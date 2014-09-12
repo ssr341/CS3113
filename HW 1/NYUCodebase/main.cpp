@@ -31,8 +31,8 @@ GLuint LoadTexture(const char *image_path) {
 	glBindTexture(GL_TEXTURE_2D, textureID);
 	glTexImage2D(GL_TEXTURE_2D, 0, 4, surface->w, surface->h, 0, GL_RGBA, GL_UNSIGNED_BYTE,
 		surface->pixels);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	SDL_FreeSurface(surface);
 	return textureID;
 }
@@ -61,40 +61,50 @@ int main(int argc, char *argv[])
 			}
 		}
 
-		// animated code
-		/*GLfloat quadUVs[] = { 0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0, 0.0 };
-		glTexCoordPointer(2, GL_FLOAT, 0, quadUVs);
-		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-
-		GLuint alienTexture = LoadTexture("alienBlue_round.png");
-
-		glEnable(GL_TEXTURE_2D);
-		glBindTexture(GL_TEXTURE_2D, alienTexture);*/
-
-		/*float lastFrameTicks = 0.0f;
-		float ticks = (float)SDL_GetTicks() / 1000.0f;
-		float elapsed = ticks - lastFrameTicks;
-		lastFrameTicks = ticks;
-		float alienAngle = 0;
-		
-		alienAngle += elapsed;
-		DrawSprite(alienTexture, 0.0, 0.0, alienAngle);*/
-
 		// code for colored triangle
+		glLoadIdentity();
+		glTranslatef(-0.5, -0.25, 0.0);
+
 		GLfloat triangle[] = { 0.0f, 0.25f, -0.25f, -0.25f, 0.25f, -0.25f };
 		glVertexPointer(2, GL_FLOAT, 0, triangle);
 		glEnableClientState(GL_VERTEX_ARRAY);
 
-		GLfloat triangleColors[] = { 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0 };
+		GLfloat triangleColors[] = { 1.0, 1.0, 0.0, 0.0, 0.5, 0.0, 0.0, 0.5, 0.0 };
 		glColorPointer(3, GL_FLOAT, 0, triangleColors);
 		glEnableClientState(GL_COLOR_ARRAY);
 
 		glDrawArrays(GL_TRIANGLES, 0, 3);
 
-		glLoadIdentity();
-		glTranslatef(-0.5, 0.5, 0.0);
-
 		glDisableClientState(GL_COLOR_ARRAY);
+		glDisableClientState(GL_VERTEX_ARRAY);
+
+		// code for brick
+		glLoadIdentity();
+		glScalef(2.0, 0.5, 0);
+		GLuint brick = LoadTexture("magic.png");
+
+		glEnable(GL_TEXTURE_2D);
+		glBindTexture(GL_TEXTURE_2D, brick);
+		DrawSprite(brick, 0.0, -1.5, 0.0);
+
+		// code for alien head
+		glLoadIdentity();
+		glScalef(0.5, 0.5, 0.5);
+
+		GLuint alientexture = LoadTexture("alienblue_round.png");
+
+		glEnable(GL_TEXTURE_2D);
+		glBindTexture(GL_TEXTURE_2D, alientexture);
+
+		// animated code
+		float lastframeticks = 0.0f;
+		float ticks = (float)SDL_GetTicks() / 1000.0f;
+		float elapsed = ticks - lastframeticks;
+		lastframeticks = ticks;
+		float alienangle = 0;
+
+		alienangle += 10*elapsed;
+		DrawSprite(alientexture, 0.0, 0.0, alienangle);
 
 		SDL_GL_SwapWindow(displayWindow);
 	}
