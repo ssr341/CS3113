@@ -9,7 +9,7 @@ void DrawSprite(GLint texture, float x, float y, float rotation) {
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, texture);
 	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
+	/*glLoadIdentity();*/
 	glTranslatef(x, y, 0.0);
 	glRotatef(rotation, 0.0, 0.0, 1.0);
 	GLfloat quad[] = { -0.5f, 0.5f, -0.5f, -0.5f, 0.5f, -0.5f, 0.5f, 0.5f };
@@ -81,12 +81,12 @@ int main(int argc, char *argv[])
 
 		// code for brick
 		glLoadIdentity();
-		glScalef(2.0, 0.5, 0);
+		glScalef(3.0, 0.5, 0);
 		GLuint brick = LoadTexture("magic.png");
 
 		glEnable(GL_TEXTURE_2D);
 		glBindTexture(GL_TEXTURE_2D, brick);
-		DrawSprite(brick, 0.0, -0.5, 0.0);
+		DrawSprite(brick, 0.0, -1.5, 0.0);
 
 		// code for alien head
 		glLoadIdentity();
@@ -104,8 +104,8 @@ int main(int argc, char *argv[])
 		lastframeticks = ticks;
 		float alienangle = 0;
 
-		alienangle += 10*elapsed;
-		DrawSprite(alientexture, 0.75, 0.75, alienangle);
+		alienangle += 100*elapsed;
+		DrawSprite(alientexture, 4.5, 3.5, alienangle);
 
 		SDL_GL_SwapWindow(displayWindow);
 	}
