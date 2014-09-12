@@ -53,6 +53,7 @@ int main(int argc, char *argv[])
 	glViewport(0, 0, 800, 600);
 	glMatrixMode(GL_PROJECTION);
 	glOrtho(-1.33, 1.33, -1.0, 1.0, -1.0, 1.0);
+	glMatrixMode(GL_MODELVIEW);
 
 	while (!done) {
 		while (SDL_PollEvent(&event)) {
@@ -85,11 +86,11 @@ int main(int argc, char *argv[])
 
 		glEnable(GL_TEXTURE_2D);
 		glBindTexture(GL_TEXTURE_2D, brick);
-		DrawSprite(brick, 0.0, -1.5, 0.0);
+		DrawSprite(brick, 0.0, -0.5, 0.0);
 
 		// code for alien head
 		glLoadIdentity();
-		glScalef(0.5, 0.5, 0.5);
+		glScalef(0.25, 0.25, 0.0);
 
 		GLuint alientexture = LoadTexture("alienblue_round.png");
 
@@ -104,7 +105,7 @@ int main(int argc, char *argv[])
 		float alienangle = 0;
 
 		alienangle += 10*elapsed;
-		DrawSprite(alientexture, 0.0, 0.0, alienangle);
+		DrawSprite(alientexture, 0.75, 0.75, alienangle);
 
 		SDL_GL_SwapWindow(displayWindow);
 	}
