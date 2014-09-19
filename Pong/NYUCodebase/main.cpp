@@ -2,6 +2,7 @@
 #include <SDL.h>
 #include <SDL_opengl.h>
 #include <SDL_image.h>
+#include <math.h>
 
 using namespace std;
 
@@ -130,15 +131,20 @@ bool ProcessEvents(){
 	float paddle2Bottom = paddle2.height / -2;
 
 	// check for collision with paddle1
-	if (ballRight >= paddle1Left){}
-	if (ballLeft <= paddle1Right){}
-	if (ballTop >= paddle1Bottom){}
-	if (ballBottom <= paddle1Top){}
+	if ((ballLeft <= paddle1Right) && (ballTop >= paddle1Bottom) && (ballBottom <= paddle1Top)){
+		ball.direction_x *= -1;  // reverse x direction
+		ball.direction_y = paddle1.direction_y * paddle1.speed; // set y direction
+	}
 
 	// check for collision with paddle2
-	if ((ballRight >= paddle2Left) && (ball.y <= paddle2Top && ball.y >= paddle2Bottom)){}
-	if (ballTop >= paddle2Bottom) {}
-	if (ballBottom <= paddle2Top){}
+	if ((ballRight >= paddle2Left) && (ballBottom <= paddle2Top) && (ballTop >= paddle2Bottom)){
+		ball.direction_x *= -1;  // reverse x direction
+		ball.direction_y = paddle2.direction_y * paddle2.speed; // set y direction
+	}
+
+	// check collision with ceilings
+	if ((ballTop >= 1.0) || (ballBottom <= -1.0))
+		ball.direction_y *= -1.0;
 
 	return true;
 }
@@ -146,6 +152,7 @@ bool ProcessEvents(){
 void update(float elapsed){
 	// paddle 1
 	paddle1.y += paddle1.direction_y * elapsed;
+	paddle1.speed = fabs(paddle1.direction_y * elapsed) + 0.1;
 	// screen boundaries for paddle 1
 	if (paddle1.y > 0.825)
 		paddle1.y = 0.825;
@@ -155,6 +162,7 @@ void update(float elapsed){
 
 	// paddle 2
 	paddle2.y += paddle2.direction_y * elapsed;
+	paddle2.speed = fabs(paddle2.direction_y * elapsed) + 0.1;
 	// screen boundaries for paddle 2
 	if (paddle2.y > 0.825)
 		paddle2.y = 0.825; 
@@ -174,6 +182,22 @@ void render(){
 	ball.Draw();
 	paddle1.Draw();
 	paddle2.Draw();
+
+	// if ball is scored
+	if (ball.x > 1.33){
+		glClearColor(0.4f, 0.5f, 0.8f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT);
+		ball.x = 0.0;
+		ball.y = 0.0;
+		ballScorer = true;
+	}
+	else if (ball.x < -1.33){
+		glClearColor(0.8f, 0.5f, 0.4f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT);
+		ball.x = 0.0;
+		ball.y = 0.0;
+		ballScorer = false;
+	}
 
 	SDL_GL_SwapWindow(displayWindow);
 }
