@@ -8,6 +8,7 @@ using namespace std;
 
 SDL_Window* displayWindow;
 bool ballScorer = true;  // person who scored last ball. True 1, False 2
+int scoreCount = 0;
 
 class Entity{
 public:
@@ -115,20 +116,20 @@ bool ProcessEvents(){
 			ball.direction_x = -1.0;
 	}
 
-	float ballRight = ball.width / 2;
-	float ballLeft = ball.width / -2;
-	float ballTop = ball.height / 2;
-	float ballBottom = ball.height / -2;
+	float ballRight = ball.x + ball.width / 2;
+	float ballLeft = ball.x + ball.width / -2;
+	float ballTop = ball.y + ball.height / 2;
+	float ballBottom = ball.y + ball.height / -2;
 
-	float paddle1Right = paddle1.width / 2;
-	float paddle1Left = paddle1.width / -2;
-	float paddle1Top = paddle1.height / 2;
-	float paddle1Bottom = paddle1.height / -2;
+	float paddle1Right = paddle1.x + paddle1.width / 2;
+	float paddle1Left = paddle1.x + paddle1.width / -2;
+	float paddle1Top = paddle1.y + paddle1.height / 2;
+	float paddle1Bottom = paddle1.x + paddle1.height / -2;
 
-	float paddle2Right = paddle2.width / 2;
-	float paddle2Left = paddle2.width / -2;
-	float paddle2Top = paddle2.height / 2;
-	float paddle2Bottom = paddle2.height / -2;
+	float paddle2Right = paddle2.x + paddle2.width / 2;
+	float paddle2Left = paddle2.x + paddle2.width / -2;
+	float paddle2Top = paddle2.y + paddle2.height / 2;
+	float paddle2Bottom = paddle2.y + paddle2.height / -2;
 
 	// check for collision with paddle1
 	if ((ballLeft <= paddle1Right) && (ballTop >= paddle1Bottom) && (ballBottom <= paddle1Top)){
@@ -152,7 +153,7 @@ bool ProcessEvents(){
 void update(float elapsed){
 	// paddle 1
 	paddle1.y += paddle1.direction_y * elapsed;
-	paddle1.speed = fabs(paddle1.direction_y * elapsed) + 0.1;
+	paddle1.speed += fabs(paddle1.direction_y * elapsed) + 0.1;
 	// screen boundaries for paddle 1
 	if (paddle1.y > 0.825)
 		paddle1.y = 0.825;
@@ -176,8 +177,23 @@ void update(float elapsed){
 }
 
 void render(){
-	glClearColor(0.4f, 0.5f, 0.4f, 1.0f);
-	glClear(GL_COLOR_BUFFER_BIT);
+	// if no score, neutral color
+	if (scoreCount == 0){
+		glClearColor(0.4f, 0.5f, 0.4f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT);
+	}
+
+	// if there is a score, change color to one that last scored
+	if (scoreCount){
+		if (ballScorer == true){
+			glClearColor(0.8f, 0.5f, 0.4f, 1.0f);
+			glClear(GL_COLOR_BUFFER_BIT);
+		}
+		else if (ballScorer == false){
+			glClearColor(0.4f, 0.5f, 0.8f, 1.0f);
+			glClear(GL_COLOR_BUFFER_BIT);
+		}
+	}
 
 	ball.Draw();
 	paddle1.Draw();
@@ -185,17 +201,19 @@ void render(){
 
 	// if ball is scored
 	if (ball.x > 1.33){
-		glClearColor(0.4f, 0.5f, 0.8f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT);
+		++scoreCount;
 		ball.x = 0.0;
 		ball.y = 0.0;
+		ball.direction_x = 0.0;
+		ball.direction_y = 0.0;
 		ballScorer = true;
 	}
 	else if (ball.x < -1.33){
-		glClearColor(0.8f, 0.5f, 0.4f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT);
+		++scoreCount;
 		ball.x = 0.0;
 		ball.y = 0.0;
+		ball.direction_x = 0.0;
+		ball.direction_y = 0.0;
 		ballScorer = false;
 	}
 
