@@ -98,14 +98,15 @@ bool ProcessEvents(){
 		// if down pressed, set direction negative
 		paddle1.direction_y = -1.0;
 	}
-	// mouse clicks used for player 2
-	else if (keys[SDL_MOUSEBUTTONDOWN]){
-		// left click goes up
-		if (event.button.button == 1)
-			paddle2.direction_y = 1.0;
-		// right click goes down
-		if (event.button.button == 3)
-			paddle2.direction_y = -1.0;
+
+	// w and s keys used for player 2
+	if (keys[SDL_SCANCODE_W]){
+		// if w pressed, set direction positive
+		paddle2.direction_y = 1.0;
+	}
+	else if (keys[SDL_SCANCODE_S]){
+		// if s pressed, set direction negative
+		paddle2.direction_y = -1.0;
 	}
 
 	// ball movement and collision
@@ -153,7 +154,7 @@ bool ProcessEvents(){
 void update(float elapsed){
 	// paddle 1
 	paddle1.y += paddle1.direction_y * elapsed;
-	paddle1.speed += fabs(paddle1.direction_y * elapsed)/1000 + 0.01;
+	paddle1.speed += fabs(paddle1.direction_y * elapsed)/1000 + 0.0001;
 	// screen boundaries for paddle 1
 	if (paddle1.y > 0.825)
 		paddle1.y = 0.825;
@@ -163,7 +164,7 @@ void update(float elapsed){
 
 	// paddle 2
 	paddle2.y += paddle2.direction_y * elapsed;
-	paddle2.speed = fabs(paddle2.direction_y * elapsed)/1000 + 0.01;
+	paddle2.speed += fabs(paddle2.direction_y * elapsed)/1000 + 0.0001;
 	// screen boundaries for paddle 2
 	if (paddle2.y > 0.825)
 		paddle2.y = 0.825; 
