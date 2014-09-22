@@ -32,9 +32,9 @@ public:
 		glDisable(GL_TEXTURE_2D);
 	}
 
-	void setSize(float x, float y){
-		width = x;
-		height = y;
+	void setSize(float w, float h){
+		width = w;
+		height = h;
 	}
 
 	float x;
@@ -90,16 +90,6 @@ bool ProcessEvents(){
 
 	const Uint8* keys = SDL_GetKeyboardState(NULL);
 	// arrow keys used for player 1
-	if (keys[SDL_SCANCODE_UP] == 1){
-		// if up pressed, set direction positive
-		paddle1.direction_y = 1.0;
-	}
-	else if (keys[SDL_SCANCODE_DOWN]){
-		// if down pressed, set direction negative
-		paddle1.direction_y = -1.0;
-	}
-
-	// w and s keys used for player 2
 	if (keys[SDL_SCANCODE_W]){
 		// if w pressed, set direction positive
 		paddle2.direction_y = 1.0;
@@ -108,6 +98,17 @@ bool ProcessEvents(){
 		// if s pressed, set direction negative
 		paddle2.direction_y = -1.0;
 	}
+
+	// w and s keys used for player 2
+	if (keys[SDL_SCANCODE_UP] == 1){
+		// if up pressed, set direction positive
+		paddle1.direction_y = 1.0;
+	}
+	else if (keys[SDL_SCANCODE_DOWN]){
+		// if down pressed, set direction negative
+		paddle1.direction_y = -1.0;
+	}
+	
 
 	// ball movement and collision
 	if (ball.x == 0 && ball.y == 0 && ball.direction_x == 0 && ball.direction_y == 0){  // ball is neutral
@@ -125,7 +126,7 @@ bool ProcessEvents(){
 	float paddle1Right = paddle1.x + paddle1.width / 2;
 	float paddle1Left = paddle1.x + paddle1.width / -2;
 	float paddle1Top = paddle1.y + paddle1.height / 2;
-	float paddle1Bottom = paddle1.x + paddle1.height / -2;
+	float paddle1Bottom = paddle1.y + paddle1.height / -2;
 
 	float paddle2Right = paddle2.x + paddle2.width / 2;
 	float paddle2Left = paddle2.x + paddle2.width / -2;
@@ -133,13 +134,34 @@ bool ProcessEvents(){
 	float paddle2Bottom = paddle2.y + paddle2.height / -2;
 
 	// check for collision with paddle1
+	// collides with right of paddle
 	if ((ballLeft <= paddle1Right) && (ballTop >= paddle1Bottom) && (ballBottom <= paddle1Top)){
+		ball.direction_x *= -1;  // reverse x direction
+		ball.direction_y = paddle1.direction_y * paddle1.speed; // set y direction
+	}
+	// collides with bottom of paddle
+	if ((ballTop >= paddle1Bottom) && (ballBottom <= paddle1Top) && (ballLeft <= paddle1Right)){
+		ball.direction_x *= -1;  // reverse x direction
+		ball.direction_y = paddle1.direction_y * paddle1.speed; // set y direction
+	}
+	// collides with top of paddle
+	if ((ballBottom <= paddle1Top) && (ballLeft <= paddle1Right) && (ballTop >= paddle1Bottom)){
 		ball.direction_x *= -1;  // reverse x direction
 		ball.direction_y = paddle1.direction_y * paddle1.speed; // set y direction
 	}
 
 	// check for collision with paddle2
 	if ((ballRight >= paddle2Left) && (ballBottom <= paddle2Top) && (ballTop >= paddle2Bottom)){
+		ball.direction_x *= -1;  // reverse x direction
+		ball.direction_y = paddle2.direction_y * paddle2.speed; // set y direction
+	}
+	// collides with bottom of paddle
+	if ((ballTop >= paddle2Bottom) && (ballBottom <= paddle2Top) && (ballRight >= paddle2Left)){
+		ball.direction_x *= -1;  // reverse x direction
+		ball.direction_y = paddle2.direction_y * paddle2.speed; // set y direction
+	}
+	// collides with top of paddle
+	if ((ballBottom <= paddle2Top) && (ballRight >= paddle2Right) && (ballTop >= paddle2Bottom)){
 		ball.direction_x *= -1;  // reverse x direction
 		ball.direction_y = paddle2.direction_y * paddle2.speed; // set y direction
 	}
