@@ -1,17 +1,43 @@
-﻿Build started 9/26/2014 6:11:04 PM.
+﻿Build started 9/27/2014 10:35:38 AM.
      1>Project "C:\Stephen-Russo-CS3113\Space Invaders\NYUCodebase\NYUCodebase.vcxproj" on node 2 (Build target(s)).
      1>ClCompile:
-         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /IC:\SDL2\include /IC:\SDL2_image\include /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt main.cpp
-         main.cpp
-     1>c:\stephen-russo-cs3113\space invaders\nyucodebase\main.cpp(260): warning C4305: 'initializing' : truncation from 'double' to 'float'
-       Link:
-         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Stephen-Russo-CS3113\Space Invaders\Debug\NYUCodebase.exe" /INCREMENTAL /NOLOGO /LIBPATH:C:\SDL2\lib\x86 /LIBPATH:C:\SDL2_image\lib\x86 SDL2.lib SDL2main.lib SDL2_image.lib OpenGL32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Stephen-Russo-CS3113\Space Invaders\Debug\NYUCodebase.pdb" /SUBSYSTEM:WINDOWS /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Stephen-Russo-CS3113\Space Invaders\Debug\NYUCodebase.lib" /MACHINE:X86 Debug\Bullet.obj
-         Debug\ClassDemoApp.obj
-         Debug\Entity.obj
-         Debug\main.obj
-         NYUCodebase.vcxproj -> C:\Stephen-Russo-CS3113\Space Invaders\Debug\NYUCodebase.exe
-     1>Done Building Project "C:\Stephen-Russo-CS3113\Space Invaders\NYUCodebase\NYUCodebase.vcxproj" (Build target(s)).
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /IC:\SDL2\include /IC:\SDL2_image\include /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt Bullet.cpp ClassDemoApp.cpp Entity.cpp gameOver.cpp mainMenu.cpp
+         mainMenu.cpp
+     1>c:\stephen-russo-cs3113\space invaders\nyucodebase\classdemoapp.h(34): error C2146: syntax error : missing ';' before identifier 'menu'
+     1>c:\stephen-russo-cs3113\space invaders\nyucodebase\classdemoapp.h(34): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+     1>c:\stephen-russo-cs3113\space invaders\nyucodebase\classdemoapp.h(37): error C2146: syntax error : missing ';' before identifier 'bullets'
+     1>c:\stephen-russo-cs3113\space invaders\nyucodebase\classdemoapp.h(37): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+     1>c:\stephen-russo-cs3113\space invaders\nyucodebase\mainmenu.cpp(56): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>c:\stephen-russo-cs3113\space invaders\nyucodebase\mainmenu.cpp(59): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>c:\stephen-russo-cs3113\space invaders\nyucodebase\mainmenu.cpp(66): error C2143: syntax error : missing ';' before '+='
+         gameOver.cpp
+     1>c:\stephen-russo-cs3113\space invaders\nyucodebase\classdemoapp.h(35): error C2146: syntax error : missing ';' before identifier 'gameOver'
+     1>c:\stephen-russo-cs3113\space invaders\nyucodebase\classdemoapp.h(35): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+     1>c:\stephen-russo-cs3113\space invaders\nyucodebase\classdemoapp.h(37): error C2146: syntax error : missing ';' before identifier 'bullets'
+     1>c:\stephen-russo-cs3113\space invaders\nyucodebase\classdemoapp.h(37): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+     1>c:\stephen-russo-cs3113\space invaders\nyucodebase\gameover.cpp(56): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>c:\stephen-russo-cs3113\space invaders\nyucodebase\gameover.cpp(59): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>c:\stephen-russo-cs3113\space invaders\nyucodebase\gameover.cpp(61): warning C4305: 'argument' : truncation from 'double' to 'GLfloat'
+     1>c:\stephen-russo-cs3113\space invaders\nyucodebase\gameover.cpp(64): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>c:\stephen-russo-cs3113\space invaders\nyucodebase\gameover.cpp(67): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>c:\stephen-russo-cs3113\space invaders\nyucodebase\gameover.cpp(74): error C2143: syntax error : missing ';' before '+='
+         Entity.cpp
+     1>c:\stephen-russo-cs3113\space invaders\nyucodebase\classdemoapp.h(43): error C2146: syntax error : missing ';' before identifier 'playerSprite'
+     1>c:\stephen-russo-cs3113\space invaders\nyucodebase\classdemoapp.h(43): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+     1>c:\stephen-russo-cs3113\space invaders\nyucodebase\classdemoapp.h(44): error C2065: 'Entity' : undeclared identifier
+     1>c:\stephen-russo-cs3113\space invaders\nyucodebase\classdemoapp.h(44): error C2923: 'std::vector' : 'Entity' is not a valid template type argument for parameter '_Ty'
+     1>c:\stephen-russo-cs3113\space invaders\nyucodebase\classdemoapp.h(44): error C3203: 'vector' : unspecialized class template can't be used as a template argument for template parameter '_Ty', expected a real type
+         ClassDemoApp.cpp
+     1>c:\stephen-russo-cs3113\space invaders\nyucodebase\classdemoapp.cpp(83): warning C4305: 'initializing' : truncation from 'double' to 'float'
+     1>c:\stephen-russo-cs3113\space invaders\nyucodebase\classdemoapp.cpp(101): warning C4551: function call missing argument list
+     1>c:\stephen-russo-cs3113\space invaders\nyucodebase\classdemoapp.cpp(261): error C2360: initialization of 'scoreString' is skipped by 'case' label
+                 c:\stephen-russo-cs3113\space invaders\nyucodebase\classdemoapp.cpp(253) : see declaration of 'scoreString'
+         Bullet.cpp
+     1>c:\stephen-russo-cs3113\space invaders\nyucodebase\classdemoapp.h(37): error C2146: syntax error : missing ';' before identifier 'bullets'
+     1>c:\stephen-russo-cs3113\space invaders\nyucodebase\classdemoapp.h(37): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+         Generating Code...
+     1>Done Building Project "C:\Stephen-Russo-CS3113\Space Invaders\NYUCodebase\NYUCodebase.vcxproj" (Build target(s)) -- FAILED.
 
-Build succeeded.
+Build FAILED.
 
-Time Elapsed 00:00:07.70
+Time Elapsed 00:00:05.78
