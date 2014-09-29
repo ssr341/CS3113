@@ -1,6 +1,10 @@
-#include "gameOver.h"
+#include "GameOver.h"
 
-GLuint mainMenu::LoadTexture(const char *image_path) {
+GameOver::GameOver(){
+	unsigned int screenText = LoadTexture("font1.png");
+}
+
+GLuint GameOver::LoadTexture(const char *image_path) {
 	SDL_Surface *surface = IMG_Load(image_path);
 	GLuint textureID;
 	glGenTextures(1, &textureID);
@@ -14,7 +18,7 @@ GLuint mainMenu::LoadTexture(const char *image_path) {
 	return textureID;
 }
 
-void mainMenu::DrawText(int fontTexture, std::string text, float size, float spacing, float r, float g, float b, float a) {
+void GameOver::DrawText(int fontTexture, std::string text, float size, float spacing, float r, float g, float b, float a) {
 	glBindTexture(GL_TEXTURE_2D, fontTexture);
 	glEnable(GL_TEXTURE_2D);
 	glEnable(GL_BLEND);
@@ -49,29 +53,46 @@ void mainMenu::DrawText(int fontTexture, std::string text, float size, float spa
 	glDrawArrays(GL_QUADS, 0, text.size() * 4);
 }
 
-void gameOver::Render(int score){
+bool GameOver::ProcessEvents(){
+	SDL_Event event;
+	const Uint8* keys = SDL_GetKeyboardState(NULL);
+
+	while (SDL_PollEvent(&event)) {
+		if (event.type == SDL_QUIT || event.type == SDL_WINDOWEVENT_CLOSE) {
+			return false;
+		}
+		else if (event.type == SDL_KEYDOWN) {
+			if (event.key.keysym.scancode == SDL_SCANCODE_SPACE) {
+				state = 1;
+			}
+		}
+	}
+}
+
+void GameOver::Render(int score){
 	// game over text
 	glLoadIdentity();
 	glTranslatef(-0.25, 0.25, 0.0);
-	DrawText(screenText, "Game", 0.2, 0.001, 1.0, 0.0, 0.0, 1.0);
+	DrawText(screenText, "Game", 0.2f, 0.001f, 1.0f, 0.0f, 0.0f, 1.0f);
 	glLoadIdentity();
 	glTranslatef(-0.25, 0.0, 0.0);
-	DrawText(screenText, "Over", 0.2, 0.001, 1.0, 0.0, 0.0, 1.0);
+	DrawText(screenText, "Over", 0.2f, 0.001f, 1.0f, 0.0f, 0.0f, 1.0f);
 	glLoadIdentity();
-	glTranslatef(-0.45, -0.25, 0.0);
+	glTranslatef(-0.45f, -0.25f, 0.0f);
 
 	std::string scoreString = std::to_string(score);
-	DrawText(screenText, "Final Score:", 0.07, 0.001, 1.0, 0.0, 0.0, 1.0);
+	DrawText(screenText, "Final Score:", 0.07f, 0.001f, 1.0f, 0.0f, 0.0f, 1.0f);
 	glLoadIdentity();
-	glTranslatef(0.5, -0.25, 0.0);
-	DrawText(screenText, scoreString, 0.07, 0.001, 1.0, 0.0, 0.0, 1.0);
+	glTranslatef(0.5f, -0.25f, 0.0f);
+	DrawText(screenText, scoreString, 0.07f, 0.001f, 1.0f, 0.0f, 0.0f, 1.0f);
+
+	glLoadIdentity();
+	glTranslatef(-0.25f, -0.6f, 0.0f);
+	DrawText(screenText, "Press Space to Continue", 0.07, 0.001, 1.0, 0.0, 0.0, 1.0);
 
 	SDL_GL_SwapWindow(displayWindow);
 }
 
-int gameOver::Update(){
-	float ticks = (float)SDL_GetTicks() / 1000.0f;
-	float elapsed += ticks;
-	if (ticks > 1000)
-		return 0;
+int GameOver::Update(){
+	return state;
 }

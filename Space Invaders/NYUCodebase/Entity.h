@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ClassDemoApp.h"
+//#include "ClassDemoApp.h"
 #include "Bullet.h"
 
 class Entity{

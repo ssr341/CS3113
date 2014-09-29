@@ -75,16 +75,18 @@
     <ClCompile Include="Bullet.cpp" />
     <ClCompile Include="ClassDemoApp.cpp" />
     <ClCompile Include="Entity.cpp" />
+    <ClCompile Include="Gameplay.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="mainMenu.cpp" />
-    <ClCompile Include="gameOver.cpp" />
+    <ClCompile Include="MainMenu.cpp" />
+    <ClCompile Include="GameOver.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Bullet.h" />
     <ClInclude Include="ClassDemoApp.h" />
     <ClInclude Include="Entity.h" />
-    <ClInclude Include="gameOver.h" />
-    <ClInclude Include="mainMenu.h" />
+    <ClInclude Include="GameOver.h" />
+    <ClInclude Include="Gameplay.h" />
+    <ClInclude Include="MainMenu.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
