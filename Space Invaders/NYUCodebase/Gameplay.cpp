@@ -1,9 +1,6 @@
 #include "Gameplay.h"
 
-Gameplay::Gameplay(){
-	init();
-	done = false;
-}
+Gameplay::Gameplay(){}
 
 GLuint Gameplay::LoadTexture(const char *image_path) {
 	SDL_Surface *surface = IMG_Load(image_path);
@@ -54,7 +51,7 @@ void Gameplay::DrawText(int fontTexture, std::string text, float size, float spa
 	glDrawArrays(GL_QUADS, 0, text.size() * 4);
 }
 
-void Gameplay::init(){
+void Gameplay::Init(){
 	spriteSheetTexture = LoadTexture("sheet.png");
 	screenText = LoadTexture("font1.png");
 

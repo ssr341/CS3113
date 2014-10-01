@@ -2,6 +2,9 @@
 
 ClassDemoApp::ClassDemoApp(){
 	Init();
+	menu.Init();
+	gameplay.Init();
+	gameOver.Init();
 	done = false;
 }
 
