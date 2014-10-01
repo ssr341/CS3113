@@ -1,6 +1,5 @@
 #pragma once
 
-//#include "ClassDemoApp.h"
 #include "Bullet.h"
 
 class Entity{
@@ -21,7 +20,7 @@ public:
 	float width;
 	float height;
 
-	float visible = true;
+	bool visible = true;
 	float speed;
 	float direction_x;
 	float direction_y;

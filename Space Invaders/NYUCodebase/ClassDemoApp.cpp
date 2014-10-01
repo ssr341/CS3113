@@ -26,6 +26,7 @@ ClassDemoApp::~ClassDemoApp(){
 
 bool ClassDemoApp::ProcessEvents(){
 	SDL_Event event;
+	bool process = false;
 
 	while (SDL_PollEvent(&event)) {
 		if (event.type == SDL_QUIT || event.type == SDL_WINDOWEVENT_CLOSE) {
@@ -34,28 +35,24 @@ bool ClassDemoApp::ProcessEvents(){
 	}
 	switch (state) {
 	case STATE_MAIN_MENU:
-		menu.ProcessEvents();
+		process = menu.ProcessEvents();
 		break;
 	case STATE_GAME_LEVEL:
-		gameplay.ProcessEvents();
+		process = gameplay.ProcessEvents();
 		break;
 	case STATE_GAME_OVER:
-		gameOver.ProcessEvents();
+		process = gameOver.ProcessEvents();
 		break;
 	}
+	if (process)
+		state = 1;
 	return done;
 }
 
 void ClassDemoApp::Update(float elapsed){
 	switch (state) {
-	case STATE_MAIN_MENU:
-		state = menu.Update();
-		break;
 	case STATE_GAME_LEVEL:
-		state = gameplay.Update(elapsed);
-		break;
-	case STATE_GAME_OVER:
-		state = gameOver.Update();
+		gameplay.Update(elapsed);
 		break;
 	}
 }
@@ -82,10 +79,8 @@ bool ClassDemoApp::UpdateAndRender() {
 	float elapsed = ticks - lastFrameTicks;
 	lastFrameTicks = ticks;
 
-	while (!ProcessEvents()){
-		Update(elapsed);
-		Render();
-	}
+	Update(elapsed);
+	Render();
 
 	return done;
 }

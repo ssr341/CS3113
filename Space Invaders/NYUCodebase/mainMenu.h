@@ -21,7 +21,7 @@ public:
 	void Render();
 	int Update();
 private:
-	int state = 0; // state of game over
+	bool done = false;
 	unsigned int screenText;
 	//SDL_Window* displayWindow;
 };

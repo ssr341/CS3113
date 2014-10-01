@@ -84,10 +84,7 @@ bool Gameplay::ProcessEvents(){
 	const Uint8* keys = SDL_GetKeyboardState(NULL);
 
 	while (SDL_PollEvent(&event)) {
-		if (event.type == SDL_QUIT || event.type == SDL_WINDOWEVENT_CLOSE) {
-			return false;
-		}
-		else if (event.type == SDL_KEYDOWN) {
+		if (event.type == SDL_KEYDOWN) {
 			if (event.key.keysym.scancode == SDL_SCANCODE_SPACE) {
 				shootBullet(playerSprite.x, playerSprite.y, 1.0);
 			}
@@ -221,7 +218,7 @@ int Gameplay::Update(float elapsed){
 		bullets[i].Update(elapsed);
 	}
 
-	return state;  // means stay in gameplay state
+	return state;
 }
 
 int Gameplay::Render(){

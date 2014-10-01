@@ -57,19 +57,13 @@ void MainMenu::DrawText(int fontTexture, std::string text, float size, float spa
 }
 
 bool MainMenu::ProcessEvents(){
-	SDL_Event event;
 	const Uint8* keys = SDL_GetKeyboardState(NULL);
 
-	while (SDL_PollEvent(&event)) {
-		if (event.type == SDL_QUIT || event.type == SDL_WINDOWEVENT_CLOSE) {
-			return false;
-		}
-	}
 	// if space is pressed move to gameplay
 	if (keys[SDL_SCANCODE_SPACE] == 1){
-		state = 1;
+		done = true;
 	}
-	return true;
+	return done;
 }
 
 void MainMenu::Render(){
@@ -86,8 +80,4 @@ void MainMenu::Render(){
 	DrawText(screenText, "Press Space to Continue", 0.07f, 0.001f, 1.0f, 0.0f, 0.0f, 1.0f);
 
 	//SDL_GL_SwapWindow(displayWindow);
-}
-
-int MainMenu::Update(){
-	return state;
 }

@@ -56,20 +56,14 @@ void GameOver::DrawText(int fontTexture, std::string text, float size, float spa
 }
 
 bool GameOver::ProcessEvents(){
-	SDL_Event event;
 	const Uint8* keys = SDL_GetKeyboardState(NULL);
 
-	while (SDL_PollEvent(&event)) {
-		if (event.type == SDL_QUIT || event.type == SDL_WINDOWEVENT_CLOSE) {
-			return false;
-		}
-		else if (event.type == SDL_KEYDOWN) {
-			if (event.key.keysym.scancode == SDL_SCANCODE_SPACE) {
-				state = 1;
-			}
-		}
+	// if space is pressed move to gameplay
+	if (keys[SDL_SCANCODE_SPACE] == 1){
+		done = true;
 	}
-	return true;
+
+	return done;
 }
 
 void GameOver::Render(int score){
@@ -94,8 +88,4 @@ void GameOver::Render(int score){
 	DrawText(screenText, "Press Space to Continue", 0.07f, 0.001f, 1.0f, 0.0f, 0.0f, 1.0f);
 
 	//SDL_GL_SwapWindow(displayWindow);
-}
-
-int GameOver::Update(){
-	return state;
 }

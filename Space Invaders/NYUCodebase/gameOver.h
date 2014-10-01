@@ -19,9 +19,8 @@ public:
 
 	bool ProcessEvents();
 	void Render(int score);
-	int Update();
 private:
-	int state = 2;  // state of game over
+	bool done = false;
 	unsigned int screenText;
 	//SDL_Window* displayWindow;
 };
