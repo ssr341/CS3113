@@ -1,7 +1,7 @@
 #include "GameOver.h"
 
 GameOver::GameOver(){
-	unsigned int screenText = LoadTexture("font1.png");
+	screenText = LoadTexture("font1.png");
 }
 
 GLuint GameOver::LoadTexture(const char *image_path) {
@@ -67,6 +67,7 @@ bool GameOver::ProcessEvents(){
 			}
 		}
 	}
+	return true;
 }
 
 void GameOver::Render(int score){
@@ -88,9 +89,9 @@ void GameOver::Render(int score){
 
 	glLoadIdentity();
 	glTranslatef(-0.25f, -0.6f, 0.0f);
-	DrawText(screenText, "Press Space to Continue", 0.07, 0.001, 1.0, 0.0, 0.0, 1.0);
+	DrawText(screenText, "Press Space to Continue", 0.07f, 0.001f, 1.0f, 0.0f, 0.0f, 1.0f);
 
-	SDL_GL_SwapWindow(displayWindow);
+	//SDL_GL_SwapWindow(displayWindow);
 }
 
 int GameOver::Update(){

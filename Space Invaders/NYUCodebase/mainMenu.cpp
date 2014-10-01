@@ -1,19 +1,20 @@
 #include "MainMenu.h"
 
 MainMenu::MainMenu(){
-	unsigned int screenText = LoadTexture("font1.png");
+	screenText = LoadTexture("font1.png");
 }
 
 GLuint MainMenu::LoadTexture(const char *image_path) {
-	SDL_Surface *surface = IMG_Load(image_path);
-	GLuint textureID;
+	SDL_Surface *surface = IMG_Load(image_path); 
+
+	GLuint textureID = -1;
 	glGenTextures(1, &textureID);
 	glBindTexture(GL_TEXTURE_2D, textureID);
 	glTexImage2D(GL_TEXTURE_2D, 0, 4, surface->w, surface->h, 0, GL_RGBA, GL_UNSIGNED_BYTE,
 		surface->pixels);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_NEAREST);
+
 	SDL_FreeSurface(surface);
 	return textureID;
 }
@@ -61,12 +62,12 @@ bool MainMenu::ProcessEvents(){
 		if (event.type == SDL_QUIT || event.type == SDL_WINDOWEVENT_CLOSE) {
 			return false;
 		}
-		else if (event.type == SDL_KEYDOWN) {
-			if (event.key.keysym.scancode == SDL_SCANCODE_SPACE) {
-				state = 1;
-			}
-		}
 	}
+	// if space is pressed move to gameplay
+	if (keys[SDL_SCANCODE_SPACE] == 1){
+		state = 1;
+	}
+	return true;
 }
 
 void MainMenu::Render(){
@@ -79,10 +80,10 @@ void MainMenu::Render(){
 	glTranslatef(-0.5, 0.0, 0.0);
 	DrawText(screenText, "Invaders", 0.15f, 0.001f, 1.0f, 1.0f, 0.0f, 1.0f);
 	glLoadIdentity();
-	glTranslatef(-0.5f, -0.4f, 0.0f);
+	glTranslatef(-0.7f, -0.4f, 0.0f);
 	DrawText(screenText, "Press Space to Continue", 0.07f, 0.001f, 1.0f, 0.0f, 0.0f, 1.0f);
 
-	SDL_GL_SwapWindow(displayWindow);
+	//SDL_GL_SwapWindow(displayWindow);
 }
 
 int MainMenu::Update(){

@@ -55,8 +55,8 @@ void Gameplay::DrawText(int fontTexture, std::string text, float size, float spa
 }
 
 void Gameplay::init(){
-	unsigned int spriteSheetTexture = LoadTexture("sheet.png");
-	unsigned int screenText = LoadTexture("font1.png");
+	spriteSheetTexture = LoadTexture("sheet.png");
+	screenText = LoadTexture("font1.png");
 
 	// name = "playerShip1_blue.png" x = "211" " y = "941" width = "99" height = "75"
 	playerSprite = Entity(spriteSheetTexture, 211.0f / 1024.f, 941.0f / 1024.0f, 99.0f / 1024.0f, 75.0f / 1024.0f);
@@ -253,7 +253,7 @@ int Gameplay::Render(){
 	glLoadIdentity();
 	glTranslatef(-0.4f, 0.9f, 0.0);
 	DrawText(screenText, scoreString, 0.06f, 0.001f, 1.0, 1.0, 0.0, 1.0);
-	SDL_GL_SwapWindow(displayWindow);
+	//SDL_GL_SwapWindow(displayWindow);
 
 	return score;
 }

@@ -1,10 +1,4 @@
 #include "ClassDemoApp.h"
-#include "Bullet.h"
-#include "Entity.h"
-#include "mainMenu.h"
-#include "gameOver.h"
-#include <vector>
-#include <string>
 
 ClassDemoApp::ClassDemoApp(){
 	Init();
@@ -53,12 +47,13 @@ void ClassDemoApp::Update(float elapsed){
 	switch (state) {
 	case STATE_MAIN_MENU:
 		state = menu.Update();
-	break;
+		break;
 	case STATE_GAME_LEVEL:
 		state = gameplay.Update(elapsed);
-	break;
+		break;
 	case STATE_GAME_OVER:
 		state = gameOver.Update();
+		break;
 	}
 }
 
@@ -76,6 +71,7 @@ void ClassDemoApp::Render(){
 			gameOver.Render(score);
 			break;
 	}
+	SDL_GL_SwapWindow(displayWindow);
 }
 
 bool ClassDemoApp::UpdateAndRender() {

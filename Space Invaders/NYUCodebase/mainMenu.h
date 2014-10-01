@@ -22,5 +22,5 @@ public:
 private:
 	int state = 0; // state of game over
 	unsigned int screenText;
-	SDL_Window* displayWindow;
+	//SDL_Window* displayWindow;
 };

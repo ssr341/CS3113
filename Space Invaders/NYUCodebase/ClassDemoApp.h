@@ -6,6 +6,7 @@
 #include "GameOver.h"
 #include "Gameplay.h"
 #include <vector>
+#include <string>
 
 enum GameState { STATE_MAIN_MENU, STATE_GAME_LEVEL, STATE_GAME_OVER };
 

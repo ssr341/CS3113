@@ -1,13 +1,8 @@
-﻿Build started 9/29/2014 1:41:43 PM.
+﻿Build started 10/1/2014 12:19:07 PM.
      1>Project "C:\Stephen-Russo-CS3113\Space Invaders\NYUCodebase\NYUCodebase.vcxproj" on node 2 (Build target(s)).
      1>ClCompile:
-         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /IC:\SDL2\include /IC:\SDL2_image\include /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt GameOver.cpp MainMenu.cpp
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /IC:\SDL2\include /IC:\SDL2_image\include /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt MainMenu.cpp
          MainMenu.cpp
-         GameOver.cpp
-     1>c:\stephen-russo-cs3113\space invaders\nyucodebase\gameover.cpp(91): warning C4305: 'argument' : truncation from 'double' to 'float'
-         Generating Code...
-     1>c:\stephen-russo-cs3113\space invaders\nyucodebase\gameover.cpp(70): warning C4715: 'GameOver::ProcessEvents' : not all control paths return a value
-     1>c:\stephen-russo-cs3113\space invaders\nyucodebase\mainmenu.cpp(70): warning C4715: 'MainMenu::ProcessEvents' : not all control paths return a value
        Link:
          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Stephen-Russo-CS3113\Space Invaders\Debug\NYUCodebase.exe" /INCREMENTAL /NOLOGO /LIBPATH:C:\SDL2\lib\x86 /LIBPATH:C:\SDL2_image\lib\x86 SDL2.lib SDL2main.lib SDL2_image.lib OpenGL32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Stephen-Russo-CS3113\Space Invaders\Debug\NYUCodebase.pdb" /SUBSYSTEM:WINDOWS /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Stephen-Russo-CS3113\Space Invaders\Debug\NYUCodebase.lib" /MACHINE:X86 Debug\Bullet.obj
          Debug\ClassDemoApp.obj
@@ -21,4 +16,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:02.57
+Time Elapsed 00:00:01.43

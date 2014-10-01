@@ -1,6 +1,7 @@
 #pragma once
 
 #include <SDL.h>
+#include <SDL.h>
 #include <SDL_opengl.h>
 #include <SDL_image.h>
 
@@ -48,5 +49,5 @@ private:
 	bool done;
 	float lastFrameTicks;
 
-	SDL_Window* displayWindow;
+	//SDL_Window* displayWindow;
 };
