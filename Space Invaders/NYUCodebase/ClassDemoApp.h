@@ -26,7 +26,7 @@ public:
 
 private:
 
-	int state = 0;
+	int state;
 	int score;
 	bool done;
 

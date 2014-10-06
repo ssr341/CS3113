@@ -21,7 +21,7 @@ public:
 	void Render();
 	int Update();
 private:
-	bool done = false;
+	bool done;
 	unsigned int screenText;
 	//SDL_Window* displayWindow;
 };

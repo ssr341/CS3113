@@ -6,6 +6,7 @@ ClassDemoApp::ClassDemoApp(){
 	gameplay.Init();
 	gameOver.Init();
 	done = false;
+	state = 0;
 }
 
 void ClassDemoApp::Init(){
@@ -32,27 +33,28 @@ bool ClassDemoApp::ProcessEvents(){
 		if (event.type == SDL_QUIT || event.type == SDL_WINDOWEVENT_CLOSE) {
 			done = true;
 		}
-	}
-	switch (state) {
-	case STATE_MAIN_MENU:
-		process = menu.ProcessEvents();
-		break;
-	case STATE_GAME_LEVEL:
-		process = gameplay.ProcessEvents();
-		break;
-	case STATE_GAME_OVER:
-		process = gameOver.ProcessEvents();
-		break;
+		switch (state) {
+		case STATE_MAIN_MENU:
+			process = menu.ProcessEvents();
+			break;
+		case STATE_GAME_LEVEL:
+			gameplay.ProcessEvents(&event);
+			break;
+		case STATE_GAME_OVER:
+			process = gameOver.ProcessEvents();
+			break;
+		}
 	}
 	if (process)
 		state = 1;
+
 	return done;
 }
 
 void ClassDemoApp::Update(float elapsed){
 	switch (state) {
 	case STATE_GAME_LEVEL:
-		gameplay.Update(elapsed);
+		state = gameplay.Update(elapsed);
 		break;
 	}
 }

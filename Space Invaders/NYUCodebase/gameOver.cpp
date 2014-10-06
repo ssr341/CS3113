@@ -60,7 +60,7 @@ bool GameOver::ProcessEvents(){
 
 	// if space is pressed move to gameplay
 	if (keys[SDL_SCANCODE_SPACE] == 1){
-		done = true;
+ 		done = true;
 	}
 
 	return done;
@@ -68,6 +68,8 @@ bool GameOver::ProcessEvents(){
 
 void GameOver::Render(int score){
 	// game over text
+	glClear(GL_COLOR_BUFFER_BIT);
+	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 	glTranslatef(-0.25, 0.25, 0.0);
 	DrawText(screenText, "Game", 0.2f, 0.001f, 1.0f, 0.0f, 0.0f, 1.0f);

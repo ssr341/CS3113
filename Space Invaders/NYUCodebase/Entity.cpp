@@ -1,9 +1,11 @@
 #include "Entity.h"
 
-Entity::Entity(){}
+Entity::Entity(){ visible = true; }
 
 Entity::Entity(unsigned int textureID, float u, float v, float width, float height) :
-	textureID(textureID), u(u), v(v), width(width), height(height){}
+textureID(textureID), u(u), v(v), width(width), height(height){
+	visible = true;
+}
 
 void Entity::Draw(float scale){
 	glEnable(GL_TEXTURE_2D);

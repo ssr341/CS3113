@@ -1,6 +1,6 @@
 #include "MainMenu.h"
 
-MainMenu::MainMenu(){}
+MainMenu::MainMenu(){ done = false; }
 
 void MainMenu::Init(){
 	screenText = LoadTexture("font1.png");
@@ -68,16 +68,19 @@ bool MainMenu::ProcessEvents(){
 
 void MainMenu::Render(){
 	// start screen text
+	
 	glClear(GL_COLOR_BUFFER_BIT);
+	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 	glTranslatef(-0.25, 0.25, 0.0);
 	DrawText(screenText, "Space", 0.15f, 0.001f, 1.0f, 1.0f, 0.0f, 1.0f);
+	
 	glLoadIdentity();
 	glTranslatef(-0.5, 0.0, 0.0);
 	DrawText(screenText, "Invaders", 0.15f, 0.001f, 1.0f, 1.0f, 0.0f, 1.0f);
 	glLoadIdentity();
 	glTranslatef(-0.75f, -0.4f, 0.0f);
 	DrawText(screenText, "Press Space to Continue", 0.07f, 0.001f, 1.0f, 0.0f, 0.0f, 1.0f);
-
+	
 	//SDL_GL_SwapWindow(displayWindow);
 }

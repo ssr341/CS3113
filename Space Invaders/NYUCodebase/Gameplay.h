@@ -21,7 +21,7 @@ public:
 	void DrawText(int fontTexture, std::string text, float size, float spacing, float r, float g, float b, float a);
 
 	void Init();
-	bool ProcessEvents();
+	bool ProcessEvents(SDL_Event* event);
 	int Render();
 	int Update(float elasped);
 
@@ -30,9 +30,9 @@ private:
 	Bullet bullets[MAX_BULLETS];
 	int bulletIndex;
 
-	float enemyShot = 0.0f; // time between enemy shots
+	float enemyShot; // time between enemy shots
 
-	int state = 1; // state of gameplay
+	int state; // state of gameplay
 
 	unsigned int spriteSheetTexture;
 	unsigned int screenText;
@@ -40,11 +40,11 @@ private:
 	Entity playerSprite;
 	std::vector<std::vector<Entity>> enemies;
 
-	int score = 0;         // score of the player
+	int score;         // score of the player
 
 	// rows and columns for enemies
-	int num_rows = 4;
-	int num_columns = 10;
+	int num_rows;
+	int num_columns;
 
 	bool done;
 	float lastFrameTicks;

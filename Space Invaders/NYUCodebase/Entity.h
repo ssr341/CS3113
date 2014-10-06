@@ -20,7 +20,7 @@ public:
 	float width;
 	float height;
 
-	bool visible = true;
+	bool visible;
 	float speed;
 	float direction_x;
 	float direction_y;

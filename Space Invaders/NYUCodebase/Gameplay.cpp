@@ -1,6 +1,12 @@
 #include "Gameplay.h"
 
-Gameplay::Gameplay(){}
+Gameplay::Gameplay(){
+	enemyShot = 0.0f;
+	state = 1;
+	score = 0;
+	num_rows = 4;
+	num_columns = 10;
+}
 
 GLuint Gameplay::LoadTexture(const char *image_path) {
 	SDL_Surface *surface = IMG_Load(image_path);
@@ -79,15 +85,12 @@ void Gameplay::Init(){
 	}
 }
 
-bool Gameplay::ProcessEvents(){
-	SDL_Event event;
+bool Gameplay::ProcessEvents(SDL_Event* event){
 	const Uint8* keys = SDL_GetKeyboardState(NULL);
 
-	while (SDL_PollEvent(&event)) {
-		if (event.type == SDL_KEYDOWN) {
-			if (event.key.keysym.scancode == SDL_SCANCODE_SPACE) {
-				shootBullet(playerSprite.x, playerSprite.y, 1.0);
-			}
+	if (event->type == SDL_KEYDOWN) {
+		if (event->key.keysym.scancode == SDL_SCANCODE_SPACE) {
+			shootBullet(playerSprite.x, playerSprite.y, 1.0);
 		}
 	}
 
@@ -132,6 +135,23 @@ int Gameplay::Update(float elapsed){
 			enemies[i][j].x += enemies[i][j].direction_x * elapsed * enemies[i][j].speed;
 			enemies[i][j].y += enemies[i][j].direction_y / 20 * elapsed * enemies[i][j].speed;
 		}
+	}
+
+	// check for visible enemies
+	bool visCount = false;
+	while (!visCount){
+		for (size_t i = 0; i < enemies.size(); i++){
+			for (size_t j = 0; j < enemies[i].size(); j++){
+				if (enemies[i][j].visible){
+					visCount = true;
+					break;
+				}
+			}
+		}
+	}
+	if (!visCount){
+		state = 2;
+		return state;
 	}
 
 	// check for collision with right side
@@ -189,7 +209,6 @@ int Gameplay::Update(float elapsed){
 		// if bullet is visible and colliding
 		if (bullets[k].visible && bullets[k].x > playerLeft && bullets[k].x < playerRight &&
 			bullets[k].y > playerBottom && bullets[k].y < playerTop){
-			// make enemy and bullet invisible and update score
 			state = 2;
 			return state;
 		}
@@ -223,6 +242,9 @@ int Gameplay::Update(float elapsed){
 
 int Gameplay::Render(){
 	glClear(GL_COLOR_BUFFER_BIT);
+	glMatrixMode(GL_MODELVIEW);
+
+	glLoadIdentity();
 	playerSprite.Draw(1.0f);
 
 	for (size_t i = 0; i < enemies.size(); i++){
