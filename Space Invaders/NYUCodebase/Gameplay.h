@@ -25,7 +25,7 @@ public:
 	int Render();
 	int Update(float elasped);
 
-	void shootBullet(float x, float y, float direction);
+	void shootBullet(float x, float y, float direction, bool shooter);
 private:
 	Bullet bullets[MAX_BULLETS];
 	int bulletIndex;

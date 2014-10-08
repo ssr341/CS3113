@@ -5,6 +5,8 @@ Entity::Entity(){ visible = true; }
 Entity::Entity(unsigned int textureID, float u, float v, float width, float height) :
 textureID(textureID), u(u), v(v), width(width), height(height){
 	visible = true;
+	direction_x = 0.0f;
+	direction_y = 0.0f;
 }
 
 void Entity::Draw(float scale){

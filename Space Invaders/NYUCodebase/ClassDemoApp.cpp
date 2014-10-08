@@ -40,9 +40,6 @@ bool ClassDemoApp::ProcessEvents(){
 		case STATE_GAME_LEVEL:
 			gameplay.ProcessEvents(&event);
 			break;
-		case STATE_GAME_OVER:
-			process = gameOver.ProcessEvents();
-			break;
 		}
 	}
 	if (process)
@@ -54,7 +51,7 @@ bool ClassDemoApp::ProcessEvents(){
 void ClassDemoApp::Update(float elapsed){
 	switch (state) {
 	case STATE_GAME_LEVEL:
-		state = gameplay.Update(elapsed);
+		state = gameplay.Update(elapsed);  // returning state as 2 for some reason after bullet is shot
 		break;
 	}
 }

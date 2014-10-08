@@ -21,4 +21,5 @@ public:
 	float direction;
 
 	bool visible;
+	bool shooter;  // true is player, false is enemy
 };

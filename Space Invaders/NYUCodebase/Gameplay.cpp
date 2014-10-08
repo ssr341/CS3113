@@ -90,7 +90,7 @@ bool Gameplay::ProcessEvents(SDL_Event* event){
 
 	if (event->type == SDL_KEYDOWN) {
 		if (event->key.keysym.scancode == SDL_SCANCODE_SPACE) {
-			shootBullet(playerSprite.x, playerSprite.y, 1.0);
+			shootBullet(playerSprite.x, playerSprite.y, 1.0, true);
 		}
 	}
 
@@ -130,6 +130,16 @@ int Gameplay::Update(float elapsed){
 	playerSprite.direction_x = 0; // stops further movement
 
 	// enemies
+
+	// y boundary for enemy
+	if (enemies[num_columns - 1][num_rows - 1].y == -0.4 || enemies[0][num_rows - 1].y == -0.4){
+		for (size_t i = 0; i < enemies.size(); i++){
+			for (size_t j = 0; j < enemies[i].size(); j++){
+				enemies[i][j].direction_y = 0.0;
+			}
+		}
+	}
+	// update enemy movement
 	for (size_t i = 0; i < enemies.size(); i++){
 		for (size_t j = 0; j < enemies[i].size(); j++){
 			enemies[i][j].x += enemies[i][j].direction_x * elapsed * enemies[i][j].speed;
@@ -147,6 +157,8 @@ int Gameplay::Update(float elapsed){
 					break;
 				}
 			}
+			if(visCount)
+				break;
 		}
 	}
 	if (!visCount){
@@ -186,7 +198,7 @@ int Gameplay::Update(float elapsed){
 
 					// if bullet is visible and colliding
 					if (bullets[k].visible && bullets[k].x > enemyLeft && bullets[k].x < enemyRight &&
-						bullets[k].y > enemyBottom && bullets[k].y < enemyTop){
+						bullets[k].y > enemyBottom && bullets[k].y < enemyTop && bullets[k].shooter){
 						// make enemy and bullet invisible and update score
 						enemies[i][j].visible = false;
 						bullets[k].visible = false;
@@ -208,7 +220,7 @@ int Gameplay::Update(float elapsed){
 
 		// if bullet is visible and colliding
 		if (bullets[k].visible && bullets[k].x > playerLeft && bullets[k].x < playerRight &&
-			bullets[k].y > playerBottom && bullets[k].y < playerTop){
+			bullets[k].y > playerBottom && bullets[k].y < playerTop && !bullets[k].shooter){
 			state = 2;
 			return state;
 		}
@@ -216,13 +228,13 @@ int Gameplay::Update(float elapsed){
 
 	// have enemy shoot bullet
 	enemyShot += elapsed;
-	if (enemyShot >= 1.0f){    // shoot every 100 frames
+	if (enemyShot >= 0.5f){    // shoot every 50 frames
 		int enemyBulletX = rand() % (9);
 		bool shot = false;  // was the bullet shot?
 		for (size_t i = 3; i > 0; i--){
 			if (!shot){
 				if (enemies[enemyBulletX][i].visible){
-					shootBullet(enemies[enemyBulletX][i].x, enemies[enemyBulletX][i].y - 0.1f, -1.0f);
+					shootBullet(enemies[enemyBulletX][i].x, enemies[enemyBulletX][i].y - 0.1f, -1.0f, false);
 					shot = true;
 				}
 			}
@@ -275,8 +287,9 @@ int Gameplay::Render(){
 }
 
 // shoots bullet at specified location
-void Gameplay::shootBullet(float x, float y, float direction){
+void Gameplay::shootBullet(float x, float y, float direction, bool shooter){
 	bullets[bulletIndex].visible = true;
+	bullets[bulletIndex].shooter = shooter;
 	bullets[bulletIndex].x = x;
 	bullets[bulletIndex].y = y;
 	bullets[bulletIndex].direction = direction;
