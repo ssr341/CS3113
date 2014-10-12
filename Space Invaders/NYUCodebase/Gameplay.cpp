@@ -85,25 +85,62 @@ void Gameplay::Init(){
 	}
 }
 
-bool Gameplay::ProcessEvents(SDL_Event* event){
-	const Uint8* keys = SDL_GetKeyboardState(NULL);
+//bool Gameplay::ProcessEvents(SDL_Event* event){
+//	const Uint8* keys = SDL_GetKeyboardState(NULL);
+//
+//	if (event->type == SDL_KEYDOWN) {
+//		if (event->key.keysym.scancode == SDL_SCANCODE_SPACE) {
+//			shootBullet(playerSprite.x, playerSprite.y, 1.0, true);
+//		}
+//	}
+//
+//	// left, right and space keys used by player
+//	if (keys[SDL_SCANCODE_LEFT] == 1){
+//		// if left pressed, set direction negative
+//		playerSprite.direction_x = -1.0;
+//	}
+//	if (keys[SDL_SCANCODE_RIGHT]){
+//		// if down pressed, set direction positive
+//		playerSprite.direction_x = 1.0;
+//	}
+//
+//	// set direction and speed of enemies at start
+//	// check for neutral, if first enemy is neutral rest are as well
+//	if (enemies[0][0].direction_x == 0 && enemies[0][0].direction_y == 0){
+//		for (size_t i = 0; i < enemies.size(); i++){
+//			for (size_t j = 0; j < enemies[i].size(); j++){
+//				enemies[i][j].direction_x = 1.0f;
+//				enemies[i][j].direction_y = -1.0f;
+//				enemies[i][j].speed = 0.25f;
+//			}
+//		}
+//	}
+//
+//	return true;
+//}
 
+bool Gameplay::ProcessShoot(SDL_Event* event){
+	const Uint8* keys = SDL_GetKeyboardState(NULL);
+	
 	if (event->type == SDL_KEYDOWN) {
 		if (event->key.keysym.scancode == SDL_SCANCODE_SPACE) {
 			shootBullet(playerSprite.x, playerSprite.y, 1.0, true);
 		}
 	}
+	return true;
+}
 
+bool Gameplay::ProcessEvents(){
+	const Uint8* keys = SDL_GetKeyboardState(NULL);
 	// left, right and space keys used by player
 	if (keys[SDL_SCANCODE_LEFT] == 1){
 		// if left pressed, set direction negative
 		playerSprite.direction_x = -1.0;
 	}
-	if (keys[SDL_SCANCODE_RIGHT]){
-		// if down pressed, set direction positive
+	if (keys[SDL_SCANCODE_RIGHT]){			// if down pressed, set direction positive
 		playerSprite.direction_x = 1.0;
 	}
-
+	
 	// set direction and speed of enemies at start
 	// check for neutral, if first enemy is neutral rest are as well
 	if (enemies[0][0].direction_x == 0 && enemies[0][0].direction_y == 0){
@@ -115,7 +152,7 @@ bool Gameplay::ProcessEvents(SDL_Event* event){
 			}
 		}
 	}
-
+	
 	return true;
 }
 
@@ -148,7 +185,7 @@ int Gameplay::Update(float elapsed){
 	}
 
 	// check for visible enemies
-	bool visCount = false;
+	/*bool visCount = false;
 	while (!visCount){
 		for (size_t i = 0; i < enemies.size(); i++){
 			for (size_t j = 0; j < enemies[i].size(); j++){
@@ -162,6 +199,12 @@ int Gameplay::Update(float elapsed){
 		}
 	}
 	if (!visCount){
+		state = 2;
+		return state;
+	}*/
+
+	// check for alive enemies
+	if (score >= 4000){
 		state = 2;
 		return state;
 	}

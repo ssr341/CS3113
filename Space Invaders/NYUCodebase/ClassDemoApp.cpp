@@ -33,14 +33,27 @@ bool ClassDemoApp::ProcessEvents(){
 		if (event.type == SDL_QUIT || event.type == SDL_WINDOWEVENT_CLOSE) {
 			done = true;
 		}
-		switch (state) {
+		/*switch (state) {
 		case STATE_MAIN_MENU:
 			process = menu.ProcessEvents();
 			break;
 		case STATE_GAME_LEVEL:
 			gameplay.ProcessEvents(&event);
 			break;
+		}*/
+		switch (state){
+		case STATE_GAME_LEVEL:
+			gameplay.ProcessShoot(&event);
+			break;
 		}
+	}
+	switch (state) {
+	case STATE_MAIN_MENU:
+		process = menu.ProcessEvents();
+		break;
+	case STATE_GAME_LEVEL:
+		gameplay.ProcessEvents();
+		break;
 	}
 	if (process)
 		state = 1;

@@ -21,7 +21,9 @@ public:
 	void DrawText(int fontTexture, std::string text, float size, float spacing, float r, float g, float b, float a);
 
 	void Init();
-	bool ProcessEvents(SDL_Event* event);
+	bool ProcessShoot(SDL_Event* event);
+	//bool ProcessEvents(SDL_Event* event);
+	bool ProcessEvents();
 	int Render();
 	int Update(float elasped);
 
