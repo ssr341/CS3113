@@ -23,7 +23,7 @@ public:
 
 	bool ProcessEvents();
 	void Render();
-	void fixedUpdate(float fixedElapsed);
+	void fixedUpdate();
 	void UpdateAndRender();
 
 private:
@@ -37,6 +37,7 @@ private:
 	Entity float2;
 	Entity float3;
 	Entity float4;
+	Entity float5;
 	Entity keyhole;
 	std::vector<Entity*> entities;
 

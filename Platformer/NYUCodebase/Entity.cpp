@@ -34,9 +34,9 @@ float lerp(float v0, float v1, float t){
 	return (1.0 - t) * v0 + t * v1;
 }
 
-void Entity::fixedUpdate(float fixedElapsed){
-	velocity_x = lerp(velocity_x, 0.0f, fixedElapsed * friction_x);
-	velocity_y = lerp(velocity_y, 0.0f, fixedElapsed * friction_y);
+void Entity::fixedUpdate(){
+	velocity_x = lerp(velocity_x, 0.0f, FIXED_TIMESTEP * friction_x);
+	velocity_y = lerp(velocity_y, 0.0f, FIXED_TIMESTEP * friction_y);
 
 	velocity_x += acceleration_x * FIXED_TIMESTEP;
 	velocity_y += acceleration_y * FIXED_TIMESTEP;

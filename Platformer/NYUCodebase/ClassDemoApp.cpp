@@ -3,18 +3,21 @@
 ClassDemoApp::ClassDemoApp(){
 	Init();
 	done = false;
-	gravity_y = -9.8f;
+	gravity_y = -11.0f;
 	timeLeftOver = 0.0f;
 
 	// player creation
 	unsigned int playerTexture = LoadTexture("alienPink.png");
 	player.textureID = playerTexture;
+	player.player = true;
 	player.width = 0.2f;
 	player.height = 0.2f;
 	player.friction_x = 50.0f;
 	player.isStatic = false;
 	player.y = -0.70f;
-	player.x = -1.2f;
+	player.x = -1.25f;
+	/*player.y = 0.76f;
+	player.x = -1.0f;*/
 	player.enableCollisions = true;
 	entities.push_back(&player);
 
@@ -52,7 +55,7 @@ GLuint ClassDemoApp::LoadTexture(const char *image_path) {
 }
 
 void ClassDemoApp::buildLevel(){
-	unsigned int blockTexture = LoadTexture("grassMid.png");
+	unsigned int blockTexture = LoadTexture("boxEmpty.png");
 	unsigned int logTexture = LoadTexture("bridgeLogs.png");
 	unsigned int keyTexture = LoadTexture("keyRed.png");
 	unsigned int bridgeTexture = LoadTexture("bridge.png");
@@ -66,6 +69,7 @@ void ClassDemoApp::buildLevel(){
 	keyhole.height = 0.2f;
 	keyhole.isStatic = true;
 	keyhole.enableCollisions = true;
+	keyhole.keyhole = true;
 	keyhole.y = -0.9f;
 	keyhole.x = -1.28f;
 	entities.push_back(&keyhole);
@@ -105,6 +109,7 @@ void ClassDemoApp::buildLevel(){
 	key.width = 0.25f;
 	key.height = 0.25f;
 	key.isStatic = true;
+	key.enableCollisions = false;
 	key.y = 0.76f;
 	key.x = -1.26f;
 	entities.push_back(&key);
@@ -115,7 +120,7 @@ void ClassDemoApp::buildLevel(){
 	float1.height = 0.2f;
 	float1.isStatic = true;
 	float1.enableCollisions = true;
-	float1.y = -0.35f;
+	float1.y = -0.45f;
 	float1.x = -0.25f;
 	entities.push_back(&float1);
 
@@ -124,7 +129,7 @@ void ClassDemoApp::buildLevel(){
 	float2.height = 0.2f;
 	float2.isStatic = true;
 	float2.enableCollisions = true;
-	float2.y = -0.1f;
+	float2.y = -0.25f;
 	float2.x = 0.3f;
 	entities.push_back(&float2);
 
@@ -135,7 +140,7 @@ void ClassDemoApp::buildLevel(){
 		blocks[blockIndex].height = 0.2f;
 		blocks[blockIndex].isStatic = true;
 		blocks[blockIndex].enableCollisions = true;
-		blocks[blockIndex].y = 0.3f;
+		blocks[blockIndex].y = 0.0f;
 		blocks[blockIndex].x = 1.33f - 2.0f / 10.0f * i;
 		entities.push_back(&blocks[blockIndex]);
 		blockIndex++;
@@ -147,19 +152,27 @@ void ClassDemoApp::buildLevel(){
 	float3.height = 0.2f;
 	float3.isStatic = true;
 	float3.enableCollisions = true;
-	float3.y = 0.6f;
-	float3.x = 0.4f;
+	float3.y = 0.4f;
+	float3.x = 1.2f;
 	entities.push_back(&float3);
 
-	// side moving platform
 	float4.textureID = bridgeTexture;
 	float4.width = 0.3f;
 	float4.height = 0.2f;
 	float4.isStatic = true;
 	float4.enableCollisions = true;
-	float4.y = 0.75f;
-	float4.x = -0.15f;
+	float4.y = 0.55f;
+	float4.x = 0.5f;
 	entities.push_back(&float4);
+
+	float5.textureID = bridgeTexture;
+	float5.width = 0.3f;
+	float5.height = 0.2f;
+	float5.isStatic = true;
+	float5.enableCollisions = true;
+	float5.y = 0.75f;
+	float5.x = -0.15f;
+	entities.push_back(&float5);
 }
 
 bool ClassDemoApp::ProcessEvents(){
@@ -172,8 +185,8 @@ bool ClassDemoApp::ProcessEvents(){
 			done = true;
 		}
 		if (event.type == SDL_KEYDOWN) {
-			if (event.key.keysym.scancode == SDL_SCANCODE_SPACE) {
-				player.velocity_y = 0.5f;
+			if (player.collidedBottom && event.key.keysym.scancode == SDL_SCANCODE_SPACE) {
+				player.velocity_y = 2.0f;
 			}
 		}
 	}
@@ -181,83 +194,103 @@ bool ClassDemoApp::ProcessEvents(){
 	// left, right and space keys used by player
 	if (keys[SDL_SCANCODE_LEFT] == 1){
 		// if left pressed, set acceleration negative
-		player.acceleration_x = -1.5f;
+		player.acceleration_x = -20.0f;
 	}
 	if (keys[SDL_SCANCODE_RIGHT]){
 		// if down pressed, set acceleration positive
-		player.acceleration_x = 1.5f;
+		player.acceleration_x = 20.0f;
 	}
 
 	return done;
 }
 
-void ClassDemoApp::fixedUpdate(float fixedElapsed){
-	for (int i = 0; i < entities.size(); i++){
-		entities[i]->collidedTop = false;
+void ClassDemoApp::fixedUpdate(){
+	for (size_t i = 0; i < entities.size(); i++){
 		entities[i]->collidedBottom = false;
-		entities[i]->collidedLeft = false;
-		entities[i]->collidedRight = false;
 	}
 
-	for (int i = 0; i < entities.size(); i++){
-		entities[i]->fixedUpdate(fixedElapsed);
+	for (size_t i = 0; i < entities.size(); i++){
+		entities[i]->fixedUpdate();
 		if (!entities[i]->isStatic){
 			/*entities[i]->velocity_x += gravity_x*FIXEDTIMESTEP;*/
 			entities[i]->velocity_y += gravity_y*FIXED_TIMESTEP;
 		}
 	}
 
-	for (int i = 0; i < entities.size(); i++){
+	for (size_t i = 0; i < entities.size(); i++){
 		// y-axis
 		entities[i]->y += entities[i]->velocity_y *FIXED_TIMESTEP;
 		if (!entities[i]->isStatic&& entities[i]->enableCollisions){
 			// collision detection
-			for (int j = 0; j < entities.size(); j++){
+			for (size_t j = 0; j < entities.size(); j++){
 				if (i != j && entities[j]->isStatic){
 					if (entities[i]->collidesWith(entities[j])){
 
-						float yPenetration = fabs(entities[j]->y - entities[i]->y) - entities[i]->height / 2.0f - entities[j]->height / 2.0f;
+						float yPenetration = fabs(fabs(entities[j]->y - entities[i]->y) - entities[i]->height / 2.0f
+							- entities[j]->height / 2.0f);
 
 						// check side of penetration
 						if (entities[j]->y > entities[i]->y){
-							entities[j]->y -= yPenetration + 0.001f;
-							entities[j]->collidedTop = true;
+							entities[i]->y -= yPenetration + 0.001f;
+							entities[i]->collidedTop = true;
 						}
 						else{
-							entities[j]->y += yPenetration + 0.001f;
-							entities[j]->collidedBottom = true;
+							entities[i]->y += yPenetration + 0.001f;
+							entities[i]->collidedBottom = true;
 						}
-						entities[j]->velocity_y = 0.0f;
+						entities[i]->velocity_y = 0.0f;
+
+						// check if player collides with key and have player pick it up
+						if (entities[i]->player && entities[j]->key){
+							entities[j]->visible = false;
+							entities[i]->key = true;
+						}
+					
+						// check if player has key on the keyhole
+						if (entities[i]->player && entities[j]->keyhole){
+							entities[i]->key = false;
+							// make key visible
+							for (size_t i = 0; i < entities.size(); i++){
+								if (!entities[i]->visible && entities[i]->key)
+									entities[i]->visible = true;
+							}
+						}
 					}
 				}
 			}
 		}
 
-		// x-axis
+		//// x-axis
 		entities[i]->x += entities[i]->velocity_x *FIXED_TIMESTEP;
 		// check if exiting sides
-		if(entities[i]->x > 1.33)
-			entities[i]->x = 1.33;
-		if(entities[i]->x < -1.33)
-			entities[i]->x = -1.33;
-		// collision detection
-		for (int j = 0; j < entities.size(); j++){
-			if (i != j){
-				if (entities[i]->collidesWith(entities[j])){
-					float xPenetration = fabs(entities[j]->x - entities[i]->x) - entities[i]->width / 2.0f - entities[j]->width / 2.0f;
-					// check side of penetration
-					if (entities[j]->x > entities[i]->x){
-						entities[i]->collidedRight = true;
-						entities[j]->x -= xPenetration + 0.001f;
-					}
-					else{
-						entities[i]->collidedLeft = true;
-						entities[j]->x += xPenetration + 0.001f;
-					}
-					entities[j]->velocity_x = 0.0f;
-				}
-			}
-		}
+		if(entities[i]->x > 1.33f)
+			entities[i]->x = 1.33f;
+		if(entities[i]->x < -1.33f)
+			entities[i]->x = -1.33f;
+		//// collision detection
+		//for (int j = 0; j < entities.size(); j++){
+		//	if (i != j){
+		//		if (entities[i]->collidesWith(entities[j])){
+		//			float xPenetration = fabs(entities[j]->x - entities[i]->x) - entities[i]->width / 2.0f - entities[j]->width / 2.0f;
+		//			// check side of penetration
+		//			if (entities[j]->x > entities[i]->x){
+		//				entities[i]->collidedRight = true;
+		//				entities[j]->x -= xPenetration + 0.001f;
+		//			}
+		//			else{
+		//				entities[i]->collidedLeft = true;
+		//				entities[j]->x += xPenetration + 0.001f;
+		//			}
+		//			entities[j]->velocity_x = 0.0f;
+		//		}
+		//	}
+		//}
+	}
+
+	// if offscreen, respawn
+	if (player.y < -1.0f){
+		player.x = -1.25f;
+		player.y = -0.70f;
 	}
 }
 
@@ -284,7 +317,7 @@ void ClassDemoApp::UpdateAndRender() {
 
 	while (fixedElapsed >= FIXED_TIMESTEP){
 		fixedElapsed -= FIXED_TIMESTEP;
-		fixedUpdate(fixedElapsed);
+		fixedUpdate();
 	}
 
 	timeLeftOver = fixedElapsed;

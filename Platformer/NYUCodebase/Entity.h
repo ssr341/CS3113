@@ -21,8 +21,6 @@ public:
 
 	bool collidesWith(Entity* entity);
 
-	void FixedUpdate();
-
 	unsigned int textureID;
 
 	//SheetSprite sprite;
@@ -41,7 +39,7 @@ public:
 	bool isStatic;
 	bool enableCollisions;
 
-	void fixedUpdate(float fixedElapsed);
+	void fixedUpdate();
 
 	bool collidedTop;
 	bool collidedBottom;
@@ -49,5 +47,7 @@ public:
 	bool collidedRight;
 
 	bool key;
+	bool keyhole;
+	bool player;
 	bool visible;
 };
