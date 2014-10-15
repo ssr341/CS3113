@@ -1,4 +1,4 @@
-// linker error, blurred sprites, what does update do, timeLeftOver error
+
 #include <SDL.h>
 #include <SDL_opengl.h>
 #include <SDL_image.h>

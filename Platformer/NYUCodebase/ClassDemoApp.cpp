@@ -12,7 +12,7 @@ ClassDemoApp::ClassDemoApp(){
 	player.player = true;
 	player.width = 0.2f;
 	player.height = 0.2f;
-	player.friction_x = 50.0f;
+	player.friction_x = 30.0f;
 	player.isStatic = false;
 	player.y = -0.70f;
 	player.x = -1.25f;
@@ -94,7 +94,7 @@ void ClassDemoApp::buildLevel(){
 	for (int i = 0; i < 4; i++){
 		blocks[blockIndex].textureID = logTexture;
 		blocks[blockIndex].width = 0.2f;
-		blocks[blockIndex].height = 0.2f;
+		blocks[blockIndex].height = 0.1f;
 		blocks[blockIndex].isStatic = true;
 		blocks[blockIndex].enableCollisions = true;
 		blocks[blockIndex].y = 0.75f;
@@ -117,7 +117,7 @@ void ClassDemoApp::buildLevel(){
 	// static platforms
 	float1.textureID = bridgeTexture;
 	float1.width = 0.3f;
-	float1.height = 0.2f;
+	float1.height = 0.06f;
 	float1.isStatic = true;
 	float1.enableCollisions = true;
 	float1.y = -0.45f;
@@ -126,7 +126,7 @@ void ClassDemoApp::buildLevel(){
 
 	float2.textureID = bridgeTexture;
 	float2.width = 0.3f;
-	float2.height = 0.2f;
+	float2.height = 0.06f;
 	float2.isStatic = true;
 	float2.enableCollisions = true;
 	float2.y = -0.25f;
@@ -137,7 +137,7 @@ void ClassDemoApp::buildLevel(){
 	for (int i = 0; i < 4; i++){
 		blocks[blockIndex].textureID = logTexture;
 		blocks[blockIndex].width = 0.2f;
-		blocks[blockIndex].height = 0.2f;
+		blocks[blockIndex].height = 0.1f;
 		blocks[blockIndex].isStatic = true;
 		blocks[blockIndex].enableCollisions = true;
 		blocks[blockIndex].y = 0.0f;
@@ -149,7 +149,7 @@ void ClassDemoApp::buildLevel(){
 	// statics platforms near the top
 	float3.textureID = bridgeTexture;
 	float3.width = 0.3f;
-	float3.height = 0.2f;
+	float3.height = 0.06f;
 	float3.isStatic = true;
 	float3.enableCollisions = true;
 	float3.y = 0.4f;
@@ -158,7 +158,7 @@ void ClassDemoApp::buildLevel(){
 
 	float4.textureID = bridgeTexture;
 	float4.width = 0.3f;
-	float4.height = 0.2f;
+	float4.height = 0.06f;
 	float4.isStatic = true;
 	float4.enableCollisions = true;
 	float4.y = 0.55f;
@@ -167,7 +167,7 @@ void ClassDemoApp::buildLevel(){
 
 	float5.textureID = bridgeTexture;
 	float5.width = 0.3f;
-	float5.height = 0.2f;
+	float5.height = 0.06f;
 	float5.isStatic = true;
 	float5.enableCollisions = true;
 	float5.y = 0.75f;
