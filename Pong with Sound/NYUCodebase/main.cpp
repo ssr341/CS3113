@@ -10,6 +10,9 @@ using namespace std;
 SDL_Window* displayWindow;
 bool ballScorer = true;  // person who scored last ball. True 1, False 2
 int scoreCount = 0;
+Mix_Chunk* collideSound; // sound of collision
+Mix_Chunk* scoreSound; // sound when score
+Mix_Music* music;   // music that plays whole game
 
 class Entity{
 public:
@@ -81,6 +84,11 @@ void Setup(){
 	glOrtho(-1.33, 1.33, -1.0, 1.0, -1.0, 1.0);
 
 	Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 4096);
+	collideSound = Mix_LoadWAV("collision.wav");
+	scoreSound = Mix_LoadWAV("score.wav");
+	music = Mix_LoadMUS("background.mp3"); // stolen from Mario Tennis music. Sorry Nintendo.
+	Mix_PlayMusic(music, -1);
+
 }
 
 bool ProcessEvents(){
@@ -141,37 +149,45 @@ bool ProcessEvents(){
 	if ((ballLeft <= paddle1Right) && (ballTop >= paddle1Bottom) && (ballBottom <= paddle1Top)){
 		ball.direction_x *= -1;  // reverse x direction
 		ball.direction_y = paddle1.direction_y * paddle1.speed; // set y direction
+		Mix_PlayChannel(-1, collideSound, 0);
 	}
 	// collides with bottom of paddle
 	if ((ballTop >= paddle1Bottom) && (ballBottom <= paddle1Top) && (ballLeft <= paddle1Right)){
 		ball.direction_x *= -1;  // reverse x direction
 		ball.direction_y = paddle1.direction_y * paddle1.speed; // set y direction
+		Mix_PlayChannel(-1, collideSound, 0);
 	}
 	// collides with top of paddle
 	if ((ballBottom <= paddle1Top) && (ballLeft <= paddle1Right) && (ballTop >= paddle1Bottom)){
 		ball.direction_x *= -1;  // reverse x direction
 		ball.direction_y = paddle1.direction_y * paddle1.speed; // set y direction
+		Mix_PlayChannel(-1, collideSound, 0);
 	}
 
 	// check for collision with paddle2
 	if ((ballRight >= paddle2Left) && (ballBottom <= paddle2Top) && (ballTop >= paddle2Bottom)){
 		ball.direction_x *= -1;  // reverse x direction
 		ball.direction_y = paddle2.direction_y * paddle2.speed; // set y direction
+		Mix_PlayChannel(-1, collideSound, 0);
 	}
 	// collides with bottom of paddle
 	if ((ballTop >= paddle2Bottom) && (ballBottom <= paddle2Top) && (ballRight >= paddle2Left)){
 		ball.direction_x *= -1;  // reverse x direction
 		ball.direction_y = paddle2.direction_y * paddle2.speed; // set y direction
+		Mix_PlayChannel(-1, collideSound, 0);
 	}
 	// collides with top of paddle
 	if ((ballBottom <= paddle2Top) && (ballRight >= paddle2Right) && (ballTop >= paddle2Bottom)){
 		ball.direction_x *= -1;  // reverse x direction
 		ball.direction_y = paddle2.direction_y * paddle2.speed; // set y direction
+		Mix_PlayChannel(-1, collideSound, 0);
 	}
 
 	// check collision with ceilings
-	if ((ballTop >= 1.0) || (ballBottom <= -1.0))
+	if ((ballTop >= 1.0) || (ballBottom <= -1.0)){
 		ball.direction_y *= -1.0;
+		Mix_PlayChannel(-1, collideSound, 0);
+	}
 
 	return true;
 }
@@ -179,22 +195,22 @@ bool ProcessEvents(){
 void update(float elapsed){
 	// paddle 1
 	paddle1.y += paddle1.direction_y * elapsed;
-	paddle1.speed += fabs(paddle1.direction_y * elapsed)/1000 + 0.0001;
+	paddle1.speed += fabs(paddle1.direction_y * elapsed)/1000 + 0.0001f;
 	// screen boundaries for paddle 1
-	if (paddle1.y > 0.825)
-		paddle1.y = 0.825;
-	if (paddle1.y < -0.825)
-		paddle1.y = -0.825;
+	if (paddle1.y > 0.825f)
+		paddle1.y = 0.825f;
+	if (paddle1.y < -0.825f)
+		paddle1.y = -0.825f;
 	paddle1.direction_y = 0;  // stops further movement
 
 	// paddle 2
 	paddle2.y += paddle2.direction_y * elapsed;
-	paddle2.speed += fabs(paddle2.direction_y * elapsed)/1000 + 0.0001;
+	paddle2.speed += fabs(paddle2.direction_y * elapsed)/1000 + 0.0001f;
 	// screen boundaries for paddle 2
-	if (paddle2.y > 0.825)
-		paddle2.y = 0.825; 
-	if (paddle2.y < -0.825)
-		paddle2.y = -0.825;
+	if (paddle2.y > 0.825f)
+		paddle2.y = 0.825f; 
+	if (paddle2.y < -0.825f)
+		paddle2.y = -0.825f;
 	paddle2.direction_y = 0;  // stops further movement
 
 	// ball
@@ -230,6 +246,7 @@ void render(){
 		++scoreCount;
 		ball.x = 0.0;
 		ball.y = 0.0;
+		Mix_PlayChannel(-1, scoreSound, 0);
 		ball.direction_x = 0.0;
 		ball.direction_y = 0.0;
 		ballScorer = true;
@@ -238,6 +255,7 @@ void render(){
 		++scoreCount;
 		ball.x = 0.0;
 		ball.y = 0.0;
+		Mix_PlayChannel(-1, scoreSound, 0);
 		ball.direction_x = 0.0;
 		ball.direction_y = 0.0;
 		ballScorer = false;
@@ -250,18 +268,19 @@ int main(int argc, char *argv[])
 {
 	Setup();
 
-	float lastFrameTicks = 0.0;
+	float lastFrameTicks = 0.0f;
 
 	ball.textureID = LoadTexture("ballGrey.png");
-	ball.setSize(0.1, 0.1);
+	ball.setSize(0.1f, 0.1f);
+	ball.x = 0.0f;
 
 	paddle1.textureID = LoadTexture("paddleRed.png");
-	paddle1.setSize(0.1, 0.35);
-	paddle1.x = -1.0;
+	paddle1.setSize(0.1f, 0.35f);
+	paddle1.x = -1.0f;
 
 	paddle2.textureID = LoadTexture("paddleBlu.png");
-	paddle2.setSize(0.1, 0.35);
-	paddle2.x = 1.0;
+	paddle2.setSize(0.1f, 0.35f);
+	paddle2.x = 1.0f;
 
 
 	while (ProcessEvents()){
@@ -273,6 +292,9 @@ int main(int argc, char *argv[])
 		render();
 	}
 	
+	Mix_FreeChunk(collideSound);
+	Mix_FreeChunk(scoreSound);
+	Mix_FreeMusic(music);
 	SDL_Quit();
 	return 0;
 }
