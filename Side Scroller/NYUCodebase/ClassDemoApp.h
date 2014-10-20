@@ -14,7 +14,10 @@
 using namespace std;
 
 #define MAX_BLOCKS 100
+#define TILE_SIZE 0.25f
 #define MAX_BULLETS 32
+#define SPRITE_COUNT_X 16
+#define SPRITE_COUNT_Y 8
 
 enum GameState { STATE_MAIN_MENU, STATE_GAME_LEVEL, STATE_GAME_OVER };
 
@@ -32,6 +35,8 @@ public:
 	bool readLayerData(ifstream &stream);
 	bool readEntityData(ifstream &stream);
 
+	void drawBlocks();
+
 	void placeEntity(string type, float placeX, float placeY);
 
 	void shootBullet(float x, float y, float direction);
@@ -47,7 +52,7 @@ private:
 
 	int mapHeight;
 	int mapWidth;
-	unsigned char levelData[LEVEL_HEIGHT][LEVEL_WIDTH];
+	unsigned char** levelData;
 
 	Entity player;
 	vector<Entity*> entities;

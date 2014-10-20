@@ -49,8 +49,6 @@ public:
 	bool collidedLeft;
 	bool collidedRight;
 
-	bool key;
-	bool keyhole;
-	bool player;
+	bool enemy;
 	bool visible;
 };

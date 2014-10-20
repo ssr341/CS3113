@@ -52,10 +52,14 @@ void ClassDemoApp::readLevel(){
 		else if (line == "[layer]") {
 			readLayerData(infile);
 		}
-		else if (line == "[Object Layer 1]") {
+		/*else if (line == "[Object Layer 1]") {
 			readEntityData(infile);
-		}
+		}*/
 	}
+	// load texture for all entities
+	/*for (size_t i = 0; i < entities.size(); i++){
+		entities[i]->textureID = LoadTexture("arne_sprites.jpg");
+	}*/
 }
 
 bool ClassDemoApp::readHeader(ifstream &stream) {
@@ -121,51 +125,99 @@ bool ClassDemoApp::readLayerData(ifstream &stream) {
 	return true;
 }
 
-bool ClassDemoApp::readEntityData(ifstream &stream) {
-	string line;
-	string type;
+//bool ClassDemoApp::readEntityData(ifstream &stream) {
+//	string line;
+//	string type;
+//
+//	while (getline(stream, line)) {
+//		if (line == "") { break; }
+//		istringstream sStream(line);
+//		string key, value;
+//		getline(sStream, key, '=');
+//		getline(sStream, value);
+//		if (key == "type") {
+//			type = value;
+//		}
+//		else if (key == "location") {
+//			istringstream lineStream(value);
+//			string xPosition, yPosition;
+//			getline(lineStream, xPosition, ',');
+//			getline(lineStream, yPosition, ',');
+//
+//			/*float placeX = atoi(xPosition.c_str()) / 16 * TILE_SIZE;
+//			float placeY = atoi(yPosition.c_str()) / 16 * -TILE_SIZE;*/
+//
+//			placeEntity(type, placeX, placeY);
+//		}
+//	}
+//	return true;
+//}
+//
+//void ClassDemoApp::placeEntity(string type, float placeX, float placeY){
+//	if (type == "Enemy"){
+//		Entity enemy;
+//		enemy.x = placeX;
+//		enemy.y = placeY;
+//		enemy.isStatic = false;
+//		enemy.acceleration_x = 1.0;
+//		enemy.enemy = true;
+//		entities.push_back(&enemy);
+//	}
+//	if (type == "Start"){
+//		player.player = true;
+//		player.friction_x = 50.0f;
+//		player.isStatic = false;
+//		player.x = placeX;
+//		player.y = placeY;
+//		entities.push_back(&player);
+//	}
+//}
 
-	while (getline(stream, line)) {
-		if (line == "") { break; }
-		istringstream sStream(line);
-		string key, value;
-		getline(sStream, key, '=');
-		getline(sStream, value);
-		if (key == "type") {
-			type = value;
+void ClassDemoApp::drawBlocks(){
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, levelTexture);
+	glMatrixMode(GL_MODELVIEW);
+	glPushMatrix();
+	glLoadIdentity();
+	glTranslatef(-TILE_SIZE * mapWidth / 2, TILE_SIZE * mapHeight / 2, 0.0f);
+
+	vector<GLfloat>vertexData;
+	vector<GLfloat>texCoordData;
+
+	int numVertices = 4;
+
+	for (int y = 0; y < mapHeight; y++) {
+		for (int x = 0; x < mapWidth; x++) {
+			//if (levelData[y][x] != 0){
+				float u = (float)(((int)levelData[y][x]) % SPRITE_COUNT_X) / (float)SPRITE_COUNT_X;
+				float v = (float)(((int)levelData[y][x]) / SPRITE_COUNT_X) / (float)SPRITE_COUNT_Y;
+				float spriteWidth = 1.0f / (float)SPRITE_COUNT_X;
+				float spriteHeight = 1.0f / (float)SPRITE_COUNT_Y;
+				vertexData.insert(vertexData.end(), {
+					TILE_SIZE * x, -TILE_SIZE * y,
+					TILE_SIZE * x, (-TILE_SIZE * y) - TILE_SIZE,
+					(TILE_SIZE * x) + TILE_SIZE, (-TILE_SIZE * y) - TILE_SIZE,
+					(TILE_SIZE * x) + TILE_SIZE, -TILE_SIZE * y
+				});
+				texCoordData.insert(texCoordData.end(), { u, v,
+					u, v + (spriteHeight),
+					u + spriteWidth, v + (spriteHeight),
+					u + spriteWidth, v
+				});
+			//}
 		}
-		else if (key == "location") {
-			istringstream lineStream(value);
-			string xPosition, yPosition;
-			getline(lineStream, xPosition, ',');
-			getline(lineStream, yPosition, ',');
-
-			float placeX = atoi(xPosition.c_str()) / 16 * TILE_SIZE;
-			float placeY = atoi(yPosition.c_str()) / 16 * -TILE_SIZE;
-
-			placeEntity(type, placeX, placeY);
-		}
 	}
-	return true;
-}
 
-void ClassDemoApp::placeEntity(string type, float placeX, float placeY){
-	if (type == "Enemy"){
-		Entity enemy;
-		enemy.x = placeX;
-		enemy.y = placeY;
-		enemy.isStatic = false;
-		enemy.acceleration_x = 1.0;
-		entities.push_back(&enemy);
-	}
-	if (type == "Start"){
-		player.player = true;
-		player.friction_x = 50.0f;
-		player.isStatic = false;
-		player.x = placeX;
-		player.y = placeY;
-		entities.push_back(&player);
-	}
+	glVertexPointer(2, GL_FLOAT, 0, vertexData.data());
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glTexCoordPointer(2, GL_FLOAT, 0, texCoordData.data());
+	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glPopMatrix();
+	glDrawArrays(GL_QUADS, 0, numVertices);
+	glDisable(GL_TEXTURE_2D);
+
 }
 
 // shoots bullet at specified location
@@ -174,7 +226,7 @@ void ClassDemoApp::shootBullet(float x, float y, float direction){
 	bullets[bulletIndex].x = x;
 	bullets[bulletIndex].y = y;
 	bullets[bulletIndex].direction = direction;
-	//bullets[bulletIndex].size = 0.01f;
+	bullets[bulletIndex].size = 0.01f;
 	bullets[bulletIndex].speed = 2.0f;
 	bulletIndex++;
 
@@ -218,8 +270,15 @@ bool ClassDemoApp::ProcessEvents(){
 }
 
 void ClassDemoApp::fixedUpdate(){
+	// check if enemies collided with walls and set flags false
 	for (size_t i = 0; i < entities.size(); i++){
+		if ((entities[i]->collidedLeft || entities[i]->collidedRight) && entities[i]->enemy)
+			entities[i]->acceleration_x *= -1.0;
+
 		entities[i]->collidedBottom = false;
+		entities[i]->collidedTop = false;
+		entities[i]->collidedLeft = false;
+		entities[i]->collidedRight = false;
 	}
 
 	for (size_t i = 0; i < entities.size(); i++){
@@ -254,44 +313,34 @@ void ClassDemoApp::fixedUpdate(){
 						entities[i]->velocity_y = 0.0f;
 
 						// check if player collides with key and have player pick it up
-						if (entities[i]->player && entities[j]->key){
+						/*if (entities[i]->player && entities[j]->key){
 							entities[j]->visible = false;
 							entities[i]->key = true;
-						}
-
-						// check if player has key on the keyhole
-						if (entities[i]->player && entities[j]->keyhole){
-							entities[i]->key = false;
-							// make key visible
-							for (size_t i = 0; i < entities.size(); i++){
-								if (!entities[i]->visible && entities[i]->key)
-									entities[i]->visible = true;
-							}
-						}
+						}*/
 					}
 				}
 			}
 		}
 
-		//// x-axis
+		// x-axis
 		entities[i]->x += entities[i]->velocity_x *FIXED_TIMESTEP;
 		// check if exiting sides
 		if (entities[i]->x > 1.33f)
 			entities[i]->x = 1.33f;
 		if (entities[i]->x < -1.33f)
 			entities[i]->x = -1.33f;
-		//// collision detection
+		// collision detection
 		//for (int j = 0; j < entities.size(); j++){
 		//	if (i != j){
 		//		if (entities[i]->collidesWith(entities[j])){
 		//			float xPenetration = fabs(entities[j]->x - entities[i]->x) - entities[i]->width / 2.0f - entities[j]->width / 2.0f;
 		//			// check side of penetration
 		//			if (entities[j]->x > entities[i]->x){
-		//				entities[i]->collidedRight = true;
+		//				entities[j]->collidedRight = true;
 		//				entities[j]->x -= xPenetration + 0.001f;
 		//			}
 		//			else{
-		//				entities[i]->collidedLeft = true;
+		//				entities[j]->collidedLeft = true;
 		//				entities[j]->x += xPenetration + 0.001f;
 		//			}
 		//			entities[j]->velocity_x = 0.0f;
@@ -310,13 +359,16 @@ void ClassDemoApp::fixedUpdate(){
 void ClassDemoApp::Render(){
 	glClear(GL_COLOR_BUFFER_BIT);
 	glMatrixMode(GL_MODELVIEW);
-	glPushMatrix();
-	glTranslatef(player.x, player.y, 0.0f);
-	for (size_t i = 0; i < entities.size(); i++){
+	/*glPushMatrix();
+	glTranslatef(player.x, player.y, 0.0f);*/
+	// draw level
+	drawBlocks();
+	// draw entities
+	/*for (size_t i = 0; i < entities.size(); i++){
 		if (entities[i]->visible)
 			entities[i]->draw();
-	}
-	glPopMatrix();
+	}*/
+	//glPopMatrix();
 	SDL_GL_SwapWindow(displayWindow);
 }
 
@@ -333,7 +385,7 @@ void ClassDemoApp::UpdateAndRender() {
 
 	while (fixedElapsed >= FIXED_TIMESTEP){
 		fixedElapsed -= FIXED_TIMESTEP;
-		fixedUpdate();
+		//fixedUpdate();
 	}
 
 	timeLeftOver = fixedElapsed;
