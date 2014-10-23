@@ -7,17 +7,33 @@ void Entity::draw(){
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, textureID);
 	glMatrixMode(GL_MODELVIEW);
+	//glPushMatrix();
 	glLoadIdentity();
-	glTranslatef(x, y, 0.0);
-	glScalef(width, height, 0.0);
-	GLfloat quad[] = { -0.5f, 0.5f, -0.5f, -0.5f, 0.5f, -0.5f, 0.5f, 0.5f };
+
+	int index = 0;
+	if (enemy)
+		index = 78;
+	else if (player)
+		index = 81;
+
+	float u = (float)(((int)index) % SPRITE_COUNT_X) / (float)SPRITE_COUNT_X;
+	float v = (float)(((int)index) / SPRITE_COUNT_X) / (float)SPRITE_COUNT_Y;
+	float spriteWidth = 1.0 / (float)SPRITE_COUNT_X;
+	float spriteHeight = 1.0 / (float)SPRITE_COUNT_Y;
+
+	GLfloat quad[] = { TILE_SIZE * x, -TILE_SIZE * y, TILE_SIZE * x, (-TILE_SIZE * y) - TILE_SIZE,
+		(TILE_SIZE * x) + TILE_SIZE, (-TILE_SIZE * y) - TILE_SIZE, (TILE_SIZE * x) + TILE_SIZE, -TILE_SIZE * y };
 	glVertexPointer(2, GL_FLOAT, 0, quad);
 	glEnableClientState(GL_VERTEX_ARRAY);
-	GLfloat quadUVs[] = { 0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0, 0.0 };
-	glTexCoordPointer(2, GL_FLOAT, 0, quadUVs);
+
+	GLfloat uvs[] = { u, v, u, v + spriteHeight, u + spriteWidth, v + spriteHeight, u + spriteWidth, v };
+	glTexCoordPointer(2, GL_FLOAT, 0, uvs);
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	//glPopMatrix();
 	glDrawArrays(GL_QUADS, 0, 4);
 	glDisable(GL_TEXTURE_2D);
 }

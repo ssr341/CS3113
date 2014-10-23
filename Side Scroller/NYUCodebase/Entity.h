@@ -7,6 +7,9 @@
 //60 FPS (1.0/60.0f)
 #define FIXED_TIMESTEP 0.0166666f
 #define MAX_TIMESTEPS 6
+#define TILE_SIZE 0.1f
+#define SPRITE_COUNT_X 16
+#define SPRITE_COUNT_Y 8
 
 class Entity {
 public:
@@ -51,4 +54,5 @@ public:
 
 	bool enemy;
 	bool visible;
+	bool player;
 };

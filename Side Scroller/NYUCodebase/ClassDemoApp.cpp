@@ -23,6 +23,8 @@ void ClassDemoApp::Init(){
 	glViewport(0, 0, 800, 600);
 	glMatrixMode(GL_PROJECTION);
 	glOrtho(-2.6666, 2.6666, -2.0, 2.0, 1.0, 1.0);
+	glClearColor(0.2f, 0.6f, 1.0f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT);
 	//glOrtho(-1.33, 1.33, -1.0, 1.0, -1.0, 1.0);
 }
 
@@ -52,14 +54,14 @@ void ClassDemoApp::readLevel(){
 		else if (line == "[layer]") {
 			readLayerData(infile);
 		}
-		/*else if (line == "[Object Layer 1]") {
+		else if (line == "[Object Layer 1]") {
 			readEntityData(infile);
-		}*/
+		}
 	}
 	// load texture for all entities
-	/*for (size_t i = 0; i < entities.size(); i++){
-		entities[i]->textureID = LoadTexture("arne_sprites.jpg");
-	}*/
+	for (size_t i = 0; i < entities.size(); i++){
+		entities[i]->textureID = levelTexture;
+	}
 }
 
 bool ClassDemoApp::readHeader(ifstream &stream) {
@@ -125,53 +127,55 @@ bool ClassDemoApp::readLayerData(ifstream &stream) {
 	return true;
 }
 
-//bool ClassDemoApp::readEntityData(ifstream &stream) {
-//	string line;
-//	string type;
-//
-//	while (getline(stream, line)) {
-//		if (line == "") { break; }
-//		istringstream sStream(line);
-//		string key, value;
-//		getline(sStream, key, '=');
-//		getline(sStream, value);
-//		if (key == "type") {
-//			type = value;
-//		}
-//		else if (key == "location") {
-//			istringstream lineStream(value);
-//			string xPosition, yPosition;
-//			getline(lineStream, xPosition, ',');
-//			getline(lineStream, yPosition, ',');
-//
-//			/*float placeX = atoi(xPosition.c_str()) / 16 * TILE_SIZE;
-//			float placeY = atoi(yPosition.c_str()) / 16 * -TILE_SIZE;*/
-//
-//			placeEntity(type, placeX, placeY);
-//		}
-//	}
-//	return true;
-//}
-//
-//void ClassDemoApp::placeEntity(string type, float placeX, float placeY){
-//	if (type == "Enemy"){
-//		Entity enemy;
-//		enemy.x = placeX;
-//		enemy.y = placeY;
-//		enemy.isStatic = false;
-//		enemy.acceleration_x = 1.0;
-//		enemy.enemy = true;
-//		entities.push_back(&enemy);
-//	}
-//	if (type == "Start"){
-//		player.player = true;
-//		player.friction_x = 50.0f;
-//		player.isStatic = false;
-//		player.x = placeX;
-//		player.y = placeY;
-//		entities.push_back(&player);
-//	}
-//}
+bool ClassDemoApp::readEntityData(ifstream &stream) {
+	string line;
+	string type;
+
+	while (getline(stream, line)) {
+		if (line == "") { break; }
+		istringstream sStream(line);
+		string key, value;
+		getline(sStream, key, '=');
+		getline(sStream, value);
+		if (key == "type") {
+			type = value;
+		}
+		else if (key == "location") {
+			istringstream lineStream(value);
+			string xPosition, yPosition;
+			getline(lineStream, xPosition, ',');
+			getline(lineStream, yPosition, ',');
+
+			float placeX = atoi(xPosition.c_str()) / 16 * TILE_SIZE;
+			float placeY = atoi(yPosition.c_str()) / 16 * -TILE_SIZE;
+
+			placeEntity(type, placeX, placeY);
+		}
+	}
+	return true;
+}
+
+void ClassDemoApp::placeEntity(string type, float placeX, float placeY){
+	if (type == "Enemy"){
+		Entity enemy;
+		enemy.x = placeX;
+		enemy.y = placeY;
+		enemy.isStatic = false;
+		enemy.acceleration_x = 1.0;
+		enemy.enemy = true;
+		entities.push_back(&enemy);
+	}
+	else if (type == "Start"){
+		spawnLocX = placeX;
+		spawnLocY = placeY;
+		player.player = true;
+		player.friction_x = 50.0f;
+		player.isStatic = false;
+		player.x = placeX;
+		player.y = placeY;
+		entities.push_back(&player);
+	}
+}
 
 void ClassDemoApp::drawBlocks(){
 	glEnable(GL_TEXTURE_2D);
@@ -184,11 +188,9 @@ void ClassDemoApp::drawBlocks(){
 	vector<GLfloat>vertexData;
 	vector<GLfloat>texCoordData;
 
-	int numVertices = 4;
-
 	for (int y = 0; y < mapHeight; y++) {
 		for (int x = 0; x < mapWidth; x++) {
-			//if (levelData[y][x] != 0){
+			if (levelData[y][x] != 0){
 				float u = (float)(((int)levelData[y][x]) % SPRITE_COUNT_X) / (float)SPRITE_COUNT_X;
 				float v = (float)(((int)levelData[y][x]) / SPRITE_COUNT_X) / (float)SPRITE_COUNT_Y;
 				float spriteWidth = 1.0f / (float)SPRITE_COUNT_X;
@@ -204,7 +206,7 @@ void ClassDemoApp::drawBlocks(){
 					u + spriteWidth, v + (spriteHeight),
 					u + spriteWidth, v
 				});
-			//}
+			}
 		}
 	}
 
@@ -215,25 +217,47 @@ void ClassDemoApp::drawBlocks(){
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glPopMatrix();
-	glDrawArrays(GL_QUADS, 0, numVertices);
+	glDrawArrays(GL_QUADS, 0, vertexData.size()/2);
 	glDisable(GL_TEXTURE_2D);
 
 }
 
-// shoots bullet at specified location
-void ClassDemoApp::shootBullet(float x, float y, float direction){
-	bullets[bulletIndex].visible = true;
-	bullets[bulletIndex].x = x;
-	bullets[bulletIndex].y = y;
-	bullets[bulletIndex].direction = direction;
-	bullets[bulletIndex].size = 0.01f;
-	bullets[bulletIndex].speed = 2.0f;
-	bulletIndex++;
-
-	// reset index if max bullet is reached and overwrite earlier bullets
-	if (bulletIndex > MAX_BULLETS - 1)
-		bulletIndex = 0;
-}
+//void ClassDemoApp::entityDraw(Entity* entity){
+//
+//	glEnable(GL_TEXTURE_2D);
+//	glBindTexture(GL_TEXTURE_2D, levelTexture);
+//	glMatrixMode(GL_MODELVIEW);
+//	glPushMatrix();
+//	glLoadIdentity();
+//	glTranslatef(-TILE_SIZE * mapWidth / 2, TILE_SIZE * mapHeight / 2, 0.0f);
+//
+//	int index = 0;
+//	if (entity->enemy)
+//		index = 78;
+//	else if (entity->player)
+//		index = 81;
+//
+//	float u = (float)(((int)index) % SPRITE_COUNT_X) / (float)SPRITE_COUNT_X;
+//	float v = (float)(((int)index) / SPRITE_COUNT_X) / (float)SPRITE_COUNT_Y;
+//	float spriteWidth = 1.0 / (float)SPRITE_COUNT_X;
+//	float spriteHeight = 1.0 / (float)SPRITE_COUNT_Y;
+//
+//	GLfloat quad[] = { TILE_SIZE * entity->x, -TILE_SIZE * entity->y, TILE_SIZE * entity->x, (-TILE_SIZE * entity->y) - TILE_SIZE,
+//		(TILE_SIZE * entity->x) + TILE_SIZE, (-TILE_SIZE * entity->y) - TILE_SIZE, (TILE_SIZE * entity->x) + TILE_SIZE, -TILE_SIZE * entity->y };
+//	glVertexPointer(2, GL_FLOAT, 0, quad);
+//	glEnableClientState(GL_VERTEX_ARRAY);
+//
+//	GLfloat uvs[] = { u, v, u, v + spriteHeight, u + spriteWidth, v + spriteHeight, u + spriteWidth, v };
+//	glTexCoordPointer(2, GL_FLOAT, 0, uvs);
+//	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+//
+//	glEnable(GL_BLEND);
+//	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+//
+//	glPopMatrix();
+//	glDrawArrays(GL_QUADS, 0, 4);
+//	glDisable(GL_TEXTURE_2D);
+//}
 
 bool ClassDemoApp::ProcessEvents(){
 	SDL_Event event;
@@ -247,9 +271,6 @@ bool ClassDemoApp::ProcessEvents(){
 		if (event.type == SDL_KEYDOWN) {
 			if (player.collidedBottom && event.key.keysym.scancode == SDL_SCANCODE_SPACE) {
 				player.velocity_y = 2.0f;
-			}
-			if (event.key.keysym.scancode == SDL_SCANCODE_X){
-				shootBullet(player.x + 0.01f, player.y, player.direction_x);
 			}
 		}
 	}
@@ -269,106 +290,181 @@ bool ClassDemoApp::ProcessEvents(){
 	return done;
 }
 
-void ClassDemoApp::fixedUpdate(){
-	// check if enemies collided with walls and set flags false
-	for (size_t i = 0; i < entities.size(); i++){
-		if ((entities[i]->collidedLeft || entities[i]->collidedRight) && entities[i]->enemy)
-			entities[i]->acceleration_x *= -1.0;
+void ClassDemoApp::worldToTileCoordinates(float worldX, float worldY, int *gridX, int *gridY) {
+	*gridX = (int)((worldX + (WORLD_OFFSET_X)) / TILE_SIZE);
+	*gridY = (int)((-worldY + (WORLD_OFFSET_Y)) / TILE_SIZE);
+}
 
-		entities[i]->collidedBottom = false;
-		entities[i]->collidedTop = false;
-		entities[i]->collidedLeft = false;
-		entities[i]->collidedRight = false;
+void ClassDemoApp::doLevelCollisionY(Entity* entity){
+	//check bottom
+	float adjust = checkPointForGridCollisionY(entity->x, entity->y - entity->height*0.5);
+	if (adjust != 0.0f){
+		entity->y += adjust;
+		entity->velocity_y = 0.0f;
+		entity->collidedBottom = true;
 	}
 
-	for (size_t i = 0; i < entities.size(); i++){
-		entities[i]->fixedUpdate();
-		if (!entities[i]->isStatic){
-			/*entities[i]->velocity_x += gravity_x*FIXEDTIMESTEP;*/
-			entities[i]->velocity_y += gravity_y*FIXED_TIMESTEP;
-		}
-	}
-
-	for (size_t i = 0; i < entities.size(); i++){
-		// y-axis
-		entities[i]->y += entities[i]->velocity_y *FIXED_TIMESTEP;
-		if (!entities[i]->isStatic&& entities[i]->enableCollisions){
-			// collision detection
-			for (size_t j = 0; j < entities.size(); j++){
-				if (i != j && entities[j]->isStatic){
-					if (entities[i]->collidesWith(entities[j])){
-
-						float yPenetration = fabs(fabs(entities[j]->y - entities[i]->y) - entities[i]->height / 2.0f
-							- entities[j]->height / 2.0f);
-
-						// check side of penetration
-						if (entities[j]->y > entities[i]->y){
-							entities[i]->y -= yPenetration + 0.001f;
-							entities[i]->collidedTop = true;
-						}
-						else{
-							entities[i]->y += yPenetration + 0.001f;
-							entities[i]->collidedBottom = true;
-						}
-						entities[i]->velocity_y = 0.0f;
-
-						// check if player collides with key and have player pick it up
-						/*if (entities[i]->player && entities[j]->key){
-							entities[j]->visible = false;
-							entities[i]->key = true;
-						}*/
-					}
-				}
-			}
-		}
-
-		// x-axis
-		entities[i]->x += entities[i]->velocity_x *FIXED_TIMESTEP;
-		// check if exiting sides
-		if (entities[i]->x > 1.33f)
-			entities[i]->x = 1.33f;
-		if (entities[i]->x < -1.33f)
-			entities[i]->x = -1.33f;
-		// collision detection
-		//for (int j = 0; j < entities.size(); j++){
-		//	if (i != j){
-		//		if (entities[i]->collidesWith(entities[j])){
-		//			float xPenetration = fabs(entities[j]->x - entities[i]->x) - entities[i]->width / 2.0f - entities[j]->width / 2.0f;
-		//			// check side of penetration
-		//			if (entities[j]->x > entities[i]->x){
-		//				entities[j]->collidedRight = true;
-		//				entities[j]->x -= xPenetration + 0.001f;
-		//			}
-		//			else{
-		//				entities[j]->collidedLeft = true;
-		//				entities[j]->x += xPenetration + 0.001f;
-		//			}
-		//			entities[j]->velocity_x = 0.0f;
-		//		}
-		//	}
-		//}
-	}
-
-	// if offscreen, respawn
-	if (player.y < -1.0f){
-		player.x = -1.25f;
-		player.y = -0.70f;
+	//check top
+	adjust = checkPointForGridCollisionY(entity->x, entity->y + entity->height*0.5);
+	if (adjust != 0.0f){
+		entity->y += adjust - TILE_SIZE;
+		entity->velocity_y = 0.0f;
+		entity->collidedTop = true;
 	}
 }
+
+float ClassDemoApp::checkPointForGridCollisionY(float x, float y){
+	int gridX, gridY;
+	worldToTileCoordinates(x, y, &gridX, &gridY);
+	if (gridX < 0 || gridX > 21 || gridY < 0 || gridY > 15){
+		return 0.0f;
+	}
+	if (isSolid(levelData[gridY][gridX])){
+		float yCoordinate = (float)((gridY*TILE_SIZE) - (TILE_SIZE*8.0));
+		return -y - yCoordinate;
+	}
+	return 0.0f;
+}
+
+void ClassDemoApp::doLevelCollisionX(Entity* entity){
+	//check left
+	float adjust = checkPointForGridCollisionX(entity->x - entity->height*0.5, entity->y);
+	if (adjust != 0.0f){
+		entity->y += adjust;
+		entity->velocity_y = 0.0f;
+		entity->collidedLeft = true;
+	}
+
+	//check right
+	adjust = checkPointForGridCollisionX(entity->x + entity->height*0.5, entity->y);
+	if (adjust != 0.0f){
+		entity->y += adjust - TILE_SIZE;
+		entity->velocity_y = 0.0f;
+		entity->collidedRight = true;
+	}
+}
+
+float ClassDemoApp::checkPointForGridCollisionX(float x, float y){
+	int gridX, gridY;
+	worldToTileCoordinates(x, y, &gridX, &gridY);
+	if (gridX < 0 || gridX > 21 || gridY < 0 || gridY > 15){
+		return 0.0f;
+	}
+	if (isSolid(levelData[gridY][gridX])){
+		float xCoordinate = (float)((gridX*TILE_SIZE) - (TILE_SIZE*16.0));
+		return -x - xCoordinate;
+	}
+	return 0.0f;
+}
+
+bool ClassDemoApp::isSolid(unsigned char index){
+	// if clouds or empty space return false
+	if (index == 0 || index == 96 || index == 97 || index == 113 || index == 114 || index == 115)
+		return false;
+	else
+		return true;
+}
+
+//void ClassDemoApp::fixedUpdate(){
+//	// check if enemies collided with walls and set flags false
+//	for (size_t i = 0; i < entities.size(); i++){
+//		if ((entities[i]->collidedLeft || entities[i]->collidedRight) && entities[i]->enemy)
+//			entities[i]->acceleration_x *= -1.0;
+//
+//		entities[i]->collidedBottom = false;
+//		entities[i]->collidedTop = false;
+//		entities[i]->collidedLeft = false;
+//		entities[i]->collidedRight = false;
+//	}
+//
+//	for (size_t i = 0; i < entities.size(); i++){
+//		entities[i]->fixedUpdate();
+//		if (!entities[i]->isStatic){
+//			/*entities[i]->velocity_x += gravity_x*FIXEDTIMESTEP;*/
+//			entities[i]->velocity_y += gravity_y*FIXED_TIMESTEP;
+//		}
+//	}
+//
+//	for (size_t i = 0; i < entities.size(); i++){
+//		// y-axis
+//		entities[i]->y += entities[i]->velocity_y *FIXED_TIMESTEP;
+//		if (!entities[i]->isStatic&& entities[i]->enableCollisions){
+//			// collision detection
+//			for (size_t j = 0; j < entities.size(); j++){
+//				if (i != j && entities[j]->isStatic){
+//					if (entities[i]->collidesWith(entities[j])){
+//
+//						float yPenetration = fabs(fabs(entities[j]->y - entities[i]->y) - entities[i]->height / 2.0f
+//							- entities[j]->height / 2.0f);
+//
+//						// check side of penetration
+//						if (entities[j]->y > entities[i]->y){
+//							entities[i]->y -= yPenetration + 0.001f;
+//							entities[i]->collidedTop = true;
+//						}
+//						else{
+//							entities[i]->y += yPenetration + 0.001f;
+//							entities[i]->collidedBottom = true;
+//						}
+//						entities[i]->velocity_y = 0.0f;
+//
+//						// check if player collides with key and have player pick it up
+//						/*if (entities[i]->player && entities[j]->key){
+//							entities[j]->visible = false;
+//							entities[i]->key = true;
+//						}*/
+//					}
+//				}
+//			}
+//		}
+//
+//		// x-axis
+//		entities[i]->x += entities[i]->velocity_x *FIXED_TIMESTEP;
+//		// check if exiting sides
+//		if (entities[i]->x > 1.33f)
+//			entities[i]->x = 1.33f;
+//		if (entities[i]->x < -1.33f)
+//			entities[i]->x = -1.33f;
+//		// collision detection
+//		//for (int j = 0; j < entities.size(); j++){
+//		//	if (i != j){
+//		//		if (entities[i]->collidesWith(entities[j])){
+//		//			float xPenetration = fabs(entities[j]->x - entities[i]->x) - entities[i]->width / 2.0f - entities[j]->width / 2.0f;
+//		//			// check side of penetration
+//		//			if (entities[j]->x > entities[i]->x){
+//		//				entities[j]->collidedRight = true;
+//		//				entities[j]->x -= xPenetration + 0.001f;
+//		//			}
+//		//			else{
+//		//				entities[j]->collidedLeft = true;
+//		//				entities[j]->x += xPenetration + 0.001f;
+//		//			}
+//		//			entities[j]->velocity_x = 0.0f;
+//		//		}
+//		//	}
+//		//}
+//	}
+//
+//	// if offscreen, respawn
+//	/*if (player.y < -1.0f){
+//		player.x = -1.25f;
+//		player.y = -0.70f;
+//	}*/
+//}
 
 void ClassDemoApp::Render(){
 	glClear(GL_COLOR_BUFFER_BIT);
 	glMatrixMode(GL_MODELVIEW);
-	/*glPushMatrix();
-	glTranslatef(player.x, player.y, 0.0f);*/
+	glLoadIdentity();
+	glTranslatef(-player.x, -player.y, 0.0f);
 	// draw level
 	drawBlocks();
 	// draw entities
-	/*for (size_t i = 0; i < entities.size(); i++){
+	for (size_t i = 0; i < entities.size(); i++){
 		if (entities[i]->visible)
+			//entityDraw(entities[i]);
 			entities[i]->draw();
-	}*/
-	//glPopMatrix();
+	}
 	SDL_GL_SwapWindow(displayWindow);
 }
 

@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Entity.h"
-#include "Bullet.h"
 
 #include <vector>
 #include <string>
@@ -13,13 +12,8 @@
 
 using namespace std;
 
-#define MAX_BLOCKS 100
-#define TILE_SIZE 0.25f
-#define MAX_BULLETS 32
-#define SPRITE_COUNT_X 16
-#define SPRITE_COUNT_Y 8
-
-enum GameState { STATE_MAIN_MENU, STATE_GAME_LEVEL, STATE_GAME_OVER };
+#define WORLD_OFFSET_X 0
+#define WORLD_OFFSET_Y 0
 
 class ClassDemoApp{
 public:
@@ -36,10 +30,17 @@ public:
 	bool readEntityData(ifstream &stream);
 
 	void drawBlocks();
+	void entityDraw(Entity* entity);
 
 	void placeEntity(string type, float placeX, float placeY);
 
-	void shootBullet(float x, float y, float direction);
+	void worldToTileCoordinates(float worldX, float worldY, int *gridX, int *gridY);
+	void doLevelCollisionY(Entity* entity);
+	float checkPointForGridCollisionY(float x, float y);
+	void doLevelCollisionX(Entity* entity);
+	float checkPointForGridCollisionX(float x, float y);
+
+	bool isSolid(unsigned char index);
 
 	bool ProcessEvents();
 	void Render();
@@ -57,14 +58,15 @@ private:
 	Entity player;
 	vector<Entity*> entities;
 
-	Bullet bullets[MAX_BULLETS];
-	int bulletIndex;
-
 	float gravity_y;
 
 	bool done;
 	float lastFrameTicks;
 	float timeLeftOver;
+
+	// respawn location
+	float spawnLocX;
+	float spawnLocY;
 
 	void readLevel();
 
