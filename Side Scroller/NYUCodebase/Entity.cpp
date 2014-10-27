@@ -2,41 +2,40 @@
 
 Entity::Entity(){ visible = true; }
 
-void Entity::draw(){
-
-	glEnable(GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D, textureID);
-	glMatrixMode(GL_MODELVIEW);
-	//glPushMatrix();
-	glLoadIdentity();
-
-	int index = 0;
-	if (enemy)
-		index = 78;
-	else if (player)
-		index = 81;
-
-	float u = (float)(((int)index) % SPRITE_COUNT_X) / (float)SPRITE_COUNT_X;
-	float v = (float)(((int)index) / SPRITE_COUNT_X) / (float)SPRITE_COUNT_Y;
-	float spriteWidth = 1.0 / (float)SPRITE_COUNT_X;
-	float spriteHeight = 1.0 / (float)SPRITE_COUNT_Y;
-
-	GLfloat quad[] = { TILE_SIZE * x, -TILE_SIZE * y, TILE_SIZE * x, (-TILE_SIZE * y) - TILE_SIZE,
-		(TILE_SIZE * x) + TILE_SIZE, (-TILE_SIZE * y) - TILE_SIZE, (TILE_SIZE * x) + TILE_SIZE, -TILE_SIZE * y };
-	glVertexPointer(2, GL_FLOAT, 0, quad);
-	glEnableClientState(GL_VERTEX_ARRAY);
-
-	GLfloat uvs[] = { u, v, u, v + spriteHeight, u + spriteWidth, v + spriteHeight, u + spriteWidth, v };
-	glTexCoordPointer(2, GL_FLOAT, 0, uvs);
-	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-	//glPopMatrix();
-	glDrawArrays(GL_QUADS, 0, 4);
-	glDisable(GL_TEXTURE_2D);
-}
+//void Entity::draw(){
+//
+//	glEnable(GL_TEXTURE_2D);
+//	glBindTexture(GL_TEXTURE_2D, textureID);
+//	glMatrixMode(GL_MODELVIEW);
+//	glPushMatrix();
+//
+//	int index = 0;
+//	if (enemy)
+//		index = 78;
+//	else if (player)
+//		index = 81;
+//
+//	float u = (float)(((int)index) % SPRITE_COUNT_X) / (float)SPRITE_COUNT_X;
+//	float v = (float)(((int)index) / SPRITE_COUNT_X) / (float)SPRITE_COUNT_Y;
+//	float spriteWidth = 1.0 / (float)SPRITE_COUNT_X;
+//	float spriteHeight = 1.0 / (float)SPRITE_COUNT_Y;
+//
+//	GLfloat quad[] = { TILE_SIZE * x, -TILE_SIZE * y, TILE_SIZE * x, (-TILE_SIZE * y) - TILE_SIZE,
+//		(TILE_SIZE * x) + TILE_SIZE, (-TILE_SIZE * y) - TILE_SIZE, (TILE_SIZE * x) + TILE_SIZE, -TILE_SIZE * y };
+//	glVertexPointer(2, GL_FLOAT, 0, quad);
+//	glEnableClientState(GL_VERTEX_ARRAY);
+//
+//	GLfloat uvs[] = { u, v, u, v + spriteHeight, u + spriteWidth, v + spriteHeight, u + spriteWidth, v };
+//	glTexCoordPointer(2, GL_FLOAT, 0, uvs);
+//	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+//
+//	glEnable(GL_BLEND);
+//	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+//
+//	glDrawArrays(GL_QUADS, 0, 4);
+//	glPopMatrix();
+//	glDisable(GL_TEXTURE_2D);
+//}
 
 // linear interpolation
 float lerp(float v0, float v1, float t){
@@ -54,7 +53,7 @@ void Entity::fixedUpdate(){
 	y += velocity_y * FIXED_TIMESTEP;
 }
 
-bool Entity::collidesWith(Entity *entity){
+bool Entity::collidesWith(Entity* entity){
 	float entityRight = entity->x + entity->width / 2;
 	float entityLeft = entity->x + entity->width / -2;
 	float entityTop = entity->y + entity->height / 2;

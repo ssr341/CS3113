@@ -161,6 +161,7 @@ void ClassDemoApp::placeEntity(string type, float placeX, float placeY){
 		enemy.x = placeX;
 		enemy.y = placeY;
 		enemy.isStatic = false;
+		enemy.enableCollisions = true;
 		enemy.acceleration_x = 1.0;
 		enemy.enemy = true;
 		entities.push_back(&enemy);
@@ -171,6 +172,7 @@ void ClassDemoApp::placeEntity(string type, float placeX, float placeY){
 		player.player = true;
 		player.friction_x = 50.0f;
 		player.isStatic = false;
+		player.enableCollisions = true;
 		player.x = placeX;
 		player.y = placeY;
 		entities.push_back(&player);
@@ -182,7 +184,7 @@ void ClassDemoApp::drawBlocks(){
 	glBindTexture(GL_TEXTURE_2D, levelTexture);
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
-	glLoadIdentity();
+	//glLoadIdentity();
 	glTranslatef(-TILE_SIZE * mapWidth / 2, TILE_SIZE * mapHeight / 2, 0.0f);
 
 	vector<GLfloat>vertexData;
@@ -216,48 +218,47 @@ void ClassDemoApp::drawBlocks(){
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glPopMatrix();
 	glDrawArrays(GL_QUADS, 0, vertexData.size()/2);
 	glDisable(GL_TEXTURE_2D);
-
+	glPopMatrix();
 }
 
-//void ClassDemoApp::entityDraw(Entity* entity){
-//
-//	glEnable(GL_TEXTURE_2D);
-//	glBindTexture(GL_TEXTURE_2D, levelTexture);
-//	glMatrixMode(GL_MODELVIEW);
-//	glPushMatrix();
-//	glLoadIdentity();
-//	glTranslatef(-TILE_SIZE * mapWidth / 2, TILE_SIZE * mapHeight / 2, 0.0f);
-//
-//	int index = 0;
-//	if (entity->enemy)
-//		index = 78;
-//	else if (entity->player)
-//		index = 81;
-//
-//	float u = (float)(((int)index) % SPRITE_COUNT_X) / (float)SPRITE_COUNT_X;
-//	float v = (float)(((int)index) / SPRITE_COUNT_X) / (float)SPRITE_COUNT_Y;
-//	float spriteWidth = 1.0 / (float)SPRITE_COUNT_X;
-//	float spriteHeight = 1.0 / (float)SPRITE_COUNT_Y;
-//
-//	GLfloat quad[] = { TILE_SIZE * entity->x, -TILE_SIZE * entity->y, TILE_SIZE * entity->x, (-TILE_SIZE * entity->y) - TILE_SIZE,
-//		(TILE_SIZE * entity->x) + TILE_SIZE, (-TILE_SIZE * entity->y) - TILE_SIZE, (TILE_SIZE * entity->x) + TILE_SIZE, -TILE_SIZE * entity->y };
-//	glVertexPointer(2, GL_FLOAT, 0, quad);
-//	glEnableClientState(GL_VERTEX_ARRAY);
-//
-//	GLfloat uvs[] = { u, v, u, v + spriteHeight, u + spriteWidth, v + spriteHeight, u + spriteWidth, v };
-//	glTexCoordPointer(2, GL_FLOAT, 0, uvs);
-//	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-//
-//	glEnable(GL_BLEND);
-//	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-//
-//	glPopMatrix();
-//	glDrawArrays(GL_QUADS, 0, 4);
-//	glDisable(GL_TEXTURE_2D);
-//}
+void ClassDemoApp::entityDraw(Entity* entity){
+
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, levelTexture);
+	glMatrixMode(GL_MODELVIEW);
+	glPushMatrix();
+	//glLoadIdentity();
+	glTranslatef(-TILE_SIZE * mapWidth / 2, TILE_SIZE * mapHeight / 2, 0.0f);
+
+	int index = 0;
+	if (entity->enemy)
+		index = 78;
+	else if (entity->player)
+		index = 81;
+
+	float u = (float)(((int)index) % SPRITE_COUNT_X) / (float)SPRITE_COUNT_X;
+	float v = (float)(((int)index) / SPRITE_COUNT_X) / (float)SPRITE_COUNT_Y;
+	float spriteWidth = 1.0 / (float)SPRITE_COUNT_X;
+	float spriteHeight = 1.0 / (float)SPRITE_COUNT_Y;
+
+	GLfloat quad[] = { TILE_SIZE * entity->x, -TILE_SIZE * entity->y, TILE_SIZE * entity->x, (-TILE_SIZE * entity->y) - TILE_SIZE,
+		(TILE_SIZE * entity->x) + TILE_SIZE, (-TILE_SIZE * entity->y) - TILE_SIZE, (TILE_SIZE * entity->x) + TILE_SIZE, -TILE_SIZE * entity->y };
+	glVertexPointer(2, GL_FLOAT, 0, quad);
+	glEnableClientState(GL_VERTEX_ARRAY);
+
+	GLfloat uvs[] = { u, v, u, v + spriteHeight, u + spriteWidth, v + spriteHeight, u + spriteWidth, v };
+	glTexCoordPointer(2, GL_FLOAT, 0, uvs);
+	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	glDrawArrays(GL_QUADS, 0, 4);
+	glDisable(GL_TEXTURE_2D);
+	glPopMatrix();
+}
 
 bool ClassDemoApp::ProcessEvents(){
 	SDL_Event event;
@@ -278,12 +279,10 @@ bool ClassDemoApp::ProcessEvents(){
 	// left, right and space keys used by player
 	if (keys[SDL_SCANCODE_LEFT] == 1){
 		// if left pressed, set acceleration negative
-		player.direction_x = -1.0f;
 		player.acceleration_x = -20.0f;
 	}
 	if (keys[SDL_SCANCODE_RIGHT]){
 		// if down pressed, set acceleration positive
-		player.direction_x = 1.0f;
 		player.acceleration_x = 20.0f;
 	}
 
@@ -365,92 +364,60 @@ bool ClassDemoApp::isSolid(unsigned char index){
 		return true;
 }
 
-//void ClassDemoApp::fixedUpdate(){
-//	// check if enemies collided with walls and set flags false
-//	for (size_t i = 0; i < entities.size(); i++){
-//		if ((entities[i]->collidedLeft || entities[i]->collidedRight) && entities[i]->enemy)
-//			entities[i]->acceleration_x *= -1.0;
-//
-//		entities[i]->collidedBottom = false;
-//		entities[i]->collidedTop = false;
-//		entities[i]->collidedLeft = false;
-//		entities[i]->collidedRight = false;
-//	}
-//
-//	for (size_t i = 0; i < entities.size(); i++){
-//		entities[i]->fixedUpdate();
-//		if (!entities[i]->isStatic){
-//			/*entities[i]->velocity_x += gravity_x*FIXEDTIMESTEP;*/
-//			entities[i]->velocity_y += gravity_y*FIXED_TIMESTEP;
-//		}
-//	}
-//
-//	for (size_t i = 0; i < entities.size(); i++){
-//		// y-axis
-//		entities[i]->y += entities[i]->velocity_y *FIXED_TIMESTEP;
-//		if (!entities[i]->isStatic&& entities[i]->enableCollisions){
-//			// collision detection
-//			for (size_t j = 0; j < entities.size(); j++){
-//				if (i != j && entities[j]->isStatic){
-//					if (entities[i]->collidesWith(entities[j])){
-//
-//						float yPenetration = fabs(fabs(entities[j]->y - entities[i]->y) - entities[i]->height / 2.0f
-//							- entities[j]->height / 2.0f);
-//
-//						// check side of penetration
-//						if (entities[j]->y > entities[i]->y){
-//							entities[i]->y -= yPenetration + 0.001f;
-//							entities[i]->collidedTop = true;
-//						}
-//						else{
-//							entities[i]->y += yPenetration + 0.001f;
-//							entities[i]->collidedBottom = true;
-//						}
-//						entities[i]->velocity_y = 0.0f;
-//
-//						// check if player collides with key and have player pick it up
-//						/*if (entities[i]->player && entities[j]->key){
-//							entities[j]->visible = false;
-//							entities[i]->key = true;
-//						}*/
-//					}
-//				}
-//			}
-//		}
-//
-//		// x-axis
-//		entities[i]->x += entities[i]->velocity_x *FIXED_TIMESTEP;
-//		// check if exiting sides
+void ClassDemoApp::fixedUpdate(){
+	// check if enemies collided with walls and set flags false
+	for (size_t i = 0; i < entities.size(); i++){
+		if ((entities[i]->collidedLeft || entities[i]->collidedRight) && entities[i]->enemy)
+			entities[i]->acceleration_x *= -1.0;
+
+		entities[i]->collidedBottom = false;
+		entities[i]->collidedTop = false;
+		entities[i]->collidedLeft = false;
+		entities[i]->collidedRight = false;
+	}
+
+	for (size_t i = 0; i < entities.size(); i++){
+		entities[i]->fixedUpdate();
+		if (!entities[i]->isStatic){
+			/*entities[i]->velocity_x += gravity_x*FIXEDTIMESTEP;*/
+			entities[i]->velocity_y += gravity_y*FIXED_TIMESTEP;
+		}
+	}
+
+	for (size_t i = 0; i < entities.size(); i++){
+		// y-axis
+		entities[i]->y += entities[i]->velocity_y *FIXED_TIMESTEP;
+		// x-axis
+		entities[i]->x += entities[i]->velocity_x *FIXED_TIMESTEP;
+		if (!entities[i]->isStatic && entities[i]->enableCollisions){
+			// collision detection with tiles
+			doLevelCollisionY(entities[i]);
+			doLevelCollisionX(entities[i]);
+
+			// collision detection with other entities
+			for (size_t j = 0; j < entities.size(); j++){
+				if ((i != j) && (entities[i]->collidesWith(entities[j]))){
+					if (entities[i]->player || entities[j]->player){
+						player.x = spawnLocX;
+						player.y = spawnLocY;
+					}
+				}
+			}
+		}
+
+		// check if exiting sides
 //		if (entities[i]->x > 1.33f)
 //			entities[i]->x = 1.33f;
 //		if (entities[i]->x < -1.33f)
 //			entities[i]->x = -1.33f;
-//		// collision detection
-//		//for (int j = 0; j < entities.size(); j++){
-//		//	if (i != j){
-//		//		if (entities[i]->collidesWith(entities[j])){
-//		//			float xPenetration = fabs(entities[j]->x - entities[i]->x) - entities[i]->width / 2.0f - entities[j]->width / 2.0f;
-//		//			// check side of penetration
-//		//			if (entities[j]->x > entities[i]->x){
-//		//				entities[j]->collidedRight = true;
-//		//				entities[j]->x -= xPenetration + 0.001f;
-//		//			}
-//		//			else{
-//		//				entities[j]->collidedLeft = true;
-//		//				entities[j]->x += xPenetration + 0.001f;
-//		//			}
-//		//			entities[j]->velocity_x = 0.0f;
-//		//		}
-//		//	}
-//		//}
-//	}
-//
-//	// if offscreen, respawn
-//	/*if (player.y < -1.0f){
-//		player.x = -1.25f;
-//		player.y = -0.70f;
-//	}*/
-//}
+	}
+
+	// if offscreen, respawn
+	if (player.y < -2.0f){
+		player.x = spawnLocX;
+		player.y = spawnLocY;
+	}
+}
 
 void ClassDemoApp::Render(){
 	glClear(GL_COLOR_BUFFER_BIT);
@@ -462,8 +429,8 @@ void ClassDemoApp::Render(){
 	// draw entities
 	for (size_t i = 0; i < entities.size(); i++){
 		if (entities[i]->visible)
-			//entityDraw(entities[i]);
-			entities[i]->draw();
+			entityDraw(entities[i]);
+			//entities[i]->draw();
 	}
 	SDL_GL_SwapWindow(displayWindow);
 }
@@ -481,7 +448,7 @@ void ClassDemoApp::UpdateAndRender() {
 
 	while (fixedElapsed >= FIXED_TIMESTEP){
 		fixedElapsed -= FIXED_TIMESTEP;
-		//fixedUpdate();
+		fixedUpdate();
 	}
 
 	timeLeftOver = fixedElapsed;
