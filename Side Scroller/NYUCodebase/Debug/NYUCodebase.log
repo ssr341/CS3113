@@ -1,12 +1,12 @@
-﻿Build started 10/27/2014 2:18:09 PM.
+﻿Build started 10/29/2014 5:34:05 PM.
      1>Project "C:\Stephen-Russo-CS3113\Side Scroller\NYUCodebase\NYUCodebase.vcxproj" on node 2 (Build target(s)).
      1>ClCompile:
          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /IC:\SDL2\include /IC:\SDL2_image\include /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt ClassDemoApp.cpp
          ClassDemoApp.cpp
-     1>c:\stephen-russo-cs3113\side scroller\nyucodebase\classdemoapp.cpp(299): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
-     1>c:\stephen-russo-cs3113\side scroller\nyucodebase\classdemoapp.cpp(307): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
-     1>c:\stephen-russo-cs3113\side scroller\nyucodebase\classdemoapp.cpp(330): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
-     1>c:\stephen-russo-cs3113\side scroller\nyucodebase\classdemoapp.cpp(338): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+     1>c:\stephen-russo-cs3113\side scroller\nyucodebase\classdemoapp.cpp(300): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+     1>c:\stephen-russo-cs3113\side scroller\nyucodebase\classdemoapp.cpp(308): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+     1>c:\stephen-russo-cs3113\side scroller\nyucodebase\classdemoapp.cpp(331): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+     1>c:\stephen-russo-cs3113\side scroller\nyucodebase\classdemoapp.cpp(339): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
        Link:
          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Stephen-Russo-CS3113\Side Scroller\Debug\NYUCodebase.exe" /INCREMENTAL /NOLOGO /LIBPATH:C:\SDL2\lib\x86 /LIBPATH:C:\SDL2_image\lib\x86 SDL2.lib SDL2main.lib SDL2_image.lib OpenGL32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Stephen-Russo-CS3113\Side Scroller\Debug\NYUCodebase.pdb" /SUBSYSTEM:WINDOWS /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Stephen-Russo-CS3113\Side Scroller\Debug\NYUCodebase.lib" /MACHINE:X86 Debug\ClassDemoApp.obj
          Debug\Entity.obj
@@ -16,4 +16,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:01.80
+Time Elapsed 00:00:02.40

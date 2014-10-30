@@ -157,14 +157,14 @@ bool ClassDemoApp::readEntityData(ifstream &stream) {
 
 void ClassDemoApp::placeEntity(string type, float placeX, float placeY){
 	if (type == "Enemy"){
-		Entity enemy;
-		enemy.x = placeX;
-		enemy.y = placeY;
-		enemy.isStatic = false;
-		enemy.enableCollisions = true;
-		enemy.acceleration_x = 1.0;
-		enemy.enemy = true;
-		entities.push_back(&enemy);
+		Entity* enemy = new Entity;
+		enemy->x = placeX;
+		enemy->y = placeY;
+		enemy->isStatic = false;
+		enemy->enableCollisions = true;
+		enemy->acceleration_x = 1.0;
+		enemy->enemy = true;
+		entities.push_back(enemy);
 	}
 	else if (type == "Start"){
 		spawnLocX = placeX;
@@ -185,7 +185,7 @@ void ClassDemoApp::drawBlocks(){
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
 	//glLoadIdentity();
-	glTranslatef(-TILE_SIZE * mapWidth / 2, TILE_SIZE * mapHeight / 2, 0.0f);
+	//glTranslatef(-TILE_SIZE * mapWidth / 2, TILE_SIZE * mapHeight / 2, 0.0f);
 
 	vector<GLfloat>vertexData;
 	vector<GLfloat>texCoordData;
@@ -230,7 +230,7 @@ void ClassDemoApp::entityDraw(Entity* entity){
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
 	//glLoadIdentity();
-	glTranslatef(-TILE_SIZE * mapWidth / 2, TILE_SIZE * mapHeight / 2, 0.0f);
+	glTranslatef(entity->x, entity->y, 0.0f);
 
 	int index = 0;
 	if (entity->enemy)
@@ -243,8 +243,9 @@ void ClassDemoApp::entityDraw(Entity* entity){
 	float spriteWidth = 1.0 / (float)SPRITE_COUNT_X;
 	float spriteHeight = 1.0 / (float)SPRITE_COUNT_Y;
 
-	GLfloat quad[] = { TILE_SIZE * entity->x, -TILE_SIZE * entity->y, TILE_SIZE * entity->x, (-TILE_SIZE * entity->y) - TILE_SIZE,
-		(TILE_SIZE * entity->x) + TILE_SIZE, (-TILE_SIZE * entity->y) - TILE_SIZE, (TILE_SIZE * entity->x) + TILE_SIZE, -TILE_SIZE * entity->y };
+	//GLfloat quad[] = { -0.5f, 0.5f, -0.5f, -0.5f, 0.5f, -0.5f, 0.5f, 0.5f };
+	GLfloat quad[] = { -0.5f*TILE_SIZE, 0.5f*TILE_SIZE, -0.5f*TILE_SIZE, -0.5f*TILE_SIZE, 0.5f*TILE_SIZE, -0.5f*TILE_SIZE, 
+		0.5f*TILE_SIZE, 0.5f*TILE_SIZE };
 	glVertexPointer(2, GL_FLOAT, 0, quad);
 	glEnableClientState(GL_VERTEX_ARRAY);
 
@@ -358,7 +359,7 @@ float ClassDemoApp::checkPointForGridCollisionX(float x, float y){
 
 bool ClassDemoApp::isSolid(unsigned char index){
 	// if clouds or empty space return false
-	if (index == 0 || index == 96 || index == 97 || index == 113 || index == 114 || index == 115)
+	if (index == 0 || index == 97 || index == 98 || index == 114 || index == 115 || index == 116)
 		return false;
 	else
 		return true;
@@ -430,7 +431,6 @@ void ClassDemoApp::Render(){
 	for (size_t i = 0; i < entities.size(); i++){
 		if (entities[i]->visible)
 			entityDraw(entities[i]);
-			//entities[i]->draw();
 	}
 	SDL_GL_SwapWindow(displayWindow);
 }
