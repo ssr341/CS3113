@@ -42,38 +42,39 @@ void Entity::fixedUpdate(){
 
 void Entity::buildMatrix(){
 	Matrix scaleMatrix;
+	scaleMatrix.identity();
 	scaleMatrix.m[0][0] = width;
 	scaleMatrix.m[1][1] = height;
-	scaleMatrix.identity();
 
 	Matrix rotateMatrix;
+	rotateMatrix.identity();
 	rotateMatrix.m[0][0] = cos(rotation);
 	rotateMatrix.m[0][1] = -1 * sin(rotation);
 	rotateMatrix.m[1][0] = sin(rotation);
 	rotateMatrix.m[1][1] = cos(rotation);
-	rotateMatrix.identity();
 
 	Matrix translateMatrix;
+	translateMatrix.identity();
 	translateMatrix.m[0][3] = x;
 	translateMatrix.m[1][3] = y;
-	translateMatrix.identity();
 
+	matrix = scaleMatrix * rotateMatrix * translateMatrix;
 }
 
-bool Entity::collidesWith(Entity *entity){
-	float entityRight = entity->x + entity->width / 2;
-	float entityLeft = entity->x + entity->width / -2;
-	float entityTop = entity->y + entity->height / 2;
-	float entityBottom = entity->y + entity->height / -2;
-
-	float thisRight = this->x + this->width / 2;
-	float thisLeft = this->x + this->width / -2;
-	float thisTop = this->y + this->height / 2;
-	float thisBottom = this->y + this->height / -2;
-
-	if ((entityLeft <= thisRight) && (entityTop >= thisBottom) && (entityBottom <= thisTop) && (entityRight >= thisLeft)){
-		return true;
-	}
-
-	return false;
-}
+//bool Entity::collidesWith(Entity *entity){
+//	float entityRight = entity->x + entity->width / 2;
+//	float entityLeft = entity->x + entity->width / -2;
+//	float entityTop = entity->y + entity->height / 2;
+//	float entityBottom = entity->y + entity->height / -2;
+//
+//	float thisRight = this->x + this->width / 2;
+//	float thisLeft = this->x + this->width / -2;
+//	float thisTop = this->y + this->height / 2;
+//	float thisBottom = this->y + this->height / -2;
+//
+//	if ((entityLeft <= thisRight) && (entityTop >= thisBottom) && (entityBottom <= thisTop) && (entityRight >= thisLeft)){
+//		return true;
+//	}
+//
+//	return false;
+//}

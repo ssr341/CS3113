@@ -17,6 +17,7 @@ ClassDemoApp::ClassDemoApp(){
 	player.y = 0.0f;
 	player.x = 0.0f;
 	player.enableCollisions = true;
+	player.buildMatrix();
 	entities.push_back(&player);
 
 	// asteroid creation
@@ -30,9 +31,10 @@ ClassDemoApp::ClassDemoApp(){
 	asteroid1.y = -0.8f;
 	asteroid1.x = -1.1f;
 	asteroid1.enableCollisions = true;
+	asteroid1.buildMatrix();
 	entities.push_back(&asteroid1);
 
-	asteroid2.textureID = asteroidTexture;
+	/*asteroid2.textureID = asteroidTexture;
 	asteroid2.width = 0.5f;
 	asteroid2.height = 0.5f;
 	asteroid2.velocity_x = -0.5f;
@@ -41,6 +43,7 @@ ClassDemoApp::ClassDemoApp(){
 	asteroid2.y = 0.8f;
 	asteroid2.x = 1.1f;
 	asteroid2.enableCollisions = true;
+	asteroid2.buildMatrix();
 	entities.push_back(&asteroid2);
 
 	asteroid3.textureID = asteroidTexture;
@@ -52,7 +55,8 @@ ClassDemoApp::ClassDemoApp(){
 	asteroid3.y = 0.0f;
 	asteroid3.x = -1.1f;
 	asteroid3.enableCollisions = true;
-	entities.push_back(&asteroid3);
+	asteroid3.buildMatrix();
+	entities.push_back(&asteroid3);*/
 }
 
 ClassDemoApp::~ClassDemoApp(){
@@ -94,21 +98,24 @@ bool ClassDemoApp::ProcessEvents(){
 		if (event.type == SDL_QUIT || event.type == SDL_WINDOWEVENT_CLOSE) {
 			done = true;
 		}
-		if (event.type == SDL_KEYDOWN) {
-			if (player.collidedBottom && event.key.keysym.scancode == SDL_SCANCODE_SPACE) {
-				player.velocity_y = 2.0f;
-			}
-		}
 	}
 
-	// left, right and space keys used by player
-	if (keys[SDL_SCANCODE_LEFT] == 1){
-		// if left pressed, set acceleration negative
-		player.acceleration_x = -20.0f;
+	// arrow keys used by player
+	if (keys[SDL_SCANCODE_LEFT]){
+		// if left pressed, set x acceleration negative
+		player.acceleration_x = -1.5f;
 	}
 	if (keys[SDL_SCANCODE_RIGHT]){
-		// if down pressed, set acceleration positive
-		player.acceleration_x = 20.0f;
+		// if right pressed, set x acceleration positive
+		player.acceleration_x = 1.5f;
+	}
+	if (keys[SDL_SCANCODE_UP]){
+		// if up pressed, set y acceleration positive
+		player.acceleration_y = 1.5f;
+	}
+	if (keys[SDL_SCANCODE_DOWN]){
+		// if up pressed, set y acceleration negative
+		player.acceleration_y = -1.5f;
 	}
 
 	return done;
@@ -121,72 +128,54 @@ void ClassDemoApp::fixedUpdate(){
 
 	for (size_t i = 0; i < entities.size(); i++){
 		entities[i]->fixedUpdate();
-		if (!entities[i]->isStatic){
-			/*entities[i]->velocity_x += gravity_x*FIXEDTIMESTEP;
-			entities[i]->velocity_y += gravity_y*FIXED_TIMESTEP;*/
-			entities[i]->rotationVelocity += entities[i]->rotationAcceleration * FIXED_TIMESTEP * 8.0f;
-		}
 	}
 
 	for (size_t i = 0; i < entities.size(); i++){
 		// y-axis
 		entities[i]->y += entities[i]->velocity_y *FIXED_TIMESTEP;
+		// x-axis
+		entities[i]->x += entities[i]->velocity_x *FIXED_TIMESTEP;
 		if (!entities[i]->isStatic&& entities[i]->enableCollisions){
 			// collision detection
 			for (size_t j = 0; j < entities.size(); j++){
 				if (i != j && entities[j]->isStatic){
-					checkCollision(entities[i], entities[j]);
-					//		if (entities[i]->collidesWith(entities[j])){
+					if (checkCollision(entities[i], entities[j])){
+						Vector entityI(entities[i]->x, entities[i]->y, 0.0f);
+						Vector entityJ(entities[j]->x, entities[j]->y, 0.0f);
 
-					//			float yPenetration = fabs(fabs(entities[j]->y - entities[i]->y) - entities[i]->height / 2.0f
-					//				- entities[j]->height / 2.0f);
+						//transform to world
+						entityI = entities[i]->matrix * entityI;
+						entityJ = entities[j]->matrix * entityJ;
 
-					//			// check side of penetration
-					//			if (entities[j]->y > entities[i]->y){
-					//				entities[i]->y -= yPenetration + 0.001f;
-					//				entities[i]->collidedTop = true;
-					//			}
-					//			else{
-					//				entities[i]->y += yPenetration + 0.001f;
-					//				entities[i]->collidedBottom = true;
-					//			}
-					//			entities[i]->velocity_y = 0.0f;
-					//		}
-					//	}
+						entityI = entities[i]->matrix.inverse() * entityI;
+						entityJ = entities[j]->matrix.inverse() * entityJ;
+
+						//divide x and y of their position difference by distance between them
+						float diffX = fabs(entityI.x - entityJ.x);
+						float diffY = fabs(entityI.y - entityJ.y);
+
+						//normalize vectors
+						entityI.normalize();
+						entityJ.normalize();
+
+						entityI.x /= diffX;
+						entityI.y /= diffY;
+						entityJ.x /= diffX;
+						entityJ.y /= diffY;
+
+						entities[i]->x = entityI.x;
+						entities[i]->y = entityI.y;
+						entities[j]->x = entityJ.x;
+						entities[j]->y = entityJ.y;
+						
+					}
 				}
 			}
-
-			//// x-axis
-			entities[i]->x += entities[i]->velocity_x *FIXED_TIMESTEP;
 			// check if exiting sides
 			if (entities[i]->x > 1.33f)
 				entities[i]->x = 1.33f;
 			if (entities[i]->x < -1.33f)
 				entities[i]->x = -1.33f;
-			//// collision detection
-			//for (int j = 0; j < entities.size(); j++){
-			//	if (i != j){
-			//		if (entities[i]->collidesWith(entities[j])){
-			//			float xPenetration = fabs(entities[j]->x - entities[i]->x) - entities[i]->width / 2.0f - entities[j]->width / 2.0f;
-			//			// check side of penetration
-			//			if (entities[j]->x > entities[i]->x){
-			//				entities[i]->collidedRight = true;
-			//				entities[j]->x -= xPenetration + 0.001f;
-			//			}
-			//			else{
-			//				entities[i]->collidedLeft = true;
-			//				entities[j]->x += xPenetration + 0.001f;
-			//			}
-			//			entities[j]->velocity_x = 0.0f;
-			//		}
-			//	}
-			//}
-		}
-
-		// if offscreen, respawn
-		if (player.y < -1.0f){
-			player.x = -1.25f;
-			player.y = -0.70f;
 		}
 	}
 }
@@ -240,10 +229,10 @@ bool ClassDemoApp::checkCollision(Entity* entity1, Entity* entity2){
 	Vector ent1BR = Vector(-entity1->width*0.5, -entity1->height*0.5, 0.0); // bottom right
 
 	//transform to world
-	ent1TL = entity2->matrix * ent1TL;
-	ent1TR = entity2->matrix * ent1TR;
-	ent1BL = entity2->matrix * ent1BL;
-	ent1BR = entity2->matrix * ent1BR;
+	ent1TL = entity1->matrix * ent1TL;
+	ent1TR = entity1->matrix * ent1TR;
+	ent1BL = entity1->matrix * ent1BL;
+	ent1BR = entity1->matrix * ent1BR;
 
 	ent1TL = entity2Inverse * ent1TL;
 	ent1TR = entity2Inverse * ent1TR;
