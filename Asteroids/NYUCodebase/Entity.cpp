@@ -46,19 +46,19 @@ void Entity::buildMatrix(){
 	scaleMatrix.m[0][0] = width;
 	scaleMatrix.m[1][1] = height;
 
-	Matrix rotateMatrix;
-	rotateMatrix.identity();
-	rotateMatrix.m[0][0] = cos(rotation);
-	rotateMatrix.m[0][1] = -1 * sin(rotation);
-	rotateMatrix.m[1][0] = sin(rotation);
-	rotateMatrix.m[1][1] = cos(rotation);
+	//Matrix rotateMatrix;
+	//rotateMatrix.identity();
+	//rotateMatrix.m[0][0] = cos(rotation);
+	//rotateMatrix.m[0][1] = -1 * sin(rotation);
+	//rotateMatrix.m[1][0] = sin(rotation);
+	//rotateMatrix.m[1][1] = cos(rotation);
 
 	Matrix translateMatrix;
 	translateMatrix.identity();
 	translateMatrix.m[0][3] = x;
 	translateMatrix.m[1][3] = y;
 
-	matrix = scaleMatrix * rotateMatrix * translateMatrix;
+	matrix = scaleMatrix * translateMatrix;
 }
 
 //bool Entity::collidesWith(Entity *entity){

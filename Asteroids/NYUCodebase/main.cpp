@@ -1,4 +1,4 @@
-// confused about collision (separation), how to set up the positions
+// confused about collision (separation), player movement unresponsive, asteroid movement weird (related to setup most likely)
 #include <SDL.h>
 #include <SDL_opengl.h>
 #include <SDL_image.h>

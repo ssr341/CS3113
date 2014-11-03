@@ -6,7 +6,7 @@ ClassDemoApp::ClassDemoApp(){
 	timeLeftOver = 0.0f;
 
 	// player creation
-	unsigned int playerTexture = LoadTexture("playerShip1_red.png");
+	/*unsigned int playerTexture = LoadTexture("playerShip1_red.png");
 	player.textureID = playerTexture;
 	player.player = true;
 	player.width = 0.2f;
@@ -17,8 +17,7 @@ ClassDemoApp::ClassDemoApp(){
 	player.y = 0.0f;
 	player.x = 0.0f;
 	player.enableCollisions = true;
-	player.buildMatrix();
-	entities.push_back(&player);
+	entities.push_back(&player);*/
 
 	// asteroid creation
 	unsigned int asteroidTexture = LoadTexture("meteorBrown_big4.png");
@@ -31,7 +30,6 @@ ClassDemoApp::ClassDemoApp(){
 	asteroid1.y = -0.8f;
 	asteroid1.x = -1.1f;
 	asteroid1.enableCollisions = true;
-	asteroid1.buildMatrix();
 	entities.push_back(&asteroid1);
 
 	/*asteroid2.textureID = asteroidTexture;
@@ -43,7 +41,6 @@ ClassDemoApp::ClassDemoApp(){
 	asteroid2.y = 0.8f;
 	asteroid2.x = 1.1f;
 	asteroid2.enableCollisions = true;
-	asteroid2.buildMatrix();
 	entities.push_back(&asteroid2);
 
 	asteroid3.textureID = asteroidTexture;
@@ -55,7 +52,6 @@ ClassDemoApp::ClassDemoApp(){
 	asteroid3.y = 0.0f;
 	asteroid3.x = -1.1f;
 	asteroid3.enableCollisions = true;
-	asteroid3.buildMatrix();
 	entities.push_back(&asteroid3);*/
 }
 
@@ -92,7 +88,8 @@ GLuint ClassDemoApp::LoadTexture(const char *image_path) {
 bool ClassDemoApp::ProcessEvents(){
 	SDL_Event event;
 	const Uint8* keys = SDL_GetKeyboardState(NULL);
-	player.acceleration_x = 0.0f;
+	//player.acceleration_x = 0.0f;
+	//player.acceleration_y = 0.0f;
 
 	while (SDL_PollEvent(&event)) {
 		if (event.type == SDL_QUIT || event.type == SDL_WINDOWEVENT_CLOSE) {
@@ -124,6 +121,9 @@ bool ClassDemoApp::ProcessEvents(){
 void ClassDemoApp::fixedUpdate(){
 	for (size_t i = 0; i < entities.size(); i++){
 		entities[i]->collidedBottom = false;
+		entities[i]->collidedTop = false;
+		entities[i]->collidedLeft = false;
+		entities[i]->collidedRight = false;
 	}
 
 	for (size_t i = 0; i < entities.size(); i++){
@@ -151,8 +151,8 @@ void ClassDemoApp::fixedUpdate(){
 						entityJ = entities[j]->matrix.inverse() * entityJ;
 
 						//divide x and y of their position difference by distance between them
-						float diffX = fabs(entityI.x - entityJ.x);
-						float diffY = fabs(entityI.y - entityJ.y);
+						float diffX = entityI.x - entityJ.x;
+						float diffY = entityI.y - entityJ.y;
 
 						//normalize vectors
 						entityI.normalize();
@@ -172,10 +172,26 @@ void ClassDemoApp::fixedUpdate(){
 				}
 			}
 			// check if exiting sides
-			if (entities[i]->x > 1.33f)
+			/*if (entities[i]->x > 1.33f){
 				entities[i]->x = 1.33f;
-			if (entities[i]->x < -1.33f)
+				if (!entities[i]->player)
+					entities[i]->acceleration_x *= -1.0f;
+			}
+			if (entities[i]->x < -1.33f){
 				entities[i]->x = -1.33f;
+				if (!entities[i]->player)
+					entities[i]->acceleration_x *= -1.0f;
+			}
+			if (entities[i]->y > 1.0f){
+				entities[i]->y = 1.0f;
+				if (!entities[i]->player)
+					entities[i]->acceleration_y *= -1.0f;
+			}
+			if (entities[i]->y < -1.0f){
+				entities[i]->y = -1.0f;
+				if (!entities[i]->player)
+					entities[i]->acceleration_y *= -1.0f;
+			}*/
 		}
 	}
 }
@@ -260,8 +276,9 @@ void ClassDemoApp::Render(){
 	glClear(GL_COLOR_BUFFER_BIT);
 	glMatrixMode(GL_MODELVIEW);
 	for (size_t i = 0; i < entities.size(); i++){
-		if (entities[i]->visible)
+		if (entities[i]->visible){
 			entities[i]->draw();
+		}
 	}
 	SDL_GL_SwapWindow(displayWindow);
 }
