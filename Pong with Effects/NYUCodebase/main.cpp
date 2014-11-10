@@ -1,10 +1,11 @@
-// screen shake not working, unsure how to use squash
+// effects are fire trail, glowing ball and screen shake
 
 #include <SDL.h>
 #include <SDL_opengl.h>
 #include <SDL_image.h>
 #include <math.h>
 #include <SDL_mixer.h>
+#include <vector>
 
 using namespace std;
 
@@ -35,14 +36,11 @@ public:
 		glEnable(GL_TEXTURE_2D);
 		glBindTexture(GL_TEXTURE_2D, textureID);
 		glMatrixMode(GL_MODELVIEW);
-		glLoadIdentity();
-		// map velocity_y 0.0 - 5.0 to 1.0 - 1.6 Y scale and 1.0 - 0.8 X scale
-		float scale_y = mapValue(fabs(speed), 0.0, 5.0, 1.0, 1.6);
-		float scale_x = mapValue(fabs(speed), 5.0, 0.0, 0.8, 1.0);
+		glPushMatrix();
+		//glLoadIdentity();
 		glTranslatef(x, y, 0.0);
-		//glScalef(width, height, 0.0);
-		glScalef(width*scale_x, height*scale_y, 0.0);
-		//glRotatef(rotation, 0.0, 0.0, 1.0);
+		glScalef(width, height, 0.0);
+		glRotatef(rotation, 0.0, 0.0, 1.0);
 		GLfloat quad[] = { -0.5f, 0.5f, -0.5f, -0.5f, 0.5f, -0.5f, 0.5f, 0.5f };
 		glVertexPointer(2, GL_FLOAT, 0, quad);
 		glEnableClientState(GL_VERTEX_ARRAY);
@@ -53,12 +51,14 @@ public:
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glDrawArrays(GL_QUADS, 0, 4);
 		glDisable(GL_TEXTURE_2D);
+		glPopMatrix();
 	}
 	void fireDraw(){
 		glEnable(GL_TEXTURE_2D);
 		glBindTexture(GL_TEXTURE_2D, textureID);
 		glMatrixMode(GL_MODELVIEW);
-		glLoadIdentity();
+		glPushMatrix();
+		//glLoadIdentity();
 		glTranslatef(x, y, 0.0);
 		glScalef(width, height, 0.0);
 		//glRotatef(rotation, 0.0, 0.0, 1.0);
@@ -72,6 +72,7 @@ public:
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 		glDrawArrays(GL_QUADS, 0, 4);
 		glDisable(GL_TEXTURE_2D);
+		glPopMatrix();
 	}
 
 	void setSize(float w, float h){
@@ -96,6 +97,10 @@ public:
 // entities to be used throughout the code
 Entity ball;
 Entity fire;
+Entity fireTrail1;
+Entity fireTrail1Glow;
+Entity fireTrail2;
+Entity fireTrail2Glow;
 Entity paddle1;
 Entity paddle2;
 
@@ -274,13 +279,40 @@ void update(float elapsed){
 	ball.y += ball.direction_y * elapsed;
 	fire.x = ball.x;
 	fire.y = ball.y;
+	if (ball.direction_x > 0){
+			fireTrail1.x = ball.x - 0.15;
+			//fireTrail1.y = ball.y;
+			fireTrail2.x = ball.x - 0.25;
+			//fireTrail2.y = ball.y;
+	}
+	if (ball.direction_x < 0){
+			fireTrail1.x = ball.x + 0.15;
+			//fireTrail1.y = ball.y;
+			fireTrail2.x = ball.x + 0.25;
+			//fireTrail2.y = ball.y;
+	}
+	if (ball.direction_y == 0){
+		fireTrail1.y = ball.y;
+		fireTrail2.y = ball.y;
+	}
+	if (ball.direction_y > 0){
+		fireTrail1.y = ball.y - 0.05;
+		fireTrail2.y = ball.y - 0.1;
+	}
+	if (ball.direction_y < 0){
+		fireTrail1.y = ball.y + 0.05;
+		fireTrail2.y = ball.y + 0.1;
+	}
+	fireTrail1Glow.x = fireTrail1.x;
+	fireTrail1Glow.y = fireTrail1.y;
+	fireTrail2Glow.x = fireTrail2.x;
+	fireTrail2Glow.y = fireTrail2.y;
 
 	stageAnimationTime += elapsed;
 	screenShakeValue += elapsed;
 }
 
 void render(){
-	glMatrixMode(GL_MODELVIEW);
 	// if no score, neutral color
 	if (scoreCount == 0){
 		glClearColor(0.4f, 0.5f, 0.4f, 1.0f);
@@ -301,20 +333,29 @@ void render(){
 
 	// if collision shake screen
 	if (screenShake){
-		glLoadIdentity();
 		float animationValue;
 		animationValue = mapValue(stageAnimationTime, 0.0, 0.5, 0.0, 1.0);
-		float screenShakeIntensity = easeOut(0.0, 0.2, animationValue)*200.0f;
-		glTranslatef(0.0f, sin(screenShakeValue * 500)* screenShakeIntensity * 200, 0.0f);
+		float screenShakeIntensity = easeOut(0.0, 0.25, animationValue)*5;
+		glMatrixMode(GL_MODELVIEW);
+		glPushMatrix();
+		glLoadIdentity();
+		glTranslatef(0.0f, sin(screenShakeValue * 50)* screenShakeIntensity * 30, 0.0f);
 	}
+
 	screenShake = false;
 	stageAnimationTime = 0.0f;
 	screenShakeValue = 0.0f;
 
 	ball.Draw();
 	fire.fireDraw();
+	fireTrail1.Draw();
+	fireTrail2.Draw();
+	fireTrail1Glow.fireDraw();
+	fireTrail2Glow.fireDraw();
 	paddle1.Draw();
 	paddle2.Draw();
+
+	glPopMatrix();
 
 	// if ball is scored
 	if (ball.x > 1.33){
@@ -358,6 +399,34 @@ int main(int argc, char *argv[])
 	fire.y = 0.0f;
 	fire.direction_x = 0.0f;
 	fire.direction_y = 0.0f;
+
+	fireTrail1.textureID = LoadTexture("fire2.png");
+	fireTrail1.setSize(0.3f, 0.3f);
+	fireTrail1.x = 0.0f;
+	fireTrail1.y = 0.0f;
+	fireTrail1.direction_x = 0.0f;
+	fireTrail1.direction_y = 0.0f;
+
+	fireTrail1Glow.textureID = LoadTexture("fire.png");
+	fireTrail1.setSize(0.3f, 0.3f);
+	fireTrail1.x = 0.0f;
+	fireTrail1.y = 0.0f;
+	fireTrail1.direction_x = 0.0f;
+	fireTrail1.direction_y = 0.0f;
+
+	fireTrail2.textureID = LoadTexture("fire2.png");
+	fireTrail2.setSize(0.3f, 0.3f);
+	fireTrail2.x = 0.0f;
+	fireTrail2.y = 0.0f;
+	fireTrail2.direction_x = 0.0f;
+	fireTrail2.direction_y = 0.0f;
+
+	fireTrail2Glow.textureID = LoadTexture("fire.png");
+	fireTrail2.setSize(0.3f, 0.3f);
+	fireTrail2.x = 0.0f;
+	fireTrail2.y = 0.0f;
+	fireTrail2.direction_x = 0.0f;
+	fireTrail2.direction_y = 0.0f;
 
 	paddle1.textureID = LoadTexture("paddleRed.png");
 	paddle1.setSize(0.1f, 0.35f);
