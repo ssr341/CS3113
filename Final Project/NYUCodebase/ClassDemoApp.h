@@ -3,6 +3,7 @@
 #include "Bullet.h"
 #include "Entity.h"
 #include "MainMenu.h"
+#include "Instructions.h"
 #include "GameOver.h"
 #include "Gameplay.h"
 #include <vector>
@@ -10,8 +11,9 @@
 #include <SDL.h>
 #include <SDL_opengl.h>
 #include <SDL_image.h>
+#include <SDL_mixer.h>
 
-enum GameState { STATE_MAIN_MENU, STATE_INSTRUCTIONS, STATE_STAGE_SELECT, STATE_GAME_LEVEL, STATE_GAME_OVER };
+enum GameState { STATE_MAIN_MENU, STATE_INSTRUCTIONS, STATE_STAGE_ONE, STATE_STAGE_TWO, STATE_STAGE_THREE, STATE_GAME_OVER };
 
 class ClassDemoApp{
 public:
@@ -24,8 +26,8 @@ public:
 
 	bool ProcessEvents();
 	void Render();
-	//void Update(float elapsed);
-	bool UpdateAndRender();
+	void fixedUpdate();
+	void UpdateAndRender();
 
 private:
 
@@ -33,11 +35,14 @@ private:
 	bool done;
 
 	float lastFrameTicks;
+	float timeLeftOver;
 
 	MainMenu menu;
-	//Instructions instruction;
+	Instructions instructions;
 	//Gameplay gameplay;
 	GameOver gameOver;
+
+	Mix_Music* music;   // music that plays whole game
 
 	SDL_Window* displayWindow;
 };

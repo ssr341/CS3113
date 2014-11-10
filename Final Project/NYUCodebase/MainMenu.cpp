@@ -85,18 +85,18 @@ void MainMenu::Render(){
 	DrawText(screenText, "Press Q at any time to quit", 0.03f, 0.001f, 1.0f, 1.0f, 0.0f, 1.0f);
 
 	glLoadIdentity();
-	glTranslatef(-0.25, 0.25, 0.0);
-	DrawText(screenText, "Name", 0.15f, 0.001f, 1.0f, 1.0f, 0.0f, 1.0f);
+	glTranslatef(-0.35, 0.25, 0.0);
+	DrawText(screenText, "Galaxy", 0.15f, 0.001f, 1.0f, 1.0f, 0.0f, 1.0f);
 
 	glLoadIdentity();
 	glTranslatef(-0.5, 0.0, 0.0);
-	DrawText(screenText, "of Game", 0.15f, 0.001f, 1.0f, 1.0f, 0.0f, 1.0f);
+	DrawText(screenText, "Defender", 0.15f, 0.001f, 1.0f, 1.0f, 0.0f, 1.0f);
 
 	glLoadIdentity();
-	glTranslatef(-0.75f, -0.4f, 0.0f);
+	glTranslatef(-0.8f, -0.4f, 0.0f);
 	DrawText(screenText, "Press Space to Continue", 0.07f, 0.001f, 1.0f, 0.0f, 0.0f, 1.0f);
 
 	glLoadIdentity();
-	glTranslatef(-0.75f, -0.8f, 0.0f);
+	glTranslatef(-0.8f, -0.8f, 0.0f);
 	DrawText(screenText, "Press I for Instructions", 0.07f, 0.001f, 1.0f, 0.0f, 0.0f, 1.0f);
 }
