@@ -4,9 +4,9 @@ ClassDemoApp::ClassDemoApp(){
 	Init();
 	menu.Init();
 	instructions.Init();
-	//stageOne.Init();
-	//stageTwo.Init();
-	//stageThree.Init();
+	stage1.Init();
+	//stage2.Init();
+	//stage3.Init();
 	gameOver.Init();
 	done = false;
 	state = 0;
@@ -40,6 +40,11 @@ bool ClassDemoApp::ProcessEvents(){
 		if (event.type == SDL_QUIT || event.type == SDL_WINDOWEVENT_CLOSE) {
 			done = true;
 		}
+		switch (state){
+		case STATE_STAGE_ONE:
+			stage1.ProcessShoot(&event);
+			break;
+		}
 		/*switch (state){
 		case STATE_GAME_LEVEL:
 			gameplay.ProcessShoot(&event);
@@ -53,23 +58,34 @@ bool ClassDemoApp::ProcessEvents(){
 	case STATE_INSTRUCTIONS:
 		state = instructions.ProcessEvents();
 		break;
+	case STATE_STAGE_ONE:
+		stage1.ProcessEvents();
+		break;
 	}
 
 	return done;
 }
 
-void ClassDemoApp::fixedUpdate(){
-	//switch (state) {
-	//case STATE_STAGE_ONE:
-	//	state = stageOne.fixedUpdate();
-	//	break;
-	//}
+void ClassDemoApp::fixedUpdate(float fixedElapsed){
+	switch (state) {
+	case STATE_STAGE_ONE:
+		int winner = stage1.fixedUpdate(fixedElapsed);
+		if (winner == 1){
+			stage1Winner = 1;
+			state++;
+		}
+		if (winner == 2){
+			stage1Winner = 2;
+			state++;
+		}
+		break;
+	}
 	//case STATE_STAGE_TWO:
-	//	state = stageTwo.fixedUpdate();
+	//	state = stage2.fixedUpdate();
 	//	break;
 	//}
 	//case STATE_STAGE_THREE:
-	//	state = stageOne.fixedUpdate();
+	//	state = stage3.fixedUpdate();
 	//	break;
 	//}
 }
@@ -84,10 +100,10 @@ void ClassDemoApp::Render(){
 	case STATE_INSTRUCTIONS:
 		instructions.Render();
 		break;
-	/*case STATE_GAME_LEVEL:
-		score = gameplay.Render();
+	case STATE_STAGE_ONE:
+		stage1.Render();
 		break;
-	case STATE_GAME_OVER:
+	/*case STATE_GAME_OVER:
 		gameOver.Render(score);
 		break;*/
 	}
@@ -107,7 +123,7 @@ void ClassDemoApp::UpdateAndRender() {
 
 	while (fixedElapsed >= FIXED_TIMESTEP){
 		fixedElapsed -= FIXED_TIMESTEP;
-		fixedUpdate();
+		fixedUpdate(fixedElapsed);
 	}
 
 	timeLeftOver = fixedElapsed;

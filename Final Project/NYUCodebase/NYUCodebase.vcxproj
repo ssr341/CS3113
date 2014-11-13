@@ -76,7 +76,7 @@
     <ClCompile Include="ClassDemoApp.cpp" />
     <ClCompile Include="Entity.cpp" />
     <ClCompile Include="GameOver.cpp" />
-    <ClCompile Include="Gameplay.cpp" />
+    <ClCompile Include="StageOne.cpp" />
     <ClCompile Include="Instructions.cpp" />
     <ClCompile Include="main.cpp">
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -88,7 +88,7 @@
     <ClInclude Include="ClassDemoApp.h" />
     <ClInclude Include="Entity.h" />
     <ClInclude Include="GameOver.h" />
-    <ClInclude Include="Gameplay.h" />
+    <ClInclude Include="StageOne.h" />
     <ClInclude Include="Instructions.h" />
     <ClInclude Include="MainMenu.h" />
   </ItemGroup>

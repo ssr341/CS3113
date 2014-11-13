@@ -3,7 +3,26 @@
 #include <SDL.h>
 #include <SDL_opengl.h>
 #include <SDL_image.h>
+#include "Bullet.h"
 
-//60 FPS (1.0/60.0f)
-#define FIXED_TIMESTEP 0.0166666f
-#define MAX_TIMESTEPS 6
+class Entity{
+public:
+	Entity();
+
+	void draw();
+
+	void fixedUpdate();
+	bool collidesWith(Bullet bullet);
+
+	float x;
+	float y;
+
+	unsigned int textureID;
+	float width;
+	float height;
+
+	bool visible;
+	float velocity_y;
+	float acceleration_y;
+	float friction_y;
+};

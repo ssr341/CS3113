@@ -5,7 +5,7 @@
 #include "MainMenu.h"
 #include "Instructions.h"
 #include "GameOver.h"
-#include "Gameplay.h"
+#include "StageOne.h"
 #include <vector>
 #include <string>
 #include <SDL.h>
@@ -26,7 +26,7 @@ public:
 
 	bool ProcessEvents();
 	void Render();
-	void fixedUpdate();
+	void fixedUpdate(float fixedElapsed);
 	void UpdateAndRender();
 
 private:
@@ -39,8 +39,14 @@ private:
 
 	MainMenu menu;
 	Instructions instructions;
-	//Gameplay gameplay;
+	StageOne stage1;
+	/*StageTwo stage2;
+	StageThree stage3;*/
 	GameOver gameOver;
+
+	float stage1Winner;
+	float stage2Winner;
+	float stage3Winner;
 
 	Mix_Music* music;   // music that plays whole game
 

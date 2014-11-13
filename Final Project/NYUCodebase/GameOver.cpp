@@ -68,8 +68,15 @@ void GameOver::Render(int winningPlayer){
 	
 	glLoadIdentity();
 	glTranslatef(-0.45f, -0.25f, 0.0f);
+	DrawText(screenText, "Player ", 0.07f, 0.001f, 1.0f, 0.0f, 0.0f, 1.0f);
 	std::string playerString = std::to_string(winningPlayer);
-	//DrawText(screenText, "Player " playerString " wins", 0.07f, 0.001f, 1.0f, 0.0f, 0.0f, 1.0f);
+	glLoadIdentity();
+	glTranslatef(-0.45f, -0.35f, 0.0f);
+	DrawText(screenText, playerString, 0.07f, 0.001f, 1.0f, 0.0f, 0.0f, 1.0f);
+	glLoadIdentity();
+	glTranslatef(-0.45f, -0.4f, 0.0f);
+	DrawText(screenText, " wins!", 0.07f, 0.001f, 1.0f, 0.0f, 0.0f, 1.0f);
+
 	glLoadIdentity();
 	glTranslatef(0.5f, -0.5f, 0.0f);
 	DrawText(screenText, "Press space to return to stage select.", 0.07f, 0.001f, 1.0f, 0.0f, 0.0f, 1.0f);

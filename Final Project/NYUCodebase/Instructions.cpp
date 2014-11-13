@@ -88,7 +88,7 @@ void Instructions::Render(){
 
 	glLoadIdentity();
 	glTranslatef(-1.25, 0.6, 0.0);
-	DrawText(screenText, "W to move up", 0.05f, 0.001f, 1.0f, 1.0f, 0.0f, 1.0f);
+	DrawText(screenText, "E to move up", 0.05f, 0.001f, 1.0f, 1.0f, 0.0f, 1.0f);
 
 	glLoadIdentity();
 	glTranslatef(0.4, 0.6, 0.0);
@@ -96,7 +96,7 @@ void Instructions::Render(){
 
 	glLoadIdentity();
 	glTranslatef(-1.25, 0.5, 0.0);
-	DrawText(screenText, "S to move down", 0.05f, 0.001f, 1.0f, 1.0f, 0.0f, 1.0f);
+	DrawText(screenText, "D to move down", 0.05f, 0.001f, 1.0f, 1.0f, 0.0f, 1.0f);
 
 	glLoadIdentity();
 	glTranslatef(0.4, 0.5, 0.0);
@@ -104,7 +104,7 @@ void Instructions::Render(){
 
 	glLoadIdentity();
 	glTranslatef(-1.25, 0.4, 0.0);
-	DrawText(screenText, "C to shoot", 0.05f, 0.001f, 1.0f, 1.0f, 0.0f, 1.0f);
+	DrawText(screenText, "F to shoot", 0.05f, 0.001f, 1.0f, 1.0f, 0.0f, 1.0f);
 
 	glLoadIdentity();
 	glTranslatef(0.4, 0.4, 0.0);
