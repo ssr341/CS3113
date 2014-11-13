@@ -4,7 +4,7 @@ StageOne::StageOne(){
 	winner = 0;
 	enemyShot = 0.0f;
 	enemyNum = 4;
-	enemyBulletSize = 0.2f;
+	enemyBulletSize = 0.05f;
 	enemyBulletSpeed = 0.5f;
 	player1KillCount = 0;
 	player2KillCount = 0;
@@ -12,6 +12,14 @@ StageOne::StageOne(){
 	player1BulletSpeed = 1.0f;
 	player2BulletSize = 0.05f;
 	player2BulletSpeed = 1.0f;
+	for (int i = 0; i < MAX_BULLETS; i++){
+		bullets[i].x = -10.0f;
+		bullets[i].y = -10.0f;
+		bullets[i].direction = 0.0f;
+		bullets[i].shooter = -1.0f;
+		bullets[i].speed = 0.0f;
+		bullets[i].size = 0.0f;
+	}
 }
 
 GLuint StageOne::LoadTexture(const char *image_path) {
@@ -108,7 +116,7 @@ void StageOne::Init(){
 		enemy2->height = 0.2f;
 		enemy2->x = enemy2X;
 		enemy2->y = enemyY;
-		enemy1->velocity_y = 0.0f;
+		enemy2->velocity_y = 0.0f;
 		enemy2->acceleration_y = -1.0f;
 		enemy2->friction_y = 0.5f;
 		enemy2->visible = true;
@@ -195,15 +203,26 @@ int StageOne::fixedUpdate(float fixedElapsed){
 		player1.y = -0.8;
 	if (player2.y < -0.8)
 		player2.y = -0.8;
+
 	// have enemies reverse when they meet edge of screen
-	if (enemies1[0]->y > 0.8 || enemies1[enemyNum-1]->y < -0.8){
+	if (enemies1[0]->y >= 0.5){
 		for (size_t i = 0; i < enemies1.size(); i++){
-			enemies1[i]->acceleration_y *= -1.0f;
+			enemies1[i]->acceleration_y = -1.0f;
 		}
 	}
-	if (enemies2[0]->y > 0.8 || enemies2[enemyNum-1]->y < -0.8){
+	if (enemies1[enemyNum - 1]->y <= -0.5){
+		for (size_t i = 0; i < enemies1.size(); i++){
+			enemies1[i]->acceleration_y = 1.0f;
+		}
+	}
+	if (enemies2[0]->y >= 0.5){
 		for (size_t i = 0; i < enemies2.size(); i++){
-			enemies2[i]->acceleration_y *= -1.0f;
+			enemies2[i]->acceleration_y = -1.0f;
+		}
+	}
+	if (enemies2[enemyNum - 1]->y <= -0.5){
+		for (size_t i = 0; i < enemies2.size(); i++){
+			enemies2[i]->acceleration_y = 1.0f;
 		}
 	}
 
@@ -246,24 +265,24 @@ int StageOne::fixedUpdate(float fixedElapsed){
 	}
 
 	// check for bullet collision with player
-	for (int i = 0; i < MAX_BULLETS; i++){
-		// if bullet is visible and colliding
-		if (bullets[i].visible && bullets[i].shooter != 0 && player1.collidesWith(bullets[i])){
-			winner = 2;
-			return winner;
-		}
-	}
-	for (int i = 0; i < MAX_BULLETS; i++){
-		// if bullet is visible and colliding
-		if (bullets[i].visible && bullets[i].shooter != 1 && player2.collidesWith(bullets[i])){
-			winner = 1;
-			return winner;
-		}
-	}
+	//for (int i = 0; i < MAX_BULLETS; i++){
+	//	// if bullet is visible and colliding
+	//	if (bullets[i].visible && bullets[i].shooter != 0 && player1.collidesWith(bullets[i])){
+	//		winner = 2;
+	//		return winner;
+	//	}
+	//}
+	//for (int i = 0; i < MAX_BULLETS; i++){
+	//	// if bullet is visible and colliding
+	//	if (bullets[i].visible && bullets[i].shooter != 1 && player2.collidesWith(bullets[i])){
+	//		winner = 1;
+	//		return winner;
+	//	}
+	//}
 
 	// have enemy shoot bullet
 	enemyShot += fixedElapsed;
-	if (enemyShot >= 0.5f){    // shoot every 50 frames
+	if (enemyShot >= 0.3f){    // shoot every 30 frames
 		bool shot1 = false;  // was the bullet shot?
 		bool shot2 = false;  // was the bullet shot?
 		while (!shot1 && !shot2){
