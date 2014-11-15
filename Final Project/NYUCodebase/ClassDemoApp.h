@@ -7,8 +7,8 @@
 #include "GameOver.h"
 #include "StageOne.h"
 #include "StageTwo.h"
-#include <vector>
-#include <string>
+#include "StageThree.h"
+
 #include <SDL.h>
 #include <SDL_opengl.h>
 #include <SDL_image.h>
@@ -42,12 +42,12 @@ private:
 	Instructions instructions;
 	StageOne stage1;
 	StageTwo stage2;
-	//StageThree stage3;
+	StageThree stage3;
 	GameOver gameOver;
 
 	float stage1Winner;
 	float stage2Winner;
-	float stage3Winner;
+	float gameWinner;
 
 	Mix_Music* music;   // music that plays whole game
 

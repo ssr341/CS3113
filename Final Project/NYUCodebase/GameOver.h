@@ -15,6 +15,7 @@ public:
 	GLuint LoadTexture(const char *image_path);
 	void DrawText(int fontTexture, std::string text, float size, float spacing, float r, float g, float b, float a);
 
+	int ProcessEvents();
 	void Render(int winningPlayer);
 private:
 

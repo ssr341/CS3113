@@ -35,6 +35,8 @@ StageTwo::~StageTwo(){
 		delete enemies1[i];
 	for (size_t i = 0; i < enemies2.size(); i++)
 		delete enemies2[i];
+	Mix_FreeChunk(shootingSound);
+	Mix_FreeChunk(explosionSound);
 }
 
 GLuint StageTwo::LoadTexture(const char *image_path) {
@@ -166,12 +168,14 @@ void StageTwo::ProcessShoot(SDL_Event* event){
 			if (player1Shot > player1ShotTime){
 				player1Shot = 0.0;
 				shootBullet(player1.x, player1.y, 1.0, 0, player1BulletSize, player1BulletSpeed);
+				Mix_PlayChannel(-1, shootingSound, 0);
 			}
 		}
 		if (event->key.keysym.scancode == SDL_SCANCODE_KP_0) {
 			if (player2Shot > player2ShotTime){
 				player2Shot = 0.0;
 				shootBullet(player2.x, player2.y, -1.0, 1, player2BulletSize, player2BulletSpeed);
+				Mix_PlayChannel(-1, shootingSound, 0);
 			}
 		}
 	}
@@ -226,11 +230,11 @@ int StageTwo::fixedUpdate(float fixedElapsed){
 	asteroid.fixedUpdate();
 	for (size_t i = 0; i < enemies1.size(); i++){
 		enemies1[i]->fixedUpdate();
-		enemies1[i]->y += enemies1[i]->velocity_y * FIXED_TIMESTEP;
+		//enemies1[i]->y += enemies1[i]->velocity_y * FIXED_TIMESTEP;
 	}
 	for (size_t i = 0; i < enemies2.size(); i++){
 		enemies2[i]->fixedUpdate();
-		enemies2[i]->y += enemies2[i]->velocity_y * FIXED_TIMESTEP;
+		//enemies2[i]->y += enemies2[i]->velocity_y * FIXED_TIMESTEP;
 	}
 
 	// screen boundaries
@@ -279,6 +283,7 @@ int StageTwo::fixedUpdate(float fixedElapsed){
 				// if bullet is visible and colliding
 				if (enemies1[i]->collidesWith(bullets[j])){
 					// make enemy and bullet invisible
+					Mix_PlayChannel(-1, explosionSound, 0);
 					enemies1[i]->visible = false;
 					bullets[j].visible = false;
 					if (bullets[j].shooter == 0)
@@ -298,6 +303,7 @@ int StageTwo::fixedUpdate(float fixedElapsed){
 				// if bullet is visible and colliding
 				if (enemies2[i]->collidesWith(bullets[j])){
 					// make enemy and bullet invisible
+					Mix_PlayChannel(-1, explosionSound, 0);
 					enemies2[i]->visible = false;
 					bullets[j].visible = false;
 					if (bullets[j].shooter == 0)
@@ -335,14 +341,17 @@ int StageTwo::fixedUpdate(float fixedElapsed){
 
 	// have bullets colliding with asteroid vanish
 	for (int i = 0; i < MAX_BULLETS; i++){
-		if (bullets[i].visible && asteroid.collidesWith(bullets[i]))
+		if (bullets[i].visible && asteroid.collidesWith(bullets[i])){
+			Mix_PlayChannel(-1, explosionSound, 0);
 			bullets[i].visible = false;
+		}
 	}
 
 	// check for bullet collision with player
 	for (int i = 0; i < MAX_BULLETS; i++){
 		// if bullet is visible and colliding
 		if (bullets[i].visible && bullets[i].shooter != 0 && player1.collidesWith(bullets[i])){
+			Mix_PlayChannel(-1, explosionSound, 0);
 			winner = 2;
 			return winner;
 		}
@@ -350,6 +359,7 @@ int StageTwo::fixedUpdate(float fixedElapsed){
 	for (int i = 0; i < MAX_BULLETS; i++){
 		// if bullet is visible and colliding
 		if (bullets[i].visible && bullets[i].shooter != 1 && player2.collidesWith(bullets[i])){
+			Mix_PlayChannel(-1, explosionSound, 0);
 			winner = 1;
 			return winner;
 		}
@@ -357,16 +367,18 @@ int StageTwo::fixedUpdate(float fixedElapsed){
 
 	// have enemy shoot bullet
 	enemyShot += fixedElapsed;
-	if (enemyShot >= 0.15f){    // shoot every 20 frames
+	if (enemyShot >= 0.15f){    // shoot every 15 frames
 		bool shot1 = false;  // was the bullet shot?
 		bool shot2 = false;  // was the bullet shot?
 		while (!shot1 && !shot2){
 			int enemyBulletX = rand() % (enemyNum);
 			if (enemies1[enemyBulletX]->visible && !shot1){
+				Mix_PlayChannel(-1, shootingSound, 0);
 				shootBullet(enemies1[enemyBulletX]->x, enemies1[enemyBulletX]->y, -1.0f, 2, enemyBulletSize, enemyBulletSpeed);
 				shot1 = true;
 			}
 			if (enemies2[enemyBulletX]->visible && !shot2){
+				Mix_PlayChannel(-1, shootingSound, 0);
 				shootBullet(enemies2[enemyBulletX]->x, enemies2[enemyBulletX]->y, 1.0f, 3, enemyBulletSize, enemyBulletSpeed);
 				shot2 = true;
 			}
@@ -388,9 +400,9 @@ int StageTwo::fixedUpdate(float fixedElapsed){
 		player1BulletSpeed *= 2.0f;
 	if (player1KillCount >= 6 && player1BulletSize == 0.025f)
 		player1BulletSize = 0.04f;
-	if (player2KillCount >= 3 && player1BulletSpeed == 2.0f)
+	if (player2KillCount >= 3 && player2BulletSpeed == 2.0f)
 		player2BulletSpeed *= 2.0f;
-	if (player2KillCount >= 6 && player1BulletSize == 0.025f)
+	if (player2KillCount >= 6 && player2BulletSize == 0.025f)
 		player2BulletSize = 0.04f;
 	if (player1KillCount >= 10 && player1ShotTime == 0.025f)
 		player1ShotTime /= 2.0f;

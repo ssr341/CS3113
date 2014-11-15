@@ -29,7 +29,8 @@ public:
 
 	void shootBullet(float x, float y, float direction, float shooter, float size, float speed);
 
-	void buildLevel();
+	Mix_Chunk* explosionSound; // sound when bullets collide
+	Mix_Chunk* shootingSound; // sound when bullets shot
 private:
 	Bullet bullets[MAX_BULLETS];
 	int bulletIndex;

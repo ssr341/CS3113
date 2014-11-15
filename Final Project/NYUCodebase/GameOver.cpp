@@ -20,6 +20,22 @@ GLuint GameOver::LoadTexture(const char *image_path) {
 	return textureID;
 }
 
+int GameOver::ProcessEvents(){
+	const Uint8* keys = SDL_GetKeyboardState(NULL);
+	int state = 5;
+
+	// if space is pressed move to stage select
+	if (keys[SDL_SCANCODE_SPACE] == 1){
+		state = 0;
+	}
+	// if q is pressed quit
+	if (keys[SDL_SCANCODE_Q] == 1){
+		SDL_Quit();
+	}
+
+	return state;
+}
+
 void GameOver::DrawText(int fontTexture, std::string text, float size, float spacing, float r, float g, float b, float a) {
 	glBindTexture(GL_TEXTURE_2D, fontTexture);
 	glEnable(GL_TEXTURE_2D);
@@ -60,24 +76,24 @@ void GameOver::Render(int winningPlayer){
 	glClear(GL_COLOR_BUFFER_BIT);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-	glTranslatef(-0.25, 0.25, 0.0);
+	glTranslatef(-0.25, 0.35, 0.0);
 	DrawText(screenText, "Game", 0.2f, 0.001f, 1.0f, 0.0f, 0.0f, 1.0f);
 	glLoadIdentity();
-	glTranslatef(-0.25, 0.0, 0.0);
+	glTranslatef(-0.25, 0.15, 0.0);
 	DrawText(screenText, "Over", 0.2f, 0.001f, 1.0f, 0.0f, 0.0f, 1.0f);
 	
 	glLoadIdentity();
-	glTranslatef(-0.45f, -0.25f, 0.0f);
+	glTranslatef(-0.35f, -0.25f, 0.0f);
 	DrawText(screenText, "Player ", 0.07f, 0.001f, 1.0f, 0.0f, 0.0f, 1.0f);
 	std::string playerString = std::to_string(winningPlayer);
 	glLoadIdentity();
-	glTranslatef(-0.45f, -0.35f, 0.0f);
+	glTranslatef(0.10f, -0.25f, 0.0f);
 	DrawText(screenText, playerString, 0.07f, 0.001f, 1.0f, 0.0f, 0.0f, 1.0f);
 	glLoadIdentity();
-	glTranslatef(-0.45f, -0.4f, 0.0f);
+	glTranslatef(0.125f, -0.25f, 0.0f);
 	DrawText(screenText, " wins!", 0.07f, 0.001f, 1.0f, 0.0f, 0.0f, 1.0f);
 
 	glLoadIdentity();
-	glTranslatef(0.5f, -0.5f, 0.0f);
-	DrawText(screenText, "Press space to return to stage select.", 0.07f, 0.001f, 1.0f, 0.0f, 0.0f, 1.0f);
+	glTranslatef(-1.2f, -0.5f, 0.0f);
+	DrawText(screenText, "Press space to return to main menu.", 0.07f, 0.001f, 1.0f, 0.0f, 0.0f, 1.0f);
 }
