@@ -39,6 +39,9 @@
     <ClCompile Include="StageOne.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="StageTwo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ClassDemoApp.h">
@@ -60,6 +63,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="StageOne.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="StageTwo.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

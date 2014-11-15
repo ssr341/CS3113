@@ -16,6 +16,7 @@
 class StageOne{
 public:
 	StageOne();
+	~StageOne();
 
 	GLuint LoadTexture(const char *image_path);
 	void DrawText(int fontTexture, std::string text, float size, float spacing, float r, float g, float b, float a);
@@ -35,6 +36,7 @@ private:
 
 	int enemyNum; // number of enemies
 	float enemyShot; // time between enemy shots
+	float respawnTimer; // time for enemy respawns
 
 	int winner; // winner of stage. 0 means gameplay still happening, 1 means player 1, 2 means player 2
 
@@ -44,6 +46,10 @@ private:
 	std::vector<Entity*> enemies2;
 
 	// powerups
+	float player1Shot; // current time between shots
+	float player2Shot; // current time between shots
+	float player1ShotTime; // time before another shot can be fired
+	float player2ShotTime; // time before another shot can be fired
 	int player1KillCount;
 	int player2KillCount;
 	float player1BulletSize;

@@ -22,6 +22,8 @@ public:
 	float height;
 
 	bool visible;
+	float deadTime;
+
 	float velocity_y;
 	float acceleration_y;
 	float friction_y;

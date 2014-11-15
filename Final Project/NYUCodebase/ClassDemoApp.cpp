@@ -1,3 +1,4 @@
+// FIXED STAGE 2 OUTCOME
 #include "ClassDemoApp.h"
 
 ClassDemoApp::ClassDemoApp(){
@@ -5,11 +6,11 @@ ClassDemoApp::ClassDemoApp(){
 	menu.Init();
 	instructions.Init();
 	stage1.Init();
-	//stage2.Init();
+	stage2.Init();
 	//stage3.Init();
 	gameOver.Init();
 	done = false;
-	state = 0;
+	state = 3;
 	timeLeftOver = 0.0f;
 }
 
@@ -44,12 +45,10 @@ bool ClassDemoApp::ProcessEvents(){
 		case STATE_STAGE_ONE:
 			stage1.ProcessShoot(&event);
 			break;
-		}
-		/*switch (state){
-		case STATE_GAME_LEVEL:
-			gameplay.ProcessShoot(&event);
+		case STATE_STAGE_TWO:
+			stage2.ProcessShoot(&event);
 			break;
-		}*/
+		}
 	}
 	switch (state) {
 	case STATE_MAIN_MENU:
@@ -61,15 +60,19 @@ bool ClassDemoApp::ProcessEvents(){
 	case STATE_STAGE_ONE:
 		stage1.ProcessEvents();
 		break;
+	case STATE_STAGE_TWO:
+		stage2.ProcessEvents();
+		break;
 	}
 
 	return done;
 }
 
 void ClassDemoApp::fixedUpdate(float fixedElapsed){
+	int winner = 0;
 	switch (state) {
 	case STATE_STAGE_ONE:
-		int winner = stage1.fixedUpdate(fixedElapsed);
+		winner = stage1.fixedUpdate(fixedElapsed);
 		if (winner == 1){
 			stage1Winner = 1;
 			state++;
@@ -79,20 +82,22 @@ void ClassDemoApp::fixedUpdate(float fixedElapsed){
 			state++;
 		}
 		break;
+	case STATE_STAGE_TWO:
+		winner = stage2.fixedUpdate(fixedElapsed);
+		if (winner == 1){
+			stage2Winner = 1;
+			state++;
+		}
+		if (winner == 2){
+			stage2Winner = 2;
+			state++;
+		}
+		break;
 	}
-	//case STATE_STAGE_TWO:
-	//	state = stage2.fixedUpdate();
-	//	break;
-	//}
-	//case STATE_STAGE_THREE:
-	//	state = stage3.fixedUpdate();
-	//	break;
-	//}
 }
 
 
 void ClassDemoApp::Render(){
-	//render stuff
 	switch (state) {
 	case STATE_MAIN_MENU:
 		menu.Render();
@@ -102,6 +107,9 @@ void ClassDemoApp::Render(){
 		break;
 	case STATE_STAGE_ONE:
 		stage1.Render();
+		break;
+	case STATE_STAGE_TWO:
+		stage2.Render();
 		break;
 	/*case STATE_GAME_OVER:
 		gameOver.Render(score);

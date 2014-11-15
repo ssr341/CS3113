@@ -132,7 +132,7 @@ void Instructions::Render(){
 
 	glLoadIdentity();
 	glTranslatef(-1.10, -0.3, 0.0);
-	DrawText(screenText, "10 UFOs - Move faster", 0.035f, 0.001f, 1.0f, 1.0f, 0.0f, 1.0f);
+	DrawText(screenText, "10 UFOs - Move slightly faster and shoot more often", 0.035f, 0.001f, 1.0f, 1.0f, 0.0f, 1.0f);
 
 	glLoadIdentity();
 	glTranslatef(-1.25, -0.4, 0.0);

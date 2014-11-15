@@ -82,6 +82,7 @@
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <ClCompile Include="MainMenu.cpp" />
+    <ClCompile Include="StageTwo.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Bullet.h" />
@@ -91,6 +92,7 @@
     <ClInclude Include="StageOne.h" />
     <ClInclude Include="Instructions.h" />
     <ClInclude Include="MainMenu.h" />
+    <ClInclude Include="StageTwo.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

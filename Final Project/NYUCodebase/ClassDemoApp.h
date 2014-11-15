@@ -6,6 +6,7 @@
 #include "Instructions.h"
 #include "GameOver.h"
 #include "StageOne.h"
+#include "StageTwo.h"
 #include <vector>
 #include <string>
 #include <SDL.h>
@@ -40,8 +41,8 @@ private:
 	MainMenu menu;
 	Instructions instructions;
 	StageOne stage1;
-	/*StageTwo stage2;
-	StageThree stage3;*/
+	StageTwo stage2;
+	//StageThree stage3;
 	GameOver gameOver;
 
 	float stage1Winner;
