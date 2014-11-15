@@ -4,7 +4,7 @@ StageTwo::StageTwo(){
 	winner = 0;
 
 	enemyShot = 0.0f;
-	enemyNum = 4;
+	enemyNum = 3;
 	enemyBulletSize = 0.025f;
 	enemyBulletSpeed = 1.0f;
 	respawnTimer = 0.4f;
@@ -113,11 +113,20 @@ void StageTwo::Init(){
 		bullets[i].textureID = LoadTexture("laserBlue03.png");
 
 	// asteroid creation
+	asteroid.textureID = LoadTexture("meteorSmall.png");
+	asteroid.height = 0.4f;
+	asteroid.width = 0.4f;
+	asteroid.x = 0.0f;
+	asteroid.y = 0.0f;
+	asteroid.friction_y = 1.0f;
+	asteroid.acceleration_y = 0.5f;
+	asteroid.velocity_y = 0.0f;
+	asteroid.visible = true;
 
 	// enemy creation
-	float enemy1X = -0.1f;
+	float enemy1X = -0.3f;
 	float enemyY = 0.3f;
-	float enemy2X = 0.1f;
+	float enemy2X = 0.3f;
 	for (int i = 0; i < enemyNum; i++){
 		Entity* enemy1 = new Entity;
 		enemy1->textureID = LoadTexture("enemyUFO.png");
@@ -214,6 +223,7 @@ int StageTwo::fixedUpdate(float fixedElapsed){
 	// run fixed update for everything
 	player1.fixedUpdate();
 	player2.fixedUpdate();
+	asteroid.fixedUpdate();
 	for (size_t i = 0; i < enemies1.size(); i++){
 		enemies1[i]->fixedUpdate();
 		enemies1[i]->y += enemies1[i]->velocity_y * FIXED_TIMESTEP;
@@ -233,23 +243,29 @@ int StageTwo::fixedUpdate(float fixedElapsed){
 	if (player2.y < -0.85)
 		player2.y = -0.85;
 
+	// have asteroid reverse when meets edge of screen
+	if (asteroid.y > 0.65)
+		asteroid.acceleration_y = -1.0f;
+	if (asteroid.y < -0.65)
+		asteroid.acceleration_y = 1.0f;
+
 	// have enemies reverse when they meet edge of screen
-	if (enemies1[0]->y >= 0.5){
+	if (enemies1[0]->y >= 0.45){
 		for (size_t i = 0; i < enemies1.size(); i++){
 			enemies1[i]->acceleration_y = -1.0f;
 		}
 	}
-	if (enemies1[enemyNum - 1]->y <= -0.5){
+	if (enemies1[enemyNum - 1]->y <= -0.45){
 		for (size_t i = 0; i < enemies1.size(); i++){
 			enemies1[i]->acceleration_y = 1.0f;
 		}
 	}
-	if (enemies2[0]->y >= 0.5){
+	if (enemies2[0]->y >= 0.45){
 		for (size_t i = 0; i < enemies2.size(); i++){
 			enemies2[i]->acceleration_y = -1.0f;
 		}
 	}
-	if (enemies2[enemyNum - 1]->y <= -0.5){
+	if (enemies2[enemyNum - 1]->y <= -0.45){
 		for (size_t i = 0; i < enemies2.size(); i++){
 			enemies2[i]->acceleration_y = 1.0f;
 		}
@@ -315,6 +331,12 @@ int StageTwo::fixedUpdate(float fixedElapsed){
 			enemies2[i]->visible = true;
 			enemies2[i]->deadTime = 0.0;
 		}
+	}
+
+	// have bullets colliding with asteroid vanish
+	for (int i = 0; i < MAX_BULLETS; i++){
+		if (bullets[i].visible && asteroid.collidesWith(bullets[i]))
+			bullets[i].visible = false;
 	}
 
 	// check for bullet collision with player
@@ -384,6 +406,7 @@ void StageTwo::Render(){
 
 	player1.draw();
 	player2.draw();
+	asteroid.draw();
 
 	for (size_t i = 0; i < enemies1.size(); i++){
 		if (enemies1[i]->visible)
