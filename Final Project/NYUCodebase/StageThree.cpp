@@ -3,6 +3,7 @@
 StageThree::StageThree(){
 	winner = 0;
 
+	bulletIndex = 0;
 	enemyShot = 0.0f;
 	enemyBulletSize = 0.03f;
 	enemyBulletSpeed = 2.0f;

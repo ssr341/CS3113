@@ -3,6 +3,7 @@
 StageTwo::StageTwo(){
 	winner = 0;
 
+	bulletIndex = 0;
 	enemyShot = 0.0f;
 	enemyNum = 3;
 	enemyBulletSize = 0.025f;

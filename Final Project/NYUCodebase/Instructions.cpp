@@ -54,17 +54,17 @@ void Instructions::DrawText(int fontTexture, std::string text, float size, float
 	glDrawArrays(GL_QUADS, 0, text.size() * 4);
 }
 
-int Instructions::ProcessEvents(){
+int Instructions::ProcessEvents(SDL_Event* event){
 	const Uint8* keys = SDL_GetKeyboardState(NULL);
 	int state = 1;
 
-	// if space is pressed move to first stage
-	if (keys[SDL_SCANCODE_SPACE] == 1){
-		state = 2;
-	}
-	// if q is pressed quit
-	if (keys[SDL_SCANCODE_Q] == 1){
-		SDL_Quit();
+	if (event->type == SDL_KEYDOWN) {
+		// if space is pressed move to stage select
+		if (event->key.keysym.scancode == SDL_SCANCODE_SPACE)
+			state = 2;
+		// if q is pressed quit
+		if (event->key.keysym.scancode == SDL_SCANCODE_Q)
+			SDL_Quit();
 	}
 
 	return state;

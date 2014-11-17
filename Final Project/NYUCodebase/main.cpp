@@ -1,5 +1,4 @@
-// render issue from main/instruction to stage 1, gameover to main menu shows up in alt tab when you run through it but not normally, rapid fire 
-// enemy bullets on start up
+
 #include "ClassDemoApp.h"
 using namespace std;
 

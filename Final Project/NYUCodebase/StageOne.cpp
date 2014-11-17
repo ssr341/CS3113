@@ -3,6 +3,8 @@
 StageOne::StageOne(){
 	winner = 0;
 
+	bulletIndex = 0;
+
 	enemyShot = 0.0f;
 	enemyNum = 4;
 	enemyBulletSize = 0.025f;
@@ -389,7 +391,6 @@ int StageOne::fixedUpdate(float fixedElapsed){
 
 void StageOne::Render(){
 	glClear(GL_COLOR_BUFFER_BIT);
-	//glMatrixMode(GL_MODELVIEW);
 
 	player1.draw();
 	player2.draw();

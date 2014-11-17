@@ -9,7 +9,7 @@ ClassDemoApp::ClassDemoApp(){
 	stage3.Init();
 	gameOver.Init();
 	done = false;
-	state = 5;
+	state = 0;
 	stage1Winner = 0;
 	stage2Winner = 0;
 	gameWinner = 0;
@@ -51,6 +51,12 @@ bool ClassDemoApp::ProcessEvents(){
 			done = true;
 		}
 		switch (state){
+		case STATE_MAIN_MENU:
+			state = menu.ProcessEvents(&event);
+			break;
+		case STATE_INSTRUCTIONS:
+			state = instructions.ProcessEvents(&event);
+			break;
 		case STATE_STAGE_ONE:
 			stage1.ProcessShoot(&event);
 			break;
@@ -60,15 +66,17 @@ bool ClassDemoApp::ProcessEvents(){
 		case STATE_STAGE_THREE:
 			stage3.ProcessShoot(&event);
 			break;
+		case STATE_GAME_OVER:
+			state = gameOver.ProcessEvents(&event);
+			if (state == 0){
+				stage1Winner = 0;
+				stage2Winner = 0;
+				gameWinner = 0;
+			}
+			break;
 		}
 	}
 	switch (state) {
-	case STATE_MAIN_MENU:
-		state = menu.ProcessEvents();
-		break;
-	case STATE_INSTRUCTIONS:
-		state = instructions.ProcessEvents();
-		break;
 	case STATE_STAGE_ONE:
 		stage1.ProcessEvents();
 		break;
@@ -77,14 +85,6 @@ bool ClassDemoApp::ProcessEvents(){
 		break;
 	case STATE_STAGE_THREE:
 		stage3.ProcessEvents();
-		break;
-	case STATE_GAME_OVER:
-		state = gameOver.ProcessEvents();
-		if (state == 0){
-			stage1Winner = 0;
-			stage2Winner = 0;
-			gameWinner = 0;
-		}
 		break;
 	}
 

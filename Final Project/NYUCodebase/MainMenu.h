@@ -14,7 +14,7 @@ public:
 	GLuint LoadTexture(const char *image_path);
 	void DrawText(int fontTexture, std::string text, float size, float spacing, float r, float g, float b, float a);
 
-	int ProcessEvents();
+	int ProcessEvents(SDL_Event* event);
 	void Render();
 	int Update();
 private:
