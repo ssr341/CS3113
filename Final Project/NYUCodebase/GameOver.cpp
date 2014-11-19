@@ -69,6 +69,8 @@ void GameOver::DrawText(int fontTexture, std::string text, float size, float spa
 	glTexCoordPointer(2, GL_FLOAT, 0, texCoordData.data());
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 	glDrawArrays(GL_QUADS, 0, text.size() * 4);
+
+	glDisableClientState(GL_COLOR_ARRAY);
 }
 
 void GameOver::Render(int winningPlayer){

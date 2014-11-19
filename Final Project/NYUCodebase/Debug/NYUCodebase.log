@@ -1,14 +1,24 @@
-﻿Build started 11/18/2014 6:43:26 PM.
+﻿Build started 11/19/2014 12:55:16 PM.
      1>Project "C:\Stephen-Russo-CS3113\Final Project\NYUCodebase\NYUCodebase.vcxproj" on node 2 (Build target(s)).
      1>ClCompile:
-         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /IC:\SDL2\include /IC:\SDL2_image\include /I"C:\SDL2_mixer-2.0.0\include" /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt ClassDemoApp.cpp StageThree.cpp
-         StageThree.cpp
-     1>c:\stephen-russo-cs3113\final project\nyucodebase\stagethree.cpp(230): warning C4305: '=' : truncation from 'double' to 'float'
-     1>c:\stephen-russo-cs3113\final project\nyucodebase\stagethree.cpp(232): warning C4305: '=' : truncation from 'double' to 'float'
-     1>c:\stephen-russo-cs3113\final project\nyucodebase\stagethree.cpp(234): warning C4305: '=' : truncation from 'double' to 'float'
-     1>c:\stephen-russo-cs3113\final project\nyucodebase\stagethree.cpp(236): warning C4305: '=' : truncation from 'double' to 'float'
-         ClassDemoApp.cpp
-     1>c:\stephen-russo-cs3113\final project\nyucodebase\classdemoapp.cpp(167): warning C4244: 'argument' : conversion from 'float' to 'int', possible loss of data
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /IC:\SDL2\include /IC:\SDL2_image\include /I"C:\SDL2_mixer-2.0.0\include" /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt GameOver.cpp Instructions.cpp
+         Instructions.cpp
+     1>c:\stephen-russo-cs3113\final project\nyucodebase\instructions.cpp(80): warning C4305: 'argument' : truncation from 'double' to 'GLfloat'
+     1>c:\stephen-russo-cs3113\final project\nyucodebase\instructions.cpp(88): warning C4305: 'argument' : truncation from 'double' to 'GLfloat'
+     1>c:\stephen-russo-cs3113\final project\nyucodebase\instructions.cpp(92): warning C4305: 'argument' : truncation from 'double' to 'GLfloat'
+     1>c:\stephen-russo-cs3113\final project\nyucodebase\instructions.cpp(96): warning C4305: 'argument' : truncation from 'double' to 'GLfloat'
+     1>c:\stephen-russo-cs3113\final project\nyucodebase\instructions.cpp(104): warning C4305: 'argument' : truncation from 'double' to 'GLfloat'
+     1>c:\stephen-russo-cs3113\final project\nyucodebase\instructions.cpp(108): warning C4305: 'argument' : truncation from 'double' to 'GLfloat'
+     1>c:\stephen-russo-cs3113\final project\nyucodebase\instructions.cpp(112): warning C4305: 'argument' : truncation from 'double' to 'GLfloat'
+     1>c:\stephen-russo-cs3113\final project\nyucodebase\instructions.cpp(116): warning C4305: 'argument' : truncation from 'double' to 'GLfloat'
+     1>c:\stephen-russo-cs3113\final project\nyucodebase\instructions.cpp(120): warning C4305: 'argument' : truncation from 'double' to 'GLfloat'
+     1>c:\stephen-russo-cs3113\final project\nyucodebase\instructions.cpp(128): warning C4305: 'argument' : truncation from 'double' to 'GLfloat'
+     1>c:\stephen-russo-cs3113\final project\nyucodebase\instructions.cpp(132): warning C4305: 'argument' : truncation from 'double' to 'GLfloat'
+     1>c:\stephen-russo-cs3113\final project\nyucodebase\instructions.cpp(136): warning C4305: 'argument' : truncation from 'double' to 'GLfloat'
+     1>c:\stephen-russo-cs3113\final project\nyucodebase\instructions.cpp(140): warning C4305: 'argument' : truncation from 'double' to 'GLfloat'
+         GameOver.cpp
+     1>c:\stephen-russo-cs3113\final project\nyucodebase\gameover.cpp(81): warning C4305: 'argument' : truncation from 'double' to 'GLfloat'
+     1>c:\stephen-russo-cs3113\final project\nyucodebase\gameover.cpp(84): warning C4305: 'argument' : truncation from 'double' to 'GLfloat'
          Generating Code...
        Link:
          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Stephen-Russo-CS3113\Final Project\Debug\NYUCodebase.exe" /INCREMENTAL /NOLOGO /LIBPATH:C:\SDL2\lib\x86 /LIBPATH:C:\SDL2_image\lib\x86 /LIBPATH:"C:\SDL2_mixer-2.0.0\lib\x86" SDL2.lib SDL2main.lib SDL2_image.lib OpenGL32.lib SDL2_mixer.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Stephen-Russo-CS3113\Final Project\Debug\NYUCodebase.pdb" /SUBSYSTEM:WINDOWS /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Stephen-Russo-CS3113\Final Project\Debug\NYUCodebase.lib" /MACHINE:X86 Debug\Bullet.obj
@@ -26,4 +36,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:04.15
+Time Elapsed 00:00:02.93

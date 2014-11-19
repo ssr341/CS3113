@@ -52,6 +52,8 @@ void MainMenu::DrawText(int fontTexture, std::string text, float size, float spa
 	glTexCoordPointer(2, GL_FLOAT, 0, texCoordData.data());
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 	glDrawArrays(GL_QUADS, 0, text.size() * 4);
+
+	glDisableClientState(GL_COLOR_ARRAY);
 }
 
 int MainMenu::ProcessEvents(SDL_Event* event){
@@ -98,4 +100,5 @@ void MainMenu::Render(){
 	glLoadIdentity();
 	glTranslatef(-0.8f, -0.8f, 0.0f);
 	DrawText(screenText, "Press I for Instructions", 0.07f, 0.001f, 1.0f, 0.0f, 0.0f, 1.0f);
+
 }

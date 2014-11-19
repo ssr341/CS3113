@@ -455,7 +455,7 @@ int StageOne::fixedUpdate(float fixedElapsed){
 
 void StageOne::Render(){
 	glClear(GL_COLOR_BUFFER_BIT);
-
+	
 	player1.draw();
 	player2.draw();
 
