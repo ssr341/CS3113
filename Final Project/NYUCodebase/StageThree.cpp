@@ -3,6 +3,10 @@
 StageThree::StageThree(){
 	winner = 0;
 
+	hitsToKill = 2;
+	player1Hits = 0;
+	player2Hits = 0;
+
 	bulletIndex = 0;
 	enemyShot = 0.0f;
 	enemyBulletSize = 0.03f;
@@ -126,6 +130,8 @@ void StageThree::reset(){
 
 	bulletIndex = 0;
 
+	player1Hits = 0;
+	player2Hits = 0;
 	enemyShot = 0.0f;
 
 	player1Shot = 10.0f;
@@ -253,17 +259,29 @@ int StageThree::fixedUpdate(float fixedElapsed){
 	for (int i = 0; i < MAX_BULLETS; i++){
 		// if bullet is visible and colliding
 		if (bullets[i].visible && bullets[i].shooter != 0 && player1.collidesWith(bullets[i])){
-			Mix_PlayChannel(-1, explosionSound, 0);
-			winner = 2;
-			return winner;
+			if (player1Hits < hitsToKill - 1){
+				player1Hits++;
+				bullets[i].visible = false;
+			}
+			else{
+				Mix_PlayChannel(-1, explosionSound, 0);
+				winner = 2;
+				return winner;
+			}
 		}
 	}
 	for (int i = 0; i < MAX_BULLETS; i++){
 		// if bullet is visible and colliding
 		if (bullets[i].visible && bullets[i].shooter != 1 && player2.collidesWith(bullets[i])){
-			Mix_PlayChannel(-1, explosionSound, 0);
-			winner = 1;
-			return winner;
+			if (player2Hits < hitsToKill - 1){
+				player2Hits++;
+				bullets[i].visible = false;
+			}
+			else{
+				Mix_PlayChannel(-1, explosionSound, 0);
+				winner = 1;
+				return winner;
+			}
 		}
 	}
 

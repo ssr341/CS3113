@@ -77,6 +77,8 @@ bool ClassDemoApp::ProcessEvents(){
 				stage2Winner = 0;
 				gameWinner = 0;
 				stage1.reset();
+				stage2.reset();
+				stage3.reset();
 			}
 			break;
 		}

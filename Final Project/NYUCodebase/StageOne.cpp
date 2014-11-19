@@ -5,6 +5,10 @@ StageOne::StageOne(){
 
 	bulletIndex = 0;
 
+	hitsToKill = 2;
+	player1Hits = 0;
+	player2Hits = 0;
+
 	enemyShot = 0.0f;
 	enemyNum = 4;
 	enemyBulletSize = 0.025f;
@@ -157,6 +161,8 @@ void StageOne::reset(){
 
 	bulletIndex = 0;
 
+	player1Hits = 0;
+	player2Hits = 0;
 	enemyShot = 0.0f;
 
 	player1Shot = 10.0f;
@@ -391,23 +397,35 @@ int StageOne::fixedUpdate(float fixedElapsed){
 	for (int i = 0; i < MAX_BULLETS; i++){
 		// if bullet is visible and colliding
 		if (bullets[i].visible && bullets[i].shooter != 0 && player1.collidesWith(bullets[i])){
-			Mix_PlayChannel(-1, explosionSound, 0);
-			winner = 2;
-			return winner;
+			if (player1Hits < hitsToKill - 1){
+				player1Hits++;
+				bullets[i].visible = false;
+			}
+			else{
+				Mix_PlayChannel(-1, explosionSound, 0);
+				winner = 2;
+				return winner;
+			}
 		}
 	}
 	for (int i = 0; i < MAX_BULLETS; i++){
 		// if bullet is visible and colliding
 		if (bullets[i].visible && bullets[i].shooter != 1 && player2.collidesWith(bullets[i])){
-			Mix_PlayChannel(-1, explosionSound, 0);
-			winner = 1;
-			return winner;
+			if (player2Hits < hitsToKill - 1){
+				player2Hits++;
+				bullets[i].visible = false;
+			}
+			else{
+				Mix_PlayChannel(-1, explosionSound, 0);
+				winner = 1;
+				return winner;
+			}
 		}
 	}
 
 	// have enemy shoot bullet
 	enemyShot += fixedElapsed;
-	if (enemyShot >= 0.15f){    // shoot every 15 frames
+	if (enemyShot >= 0.10f){    // shoot every 10 frames
 		bool shot1 = false;  // was the bullet shot?
 		bool shot2 = false;  // was the bullet shot?
 		while (!shot1 && !shot2){

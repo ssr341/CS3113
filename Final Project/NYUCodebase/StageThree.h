@@ -41,6 +41,10 @@ private:
 
 	int winner; // winner of stage. 0 means gameplay still happening, 1 means player 1, 2 means player 2
 
+	int hitsToKill; // number of hits to kill a player
+	int player1Hits; // number of times player 1 has been shot
+	int player2Hits; // number of times player 2 has been shot
+
 	Entity player1;
 	Entity player2;
 	Entity enemy;
