@@ -161,6 +161,77 @@ void StageTwo::Init(){
 	}
 }
 
+// reset the stage. called when user wants to play again
+void StageTwo::reset(){
+	winner = 0;
+
+	bulletIndex = 0;
+
+	enemyShot = 0.0f;
+
+	player1Shot = 10.0f;
+	player2Shot = 10.0f;
+	player1ShotTime = 0.025f;
+	player2ShotTime = 0.025f;
+	player1KillCount = 0;
+	player2KillCount = 0;
+	player1BulletSize = 0.025f;
+	player1BulletSpeed = 2.0f;
+	player2BulletSize = 0.025f;
+	player2BulletSpeed = 2.0f;
+
+	player1.x = -1.13f;
+	player1.y = 0.0f;
+	player1.friction_y = 1.5f;
+	player1.acceleration_y = 0.0f;
+	player1.velocity_y = 0.0f;
+	player1.visible = true;
+
+	player2.x = 1.13f;
+	player2.y = 0.0f;
+	player2.friction_y = 1.5f;
+	player2.acceleration_y = 0.0f;
+	player2.velocity_y = 0.0f;
+	player2.visible = true;
+
+	asteroid.x = 0.0f;
+	asteroid.y = 0.0f;
+	asteroid.friction_y = 1.0f;
+	asteroid.acceleration_y = 0.5f;
+	asteroid.velocity_y = 0.0f;
+	asteroid.visible = true;
+
+	for (int i = 0; i < MAX_BULLETS; i++){
+		bullets[i].x = -10.0f;
+		bullets[i].y = -10.0f;
+		bullets[i].direction = 0.0f;
+		bullets[i].shooter = -1.0f;
+		bullets[i].speed = 0.0f;
+		bullets[i].size = 0.0f;
+	}
+
+	float enemyY = 0.3f;
+	for (size_t i = 0; i < enemyNum; i++){
+		enemies1[i]->x = -0.3f;;
+		enemies1[i]->y = enemyY;
+		enemies1[i]->velocity_y = 0.0f;
+		enemies1[i]->acceleration_y = -1.0f;
+		enemies1[i]->friction_y = 0.5f;
+		enemies1[i]->visible = true;
+		enemies1[i]->deadTime = 0.0f;
+
+		enemies2[i]->x = 0.3f;
+		enemies2[i]->y = enemyY;
+		enemies2[i]->velocity_y = 0.0f;
+		enemies2[i]->acceleration_y = -1.0f;
+		enemies2[i]->friction_y = 0.5f;
+		enemies2[i]->visible = true;
+		enemies2[i]->deadTime = 0.0f;
+
+		enemyY -= 0.2f;
+	}
+}
+
 void StageTwo::ProcessShoot(SDL_Event* event){
 	const Uint8* keys = SDL_GetKeyboardState(NULL);
 

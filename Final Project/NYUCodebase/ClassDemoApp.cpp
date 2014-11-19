@@ -53,9 +53,13 @@ bool ClassDemoApp::ProcessEvents(){
 		switch (state){
 		case STATE_MAIN_MENU:
 			state = menu.ProcessEvents(&event);
+			if (state != 0)
+				return done;
 			break;
 		case STATE_INSTRUCTIONS:
 			state = instructions.ProcessEvents(&event);
+			if (state != 1)
+				return done;
 			break;
 		case STATE_STAGE_ONE:
 			stage1.ProcessShoot(&event);
@@ -72,6 +76,7 @@ bool ClassDemoApp::ProcessEvents(){
 				stage1Winner = 0;
 				stage2Winner = 0;
 				gameWinner = 0;
+				stage1.reset();
 			}
 			break;
 		}

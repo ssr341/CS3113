@@ -29,6 +29,8 @@ public:
 
 	void shootBullet(float x, float y, float direction, float shooter, float size, float speed);
 
+	void reset();
+
 	Mix_Chunk* explosionSound; // sound when bullets collide
 	Mix_Chunk* shootingSound; // sound when bullets shot
 private:

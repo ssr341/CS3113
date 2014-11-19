@@ -120,6 +120,54 @@ void StageThree::Init(){
 	enemy.visible = true;
 }
 
+// reset the stage. called when user wants to play again
+void StageThree::reset(){
+	winner = 0;
+
+	bulletIndex = 0;
+
+	enemyShot = 0.0f;
+
+	player1Shot = 10.0f;
+	player2Shot = 10.0f;
+	player1ShotTime = 0.0125f;
+	player2ShotTime = 0.0125f;
+	player1BulletSize = 0.04f;
+	player1BulletSpeed = 4.0f;
+	player2BulletSize = 0.04f;
+	player2BulletSpeed = 4.0f;
+
+	player1.x = -1.13f;
+	player1.y = 0.0f;
+	player1.friction_y = 1.5f;
+	player1.acceleration_y = 0.0f;
+	player1.velocity_y = 0.0f;
+	player1.visible = true;
+
+	player2.x = 1.13f;
+	player2.y = 0.0f;
+	player2.friction_y = 1.5f;
+	player2.acceleration_y = 0.0f;
+	player2.velocity_y = 0.0f;
+	player2.visible = true;
+
+	for (int i = 0; i < MAX_BULLETS; i++){
+		bullets[i].x = -10.0f;
+		bullets[i].y = -10.0f;
+		bullets[i].direction = 0.0f;
+		bullets[i].shooter = -1.0f;
+		bullets[i].speed = 0.0f;
+		bullets[i].size = 0.0f;
+	}
+
+	enemy.x = 0.0f;
+	enemy.y = 0.0f;
+	enemy.velocity_y = 0.0f;
+	enemy.acceleration_y = 0.5f;
+	enemy.friction_y = 1.0f;
+	enemy.visible = true;
+}
+
 void StageThree::ProcessShoot(SDL_Event* event){
 	const Uint8* keys = SDL_GetKeyboardState(NULL);
 
