@@ -45,9 +45,10 @@ private:
 	StageThree stage3;
 	GameOver gameOver;
 
-	float stage1Winner;
-	float stage2Winner;
-	float gameWinner;
+	int winner;
+	int stage1Winner;
+	int stage2Winner;
+	int gameWinner;
 
 	Mix_Music* music;   // music that plays whole game
 

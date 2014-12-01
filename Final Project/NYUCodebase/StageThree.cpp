@@ -174,23 +174,29 @@ void StageThree::reset(){
 	enemy.visible = true;
 }
 
-void StageThree::ProcessShoot(SDL_Event* event){
+void StageThree::ProcessShoot(SDL_Event* event, bool& done){
 	const Uint8* keys = SDL_GetKeyboardState(NULL);
 
 	if (event->type == SDL_KEYDOWN) {
-		if (event->key.keysym.scancode == SDL_SCANCODE_F) {
+		// player 1 shoot
+		if (event->key.keysym.scancode == SDL_SCANCODE_W) {
 			if (player1Shot > player1ShotTime){
 				player1Shot = 0.0;
 				shootBullet(player1.x, player1.y, 1.0, 0, player1BulletSize, player1BulletSpeed);
 				Mix_PlayChannel(-1, shootingSound, 0);
 			}
 		}
+		// player 2 shoot
 		if (event->key.keysym.scancode == SDL_SCANCODE_KP_0) {
 			if (player2Shot > player2ShotTime){
 				player2Shot = 0.0;
 				shootBullet(player2.x, player2.y, -1.0, 1, player2BulletSize, player2BulletSpeed);
 				Mix_PlayChannel(-1, shootingSound, 0);
 			}
+		}
+		// if esc is pressed quit
+		if (event->key.keysym.scancode == SDL_SCANCODE_ESCAPE){
+			done = true;
 		}
 	}
 }
@@ -199,12 +205,12 @@ void StageThree::ProcessEvents(){
 	player1.acceleration_y = 0.0f;
 	player2.acceleration_y = 0.0f;
 	const Uint8* keys = SDL_GetKeyboardState(NULL);
-	// e, d and f keys used by player 1
-	if (keys[SDL_SCANCODE_E]){
+	// w, s and f keys used by player 1
+	if (keys[SDL_SCANCODE_W]){
 		// if e pressed, set acceleration positive
 		player1.acceleration_y = 4.5f;
 	}
-	if (keys[SDL_SCANCODE_D]){
+	if (keys[SDL_SCANCODE_S]){
 		// if d pressed, set acceleration negative
 		player1.acceleration_y = -4.5f;
 	}
@@ -217,10 +223,6 @@ void StageThree::ProcessEvents(){
 	if (keys[SDL_SCANCODE_DOWN]){
 		// if down pressed, set acceleration negative
 		player2.acceleration_y = -4.5f;
-	}
-	// if q is pressed quit
-	if (keys[SDL_SCANCODE_Q] == 1){
-		SDL_Quit();
 	}
 
 }

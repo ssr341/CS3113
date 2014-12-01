@@ -56,7 +56,7 @@ void Instructions::DrawText(int fontTexture, std::string text, float size, float
 	glDisableClientState(GL_COLOR_ARRAY);
 }
 
-int Instructions::ProcessEvents(SDL_Event* event){
+int Instructions::ProcessEvents(SDL_Event* event, bool& done){
 	const Uint8* keys = SDL_GetKeyboardState(NULL);
 	int state = 1;
 
@@ -64,9 +64,9 @@ int Instructions::ProcessEvents(SDL_Event* event){
 		// if space is pressed move to stage select
 		if (event->key.keysym.scancode == SDL_SCANCODE_SPACE)
 			state = 2;
-		// if q is pressed quit
-		if (event->key.keysym.scancode == SDL_SCANCODE_Q)
-			SDL_Quit();
+		// if esc is pressed quit
+		if (event->key.keysym.scancode == SDL_SCANCODE_ESCAPE)
+			done = true;
 	}
 
 	return state;
@@ -78,7 +78,7 @@ void Instructions::Render(){
 
 	glLoadIdentity();
 	glTranslatef(-1.3, 0.9, 0.0);
-	DrawText(screenText, "Press Q at any time to quit", 0.03f, 0.001f, 1.0f, 1.0f, 0.0f, 1.0f);
+	DrawText(screenText, "Press Escape at any time to quit", 0.03f, 0.001f, 1.0f, 1.0f, 0.0f, 1.0f);
 
 	glLoadIdentity();
 	glTranslatef(-1.25, 0.75, 0.0);
@@ -90,7 +90,7 @@ void Instructions::Render(){
 
 	glLoadIdentity();
 	glTranslatef(-1.25, 0.6, 0.0);
-	DrawText(screenText, "E to move up", 0.05f, 0.001f, 1.0f, 1.0f, 0.0f, 1.0f);
+	DrawText(screenText, "W to move up", 0.05f, 0.001f, 1.0f, 1.0f, 0.0f, 1.0f);
 
 	glLoadIdentity();
 	glTranslatef(0.4, 0.6, 0.0);
@@ -98,7 +98,7 @@ void Instructions::Render(){
 
 	glLoadIdentity();
 	glTranslatef(-1.25, 0.5, 0.0);
-	DrawText(screenText, "D to move down", 0.05f, 0.001f, 1.0f, 1.0f, 0.0f, 1.0f);
+	DrawText(screenText, "S to move down", 0.05f, 0.001f, 1.0f, 1.0f, 0.0f, 1.0f);
 
 	glLoadIdentity();
 	glTranslatef(0.4, 0.5, 0.0);
@@ -118,7 +118,7 @@ void Instructions::Render(){
 
 	glLoadIdentity();
 	glTranslatef(-1.25, 0.1, 0.0);
-	DrawText(screenText, "One shot means death", 0.05f, 0.001f, 1.0f, 1.0f, 0.0f, 1.0f);
+	DrawText(screenText, "Two shots mean death", 0.05f, 0.001f, 1.0f, 1.0f, 0.0f, 1.0f);
 
 	glLoadIdentity();
 	glTranslatef(-1.25, 0.0, 0.0);

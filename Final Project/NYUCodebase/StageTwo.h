@@ -22,7 +22,7 @@ public:
 	void DrawText(int fontTexture, std::string text, float size, float spacing, float r, float g, float b, float a);
 
 	void Init();
-	void ProcessShoot(SDL_Event* event);
+	void ProcessShoot(SDL_Event* event, bool& done);
 	void ProcessEvents();
 	void Render();
 	int fixedUpdate(float fixedElapsed);

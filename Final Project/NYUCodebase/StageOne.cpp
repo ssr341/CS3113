@@ -2,6 +2,7 @@
 
 StageOne::StageOne(){
 	winner = 0;
+	freeze = false;
 
 	bulletIndex = 0;
 
@@ -116,6 +117,16 @@ void StageOne::Init(){
 	player2.velocity_y = 0.0f;
 	player2.visible = true;
 
+	sparkle.textureID = LoadTexture("sparkle.png");
+	sparkle.x = -100.0f;
+	sparkle.y = -100.0f;
+	sparkle.height = 0.05f;
+	sparkle.width = 0.05f;
+	sparkle.friction_y = 0.0f;
+	sparkle.acceleration_y = 0.0f;
+	sparkle.velocity_y = 0.0f;
+	sparkle.visible = false;
+
 	// bullet texture
 	for (int i = 0; i < MAX_BULLETS; i++)
 		bullets[i].textureID = LoadTexture("laserBlue03.png");
@@ -200,7 +211,7 @@ void StageOne::reset(){
 	}
 
 	float enemyY = 0.3f;
-	for (size_t i = 0; i < enemyNum; i++){
+	for (int i = 0; i < enemyNum; i++){
 		enemies1[i]->x = -0.1f;;
 		enemies1[i]->y = enemyY;
 		enemies1[i]->velocity_y = 0.0f;
@@ -221,10 +232,11 @@ void StageOne::reset(){
 	}
 }
 
-void StageOne::ProcessShoot(SDL_Event* event){
+void StageOne::ProcessShoot(SDL_Event* event, bool& done){
 	const Uint8* keys = SDL_GetKeyboardState(NULL);
 
 	if (event->type == SDL_KEYDOWN) {
+		// player 1 shoot
 		if (event->key.keysym.scancode == SDL_SCANCODE_F) {
 			if (player1Shot > player1ShotTime){
 				player1Shot = 0.0;
@@ -232,12 +244,17 @@ void StageOne::ProcessShoot(SDL_Event* event){
 				Mix_PlayChannel(-1, shootingSound, 0);
 			}
 		}
+		// player 2 shoot
 		if (event->key.keysym.scancode == SDL_SCANCODE_KP_0) {
 			if (player2Shot > player2ShotTime){
 				player2Shot = 0.0;
 				shootBullet(player2.x, player2.y, -1.0, 1, player2BulletSize, player2BulletSpeed);
 				Mix_PlayChannel(-1, shootingSound, 0);
 			}
+		}
+		// if esc is pressed quit
+		if (event->key.keysym.scancode == SDL_SCANCODE_ESCAPE){
+			done = true;
 		}
 	}
 }
@@ -246,15 +263,15 @@ void StageOne::ProcessEvents(){
 	player1.acceleration_y = 0.0f;
 	player2.acceleration_y = 0.0f;
 	const Uint8* keys = SDL_GetKeyboardState(NULL);
-	// w, s and c keys used by player 1
-	if (keys[SDL_SCANCODE_E]){
+	// w, s and f keys used by player 1
+	if (keys[SDL_SCANCODE_W]){
 		// if w pressed, set acceleration positive
 		if (player1KillCount >= 10)
 			player1.acceleration_y = 4.5f;
 		else
 			player1.acceleration_y = 3.5f;
 	}
-	if (keys[SDL_SCANCODE_D]){			
+	if (keys[SDL_SCANCODE_S]){			
 		// if s pressed, set acceleration negative
 		if (player1KillCount >= 10)
 			player1.acceleration_y = -4.5f;
@@ -277,198 +294,217 @@ void StageOne::ProcessEvents(){
 		else
 			player2.acceleration_y = -3.5f;
 	}
-	// if q is pressed quit
-	if (keys[SDL_SCANCODE_Q] == 1){
-		SDL_Quit();
-	}
 
 }
 
 int StageOne::fixedUpdate(float fixedElapsed){
-	// run fixed update for everything
-	player1.fixedUpdate();
-	player2.fixedUpdate();
-	for (size_t i = 0; i < enemies1.size(); i++){
-		enemies1[i]->fixedUpdate();
-		//enemies1[i]->y += enemies1[i]->velocity_y * FIXED_TIMESTEP;
-	}
-	for (size_t i = 0; i < enemies2.size(); i++){
-		enemies2[i]->fixedUpdate();
-		//enemies2[i]->y += enemies2[i]->velocity_y * FIXED_TIMESTEP;
-	}
-
-	// screen boundaries
-	if (player1.y > 0.85)
-		player1.y = 0.85;
-	if (player2.y > 0.85)
-		player2.y = 0.85;
-	if (player1.y < -0.85)
-		player1.y = -0.85;
-	if (player2.y < -0.85)
-		player2.y = -0.85;
-
-	// have enemies reverse when they meet edge of screen
-	if (enemies1[0]->y >= 0.5){
+	if (!freeze){
+		// run fixed update for everything
+		player1.fixedUpdate();
+		player2.fixedUpdate();
 		for (size_t i = 0; i < enemies1.size(); i++){
-			enemies1[i]->acceleration_y = -1.0f;
+			enemies1[i]->fixedUpdate();
+			//enemies1[i]->y += enemies1[i]->velocity_y * FIXED_TIMESTEP;
 		}
-	}
-	if (enemies1[enemyNum - 1]->y <= -0.5){
-		for (size_t i = 0; i < enemies1.size(); i++){
-			enemies1[i]->acceleration_y = 1.0f;
-		}
-	}
-	if (enemies2[0]->y >= 0.5){
 		for (size_t i = 0; i < enemies2.size(); i++){
-			enemies2[i]->acceleration_y = -1.0f;
+			enemies2[i]->fixedUpdate();
+			//enemies2[i]->y += enemies2[i]->velocity_y * FIXED_TIMESTEP;
 		}
-	}
-	if (enemies2[enemyNum - 1]->y <= -0.5){
-		for (size_t i = 0; i < enemies2.size(); i++){
-			enemies2[i]->acceleration_y = 1.0f;
-		}
-	}
 
-	// check for enemy collision with bullets
-	for (size_t i = 0; i < enemies1.size(); i++){
-		for (int j = 0; j < MAX_BULLETS; j++){
-			// if enemy already dead ignore
-			if (enemies1[i]->visible && bullets[j].visible && bullets[j].shooter != 2){
-				// if bullet is visible and colliding
-				if (enemies1[i]->collidesWith(bullets[j])){
-					// make enemy and bullet invisible
-					Mix_PlayChannel(-1, explosionSound, 0);
-					enemies1[i]->visible = false;
-					bullets[j].visible = false;
-					if (bullets[j].shooter == 0)
-						player1KillCount++;
-					if (bullets[j].shooter == 1)
-						player2KillCount++;
+		// screen boundaries
+		if (player1.y > 0.85f)
+			player1.y = 0.85f;
+		if (player2.y > 0.85f)
+			player2.y = 0.85f;
+		if (player1.y < -0.85f)
+			player1.y = -0.85f;
+		if (player2.y < -0.85f)
+			player2.y = -0.85f;
+
+		// have enemies reverse when they meet edge of screen
+		if (enemies1[0]->y >= 0.5){
+			for (size_t i = 0; i < enemies1.size(); i++){
+				enemies1[i]->acceleration_y = -1.0f;
+			}
+		}
+		if (enemies1[enemyNum - 1]->y <= -0.5){
+			for (size_t i = 0; i < enemies1.size(); i++){
+				enemies1[i]->acceleration_y = 1.0f;
+			}
+		}
+		if (enemies2[0]->y >= 0.5){
+			for (size_t i = 0; i < enemies2.size(); i++){
+				enemies2[i]->acceleration_y = -1.0f;
+			}
+		}
+		if (enemies2[enemyNum - 1]->y <= -0.5){
+			for (size_t i = 0; i < enemies2.size(); i++){
+				enemies2[i]->acceleration_y = 1.0f;
+			}
+		}
+
+		// check for enemy collision with bullets
+		for (size_t i = 0; i < enemies1.size(); i++){
+			for (int j = 0; j < MAX_BULLETS; j++){
+				// if enemy already dead ignore
+				if (enemies1[i]->visible && bullets[j].visible && bullets[j].shooter != 2){
+					// if bullet is visible and colliding
+					if (enemies1[i]->collidesWith(bullets[j])){
+						// make enemy and bullet invisible
+						Mix_PlayChannel(-1, explosionSound, 0);
+						enemies1[i]->visible = false;
+						bullets[j].visible = false;
+						if (bullets[j].shooter == 0)
+							player1KillCount++;
+						if (bullets[j].shooter == 1)
+							player2KillCount++;
+					}
 				}
 			}
 		}
-	}
 
-	// check for enemy collision with bullets
-	for (size_t i = 0; i < enemies2.size(); i++){
-		for (int j = 0; j < MAX_BULLETS; j++){
-			// if enemy already dead ignore
-			if (enemies2[i]->visible && bullets[j].visible && bullets[j].shooter != 3){
-				// if bullet is visible and colliding
-				if (enemies2[i]->collidesWith(bullets[j])){
-					// make enemy and bullet invisible
-					Mix_PlayChannel(-1, explosionSound, 0);
-					enemies2[i]->visible = false;
-					bullets[j].visible = false;
-					if (bullets[j].shooter == 0)
-						player1KillCount++;
-					if (bullets[j].shooter == 1)
-						player2KillCount++;
+		// check for enemy collision with bullets
+		for (size_t i = 0; i < enemies2.size(); i++){
+			for (int j = 0; j < MAX_BULLETS; j++){
+				// if enemy already dead ignore
+				if (enemies2[i]->visible && bullets[j].visible && bullets[j].shooter != 3){
+					// if bullet is visible and colliding
+					if (enemies2[i]->collidesWith(bullets[j])){
+						// make enemy and bullet invisible
+						Mix_PlayChannel(-1, explosionSound, 0);
+						enemies2[i]->visible = false;
+						bullets[j].visible = false;
+						if (bullets[j].shooter == 0)
+							player1KillCount++;
+						if (bullets[j].shooter == 1)
+							player2KillCount++;
+					}
 				}
 			}
 		}
-	}
 
-	// update respawn timers
-	for (size_t i = 0; i < enemies1.size(); i++){
-		if (!enemies1[i]->visible)
-			enemies1[i]->deadTime += fixedElapsed;
-	}
-	for (size_t i = 0; i < enemies2.size(); i++){
-		if (!enemies2[i]->visible)
-			enemies1[i]->deadTime += fixedElapsed;
-	}
-
-	// check for respawns
-	for (size_t i = 0; i < enemies1.size(); i++){
-		if (!enemies1[i]->visible && enemies1[i]->deadTime > respawnTimer){
-			enemies1[i]->visible = true;
-			enemies1[i]->deadTime = 0.0;
-		}	
-	}
-	for (size_t i = 0; i < enemies2.size(); i++){
-		if (!enemies2[i]->visible && enemies2[i]->deadTime > respawnTimer){
-			enemies2[i]->visible = true;
-			enemies2[i]->deadTime = 0.0;
+		// update respawn timers
+		for (size_t i = 0; i < enemies1.size(); i++){
+			if (!enemies1[i]->visible)
+				enemies1[i]->deadTime += fixedElapsed;
 		}
-	}
+		for (size_t i = 0; i < enemies2.size(); i++){
+			if (!enemies2[i]->visible)
+				enemies1[i]->deadTime += fixedElapsed;
+		}
 
-	// check for bullet collision with player
-	for (int i = 0; i < MAX_BULLETS; i++){
-		// if bullet is visible and colliding
-		if (bullets[i].visible && bullets[i].shooter != 0 && player1.collidesWith(bullets[i])){
-			if (player1Hits < hitsToKill - 1){
-				player1Hits++;
-				bullets[i].visible = false;
-			}
-			else{
-				Mix_PlayChannel(-1, explosionSound, 0);
-				winner = 2;
-				return winner;
+		// check for respawns
+		for (size_t i = 0; i < enemies1.size(); i++){
+			if (!enemies1[i]->visible && enemies1[i]->deadTime > respawnTimer){
+				enemies1[i]->visible = true;
+				enemies1[i]->deadTime = 0.0;
 			}
 		}
-	}
-	for (int i = 0; i < MAX_BULLETS; i++){
-		// if bullet is visible and colliding
-		if (bullets[i].visible && bullets[i].shooter != 1 && player2.collidesWith(bullets[i])){
-			if (player2Hits < hitsToKill - 1){
-				player2Hits++;
-				bullets[i].visible = false;
-			}
-			else{
-				Mix_PlayChannel(-1, explosionSound, 0);
-				winner = 1;
-				return winner;
+		for (size_t i = 0; i < enemies2.size(); i++){
+			if (!enemies2[i]->visible && enemies2[i]->deadTime > respawnTimer){
+				enemies2[i]->visible = true;
+				enemies2[i]->deadTime = 0.0;
 			}
 		}
-	}
 
-	// have enemy shoot bullet
-	enemyShot += fixedElapsed;
-	if (enemyShot >= 0.10f){    // shoot every 10 frames
-		bool shot1 = false;  // was the bullet shot?
-		bool shot2 = false;  // was the bullet shot?
-		while (!shot1 && !shot2){
-			int enemyBulletX = rand() % (enemyNum);
-			if (enemies1[enemyBulletX]->visible && !shot1){
-				Mix_PlayChannel(-1, shootingSound, 0);
-				shootBullet(enemies1[enemyBulletX]->x, enemies1[enemyBulletX]->y, -1.0f, 2, enemyBulletSize, enemyBulletSpeed);
-				shot1 = true;
-			}
-			if (enemies2[enemyBulletX]->visible && !shot2){
-				Mix_PlayChannel(-1, shootingSound, 0);
-				shootBullet(enemies2[enemyBulletX]->x, enemies2[enemyBulletX]->y, 1.0f, 3, enemyBulletSize, enemyBulletSpeed);
-				shot2 = true;
+		// check for bullet collision with player
+		for (int i = 0; i < MAX_BULLETS; i++){
+			// if bullet is visible and colliding
+			if (bullets[i].visible && bullets[i].shooter != 0 && player1.collidesWith(bullets[i])){
+				if (player1Hits < hitsToKill - 1){
+					player1Hits++;
+					bullets[i].visible = false;
+				}
+				else{
+					Mix_PlayChannel(-1, explosionSound, 0);
+					winner = 2;
+					freeze = true;
+					return winner;
+				}
 			}
 		}
-		enemyShot = 0;
+		for (int i = 0; i < MAX_BULLETS; i++){
+			// if bullet is visible and colliding
+			if (bullets[i].visible && bullets[i].shooter != 1 && player2.collidesWith(bullets[i])){
+				if (player2Hits < hitsToKill - 1){
+					player2Hits++;
+					bullets[i].visible = false;
+				}
+				else{
+					Mix_PlayChannel(-1, explosionSound, 0);
+					winner = 1;
+					freeze = true;
+					return winner;
+				}
+			}
+		}
+
+		// have enemy shoot bullet
+		enemyShot += fixedElapsed;
+		if (enemyShot >= 0.10f){    // shoot every 10 frames
+			bool shot1 = false;  // was the bullet shot?
+			bool shot2 = false;  // was the bullet shot?
+			while (!shot1 && !shot2){
+				int enemyBulletX = rand() % (enemyNum);
+				if (enemies1[enemyBulletX]->visible && !shot1){
+					Mix_PlayChannel(-1, shootingSound, 0);
+					shootBullet(enemies1[enemyBulletX]->x, enemies1[enemyBulletX]->y, -1.0f, 2, enemyBulletSize, enemyBulletSpeed);
+					shot1 = true;
+				}
+				if (enemies2[enemyBulletX]->visible && !shot2){
+					Mix_PlayChannel(-1, shootingSound, 0);
+					shootBullet(enemies2[enemyBulletX]->x, enemies2[enemyBulletX]->y, 1.0f, 3, enemyBulletSize, enemyBulletSpeed);
+					shot2 = true;
+				}
+			}
+			enemyShot = 0;
+		}
+
+		// update position of each bullet
+		for (int i = 0; i < MAX_BULLETS; i++){
+			/*bullets[i].Update(fixedElapsed);*/
+			bullets[i].fixedUpdate();
+		}
+
+		// update player shot timers
+		player1Shot += fixedElapsed;
+		player2Shot += fixedElapsed;
+
+		// update for powerups
+		if (player1KillCount >= 3 && player1BulletSpeed == 2.0f)
+			player1BulletSpeed *= 2.0f;
+		if (player1KillCount >= 6 && player1BulletSize == 0.025f)
+			player1BulletSize = 0.04f;
+		if (player2KillCount >= 3 && player2BulletSpeed == 2.0f)
+			player2BulletSpeed *= 2.0f;
+		if (player2KillCount >= 6 && player2BulletSize == 0.025f)
+			player2BulletSize = 0.04f;
+		if (player1KillCount >= 10 && player1ShotTime == 0.025f)
+			player1ShotTime /= 2.0f;
+		if (player2KillCount >= 10 && player2ShotTime == 0.025f)
+			player2ShotTime /= 2.0f;
 	}
-
-	// update position of each bullet
-	for (int i = 0; i < MAX_BULLETS; i++){
-		/*bullets[i].Update(fixedElapsed);*/
-		bullets[i].fixedUpdate();
-	}
-
-	// update player shot timers
-	player1Shot += fixedElapsed;
-	player2Shot += fixedElapsed;
-
-	// update for powerups
-	if (player1KillCount >= 3 && player1BulletSpeed == 2.0f)
-		player1BulletSpeed *= 2.0f;
-	if (player1KillCount >= 6 && player1BulletSize == 0.025f)
-		player1BulletSize = 0.04f;
-	if (player2KillCount >= 3 && player2BulletSpeed == 2.0f)
-		player2BulletSpeed *= 2.0f;
-	if (player2KillCount >= 6 && player2BulletSize == 0.025f)
-		player2BulletSize = 0.04f;
-	if (player1KillCount >= 10 && player1ShotTime == 0.025f)
-		player1ShotTime /= 2.0f;
-	if (player2KillCount >= 10 && player2ShotTime == 0.025f)
-		player2ShotTime /= 2.0f;
-
 	return winner;
+}
+
+bool StageOne::explosion(float fixedElapsed){
+	sparkle.visible = true;
+	explosionTime += fixedElapsed;
+	// set sparkle over the loser
+	if (winner == 1){
+		sparkle.x = player2.x;
+		sparkle.y = player2.y;
+	}
+	if (winner == 2){
+		sparkle.x = player1.x;
+		sparkle.y = player1.y;
+	}
+	// have sparkle grow over time
+	sparkle.height *= explosionTime / 2;
+	sparkle.width *= explosionTime / 2;
+	if (sparkle.height > 2.0)
+		return true;
+	return false;
 }
 
 void StageOne::Render(){
@@ -486,12 +522,15 @@ void StageOne::Render(){
 			enemies2[i]->draw();
 	}
 
-	for (int i = 0; i < MAX_BULLETS; i++){
-		// only draw bullets that haven't collided or are on screen
-		if (bullets[i].visible)
-			bullets[i].Draw();
+	if (!freeze){
+		for (int i = 0; i < MAX_BULLETS; i++){
+			// only draw bullets that haven't collided or are on screen
+			if (bullets[i].visible)
+				bullets[i].Draw();
+		}
 	}
-
+	if (freeze)
+		sparkle.draw();
 }
 
 // shoots bullet at specified location

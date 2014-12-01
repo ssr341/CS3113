@@ -56,7 +56,7 @@ void MainMenu::DrawText(int fontTexture, std::string text, float size, float spa
 	glDisableClientState(GL_COLOR_ARRAY);
 }
 
-int MainMenu::ProcessEvents(SDL_Event* event){
+int MainMenu::ProcessEvents(SDL_Event* event, bool& done){
 	const Uint8* keys = SDL_GetKeyboardState(NULL);
 	int state = 0;
 
@@ -67,9 +67,9 @@ int MainMenu::ProcessEvents(SDL_Event* event){
 		// if i is pressed move to instructions
 		if (event->key.keysym.scancode == SDL_SCANCODE_I) 
 			state = 1;
-		// if q is pressed quit
-		if (event->key.keysym.scancode == SDL_SCANCODE_Q)
-			SDL_Quit();
+		// if escape is pressed quit
+		if (event->key.keysym.scancode == SDL_SCANCODE_ESCAPE)
+			done = true;
 	}
 
 	return state;
@@ -83,7 +83,7 @@ void MainMenu::Render(){
 	
 	glLoadIdentity();
 	glTranslatef(-1.3, 0.9, 0.0);
-	DrawText(screenText, "Press Q at any time to quit", 0.03f, 0.001f, 1.0f, 1.0f, 0.0f, 1.0f);
+	DrawText(screenText, "Press Esc at any time to quit", 0.03f, 0.001f, 1.0f, 1.0f, 0.0f, 1.0f);
 
 	glLoadIdentity();
 	glTranslatef(-0.35, 0.25, 0.0);

@@ -46,32 +46,32 @@ ClassDemoApp::~ClassDemoApp(){
 bool ClassDemoApp::ProcessEvents(){
 	SDL_Event event;
 
-	while (SDL_PollEvent(&event)) {
+	while (SDL_PollEvent(&event) && !done) {
 		if (event.type == SDL_QUIT || event.type == SDL_WINDOWEVENT_CLOSE) {
 			done = true;
 		}
 		switch (state){
 		case STATE_MAIN_MENU:
-			state = menu.ProcessEvents(&event);
+			state = menu.ProcessEvents(&event, done);
 			if (state != 0)
 				return done;
 			break;
 		case STATE_INSTRUCTIONS:
-			state = instructions.ProcessEvents(&event);
+			state = instructions.ProcessEvents(&event, done);
 			if (state != 1)
 				return done;
 			break;
 		case STATE_STAGE_ONE:
-			stage1.ProcessShoot(&event);
+			stage1.ProcessShoot(&event, done);
 			break;
 		case STATE_STAGE_TWO:
-			stage2.ProcessShoot(&event);
+			stage2.ProcessShoot(&event, done);
 			break;
 		case STATE_STAGE_THREE:
-			stage3.ProcessShoot(&event);
+			stage3.ProcessShoot(&event, done);
 			break;
 		case STATE_GAME_OVER:
-			state = gameOver.ProcessEvents(&event);
+			state = gameOver.ProcessEvents(&event, done);
 			if (state == 0){
 				stage1Winner = 0;
 				stage2Winner = 0;
@@ -99,17 +99,20 @@ bool ClassDemoApp::ProcessEvents(){
 }
 
 void ClassDemoApp::fixedUpdate(float fixedElapsed){
-	int winner = 0;
+	//int winner = 0;
 	switch (state) {
 	case STATE_STAGE_ONE:
-		winner = stage1.fixedUpdate(fixedElapsed);
+		if (winner == 0)
+			winner = stage1.fixedUpdate(fixedElapsed);
 		if (winner == 1){
 			stage1Winner = 1;
-			state++;
+			if (stage1.explosion(fixedElapsed))
+				state++;
 		}
 		if (winner == 2){
 			stage1Winner = 2;
-			state++;
+			if (stage1.explosion(fixedElapsed))
+				state++;
 		}
 		break;
 	case STATE_STAGE_TWO:

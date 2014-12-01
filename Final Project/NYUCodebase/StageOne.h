@@ -22,12 +22,14 @@ public:
 	void DrawText(int fontTexture, std::string text, float size, float spacing, float r, float g, float b, float a);
 
 	void Init();
-	void ProcessShoot(SDL_Event* event);
+	void ProcessShoot(SDL_Event* event, bool& done);
 	void ProcessEvents();
 	void Render();
 	int fixedUpdate(float fixedElapsed);
 
 	void shootBullet(float x, float y, float direction, float shooter, float size, float speed);
+
+	bool explosion(float fixedElapsed);
 
 	void reset();
 
@@ -46,11 +48,16 @@ private:
 	int player2Hits; // number of times player 2 has been shot
 
 	int winner; // winner of stage. 0 means gameplay still happening, 1 means player 1, 2 means player 2
+	bool freeze; // freeze movement when someone dies
 
 	Entity player1;
 	Entity player2;
 	std::vector<Entity*> enemies1;
 	std::vector<Entity*> enemies2;
+
+	// used in explosion
+	Entity sparkle;
+	float explosionTime;
 
 	// powerups
 	float player1Shot; // current time between shots

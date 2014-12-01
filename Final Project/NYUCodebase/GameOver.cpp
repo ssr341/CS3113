@@ -20,7 +20,7 @@ GLuint GameOver::LoadTexture(const char *image_path) {
 	return textureID;
 }
 
-int GameOver::ProcessEvents(SDL_Event* event){
+int GameOver::ProcessEvents(SDL_Event* event, bool& done){
 	const Uint8* keys = SDL_GetKeyboardState(NULL);
 	int state = 5;
 
@@ -28,9 +28,9 @@ int GameOver::ProcessEvents(SDL_Event* event){
 		// if space is pressed move to stage select
 		if (event->key.keysym.scancode == SDL_SCANCODE_SPACE)
 			state = 0;
-		// if q is pressed quit
-		if (event->key.keysym.scancode == SDL_SCANCODE_Q)
-			SDL_Quit();
+		// if esc is pressed quit
+		if (event->key.keysym.scancode == SDL_SCANCODE_ESCAPE)
+			done = true;
 	}
 
 	return state;
