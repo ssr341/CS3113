@@ -6,9 +6,14 @@ StageOne::StageOne(){
 
 	bulletIndex = 0;
 
+	screenShake = false;
+	stageAnimationTime = 0.0f;
+	screenShakeValue = 0.0f;
+
 	hitsToKill = 2;
 	player1Hits = 0;
 	player2Hits = 0;
+	explosionTime = 0.0f;
 
 	enemyShot = 0.0f;
 	enemyNum = 4;
@@ -107,6 +112,16 @@ void StageOne::Init(){
 	player1.velocity_y = 0.0f;
 	player1.visible = true;
 
+	player1shield.textureID = LoadTexture("ring.png");
+	player1shield.height = 0.25f;
+	player1shield.width = 0.25f;
+	player1shield.x = -1.13f;
+	player1shield.y = 0.0f;
+	player1shield.friction_y = 0.0f;
+	player1shield.acceleration_y = 0.0f;
+	player1shield.velocity_y = 0.0f;
+	player1shield.visible = true;
+
 	player2.textureID = LoadTexture("playerShip2.png");
 	player2.height = 0.25f;
 	player2.width = 0.25f;
@@ -175,6 +190,7 @@ void StageOne::reset(){
 	player1Hits = 0;
 	player2Hits = 0;
 	enemyShot = 0.0f;
+	explosionTime = 0.0f;
 
 	player1Shot = 10.0f;
 	player2Shot = 10.0f;
@@ -200,6 +216,15 @@ void StageOne::reset(){
 	player2.acceleration_y = 0.0f;
 	player2.velocity_y = 0.0f;
 	player2.visible = true;
+
+	sparkle.x = -100.0f;
+	sparkle.y = -100.0f;
+	sparkle.height = 0.05f;
+	sparkle.width = 0.05f;
+	sparkle.friction_y = 0.0f;
+	sparkle.acceleration_y = 0.0f;
+	sparkle.velocity_y = 0.0f;
+	sparkle.visible = false;
 
 	for (int i = 0; i < MAX_BULLETS; i++){
 		bullets[i].x = -10.0f;
@@ -311,6 +336,10 @@ int StageOne::fixedUpdate(float fixedElapsed){
 			//enemies2[i]->y += enemies2[i]->velocity_y * FIXED_TIMESTEP;
 		}
 
+		// update shield to player position
+		player1shield.x = player1.x;
+		player1shield.y = player1.y;
+
 		// screen boundaries
 		if (player1.y > 0.85f)
 			player1.y = 0.85f;
@@ -412,6 +441,7 @@ int StageOne::fixedUpdate(float fixedElapsed){
 			// if bullet is visible and colliding
 			if (bullets[i].visible && bullets[i].shooter != 0 && player1.collidesWith(bullets[i])){
 				if (player1Hits < hitsToKill - 1){
+					screenShake = true;
 					player1Hits++;
 					bullets[i].visible = false;
 				}
@@ -427,6 +457,7 @@ int StageOne::fixedUpdate(float fixedElapsed){
 			// if bullet is visible and colliding
 			if (bullets[i].visible && bullets[i].shooter != 1 && player2.collidesWith(bullets[i])){
 				if (player2Hits < hitsToKill - 1){
+					screenShake = true;
 					player2Hits++;
 					bullets[i].visible = false;
 				}
@@ -469,6 +500,10 @@ int StageOne::fixedUpdate(float fixedElapsed){
 		// update player shot timers
 		player1Shot += fixedElapsed;
 		player2Shot += fixedElapsed;
+		
+		// update screen shake stuff
+		stageAnimationTime += fixedElapsed;
+		screenShakeValue += fixedElapsed;
 
 		// update for powerups
 		if (player1KillCount >= 3 && player1BulletSpeed == 2.0f)
@@ -509,8 +544,23 @@ bool StageOne::explosion(float fixedElapsed){
 
 void StageOne::Render(){
 	glClear(GL_COLOR_BUFFER_BIT);
+
+	glMatrixMode(GL_MODELVIEW);
+	glPushMatrix();
+	// if player collision shake screen
+	if (screenShake){
+		float animationValue;
+		animationValue = mapValue(stageAnimationTime, 0.0, 1.0, 0.0, 1.0);
+		float screenShakeIntensity = easeOut(0.0, 0.25, animationValue)*50;
+		glTranslatef(0.0f, sin(screenShakeValue * 50)* screenShakeIntensity * 30, 0.0f);
+	}
+	
+	screenShake = false;
+	stageAnimationTime = 0.0f;
+	screenShakeValue = 0.0f;
 	
 	player1.draw();
+	player1shield.shieldDraw();
 	player2.draw();
 
 	for (size_t i = 0; i < enemies1.size(); i++){
@@ -529,6 +579,8 @@ void StageOne::Render(){
 				bullets[i].Draw();
 		}
 	}
+	glPopMatrix();
+
 	if (freeze)
 		sparkle.draw();
 }
@@ -547,4 +599,23 @@ void StageOne::shootBullet(float x, float y, float direction, float shooter, flo
 	// reset index if max bullet is reached and overwrite earlier bullets
 	if (bulletIndex > MAX_BULLETS - 1)
 		bulletIndex = 0;
+}
+
+// used in screenshake
+float StageOne::mapValue(float value, float srcMin, float srcMax, float dstMin, float dstMax) {
+	float retVal = dstMin + ((value - srcMin) / (srcMax - srcMin) * (dstMax - dstMin));
+	if (retVal < dstMin) {
+		retVal = dstMin;
+	}
+	if (retVal > dstMax) {
+		retVal = dstMax;
+	}
+	return retVal;
+}
+
+float StageOne::easeOut(float from, float to, float time) {
+	float oneMinusT = 1.0f - time;
+	float tVal = 1.0f - (oneMinusT * oneMinusT * oneMinusT *
+		oneMinusT * oneMinusT);
+	return (1.0f - tVal)*from + tVal*to;
 }

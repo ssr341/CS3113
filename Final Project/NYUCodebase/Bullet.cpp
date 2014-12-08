@@ -26,16 +26,4 @@ void Bullet::Draw(){
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glDrawArrays(GL_QUADS, 0, 4);
 	glDisable(GL_TEXTURE_2D);
-	// only draw bullets on screen that haven't collided
-	//if (!visible)
-	//	return;
-
-	//glLoadIdentity();
-	//glTranslatef(x, y, 0.0);
-	//glScalef(size, size, 0.0f);
-	//GLfloat quad[] = { -0.5f, 0.5f, -0.5f, -0.5f, 0.5f, -0.5f, 0.5f, 0.5f };
-	///*GLfloat quad[] = { -size, size, -size, -size, size, -size, size, size };*/
-	//glVertexPointer(2, GL_FLOAT, 0, quad);
-	//glEnableClientState(GL_VERTEX_ARRAY);
-	//glDrawArrays(GL_QUADS, 0, 4);
 }

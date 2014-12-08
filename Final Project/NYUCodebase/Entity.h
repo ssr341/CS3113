@@ -10,6 +10,7 @@ public:
 	Entity();
 
 	void draw();
+	void shieldDraw();
 
 	void fixedUpdate();
 	bool collidesWith(Bullet bullet);

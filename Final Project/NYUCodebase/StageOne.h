@@ -33,6 +33,9 @@ public:
 
 	void reset();
 
+	float mapValue(float value, float srcMin, float srcMax, float dstMin, float dstMax);
+	float easeOut(float from, float to, float time);
+
 	Mix_Chunk* explosionSound; // sound when bullets collide
 	Mix_Chunk* shootingSound; // sound when bullets shot
 private:
@@ -50,7 +53,13 @@ private:
 	int winner; // winner of stage. 0 means gameplay still happening, 1 means player 1, 2 means player 2
 	bool freeze; // freeze movement when someone dies
 
+	// shake screen when player is hit
+	bool screenShake;
+	float stageAnimationTime;
+	float screenShakeValue;
+
 	Entity player1;
+	Entity player1shield;
 	Entity player2;
 	std::vector<Entity*> enemies1;
 	std::vector<Entity*> enemies2;
