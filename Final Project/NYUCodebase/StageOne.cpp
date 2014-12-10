@@ -65,41 +65,6 @@ GLuint StageOne::LoadTexture(const char *image_path) {
 	return textureID;
 }
 
-void StageOne::DrawText(int fontTexture, std::string text, float size, float spacing, float r, float g, float b, float a) {
-	glBindTexture(GL_TEXTURE_2D, fontTexture);
-	glEnable(GL_TEXTURE_2D);
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-	float texture_size = 1.0 / 16.0f;
-
-	std::vector<float> vertexData;
-	std::vector<float> texCoordData;
-	std::vector<float> colorData;
-
-	for (size_t i = 0; i < text.size(); i++) {
-		float texture_x = (float)(((int)text[i]) % 16) / 16.0f;
-		float texture_y = (float)(((int)text[i]) / 16) / 16.0f;
-
-		colorData.insert(colorData.end(), { r, g, b, a, r, g, b, a, r, g, b, a, r, g, b, a });
-
-		vertexData.insert(vertexData.end(), { ((size + spacing) * i) + (-0.5f * size), 0.5f * size, ((size + spacing) * i) +
-			(-0.5f * size), -0.5f * size, ((size + spacing) * i) + (0.5f * size), -0.5f * size, ((size + spacing) * i) + (0.5f * size), 0.5f
-			* size });
-
-		texCoordData.insert(texCoordData.end(), { texture_x, texture_y, texture_x, texture_y + texture_size, texture_x +
-			texture_size, texture_y + texture_size, texture_x + texture_size, texture_y });
-	}
-
-	glColorPointer(4, GL_FLOAT, 0, colorData.data());
-	glEnableClientState(GL_COLOR_ARRAY);
-	glVertexPointer(2, GL_FLOAT, 0, vertexData.data());
-	glEnableClientState(GL_VERTEX_ARRAY);
-	glTexCoordPointer(2, GL_FLOAT, 0, texCoordData.data());
-	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-	glDrawArrays(GL_QUADS, 0, text.size() * 4);
-}
-
 void StageOne::Init(){
 	// player creation
 	player1.textureID = LoadTexture("playerShip1.png");
@@ -132,11 +97,21 @@ void StageOne::Init(){
 	player2.velocity_y = 0.0f;
 	player2.visible = true;
 
+	player2shield.textureID = LoadTexture("ring.png");
+	player2shield.height = 0.25f;
+	player2shield.width = 0.25f;
+	player2shield.x = 1.13f;
+	player2shield.y = 0.0f;
+	player2shield.friction_y = 0.0f;
+	player2shield.acceleration_y = 0.0f;
+	player2shield.velocity_y = 0.0f;
+	player2shield.visible = true;
+
 	sparkle.textureID = LoadTexture("sparkle.png");
 	sparkle.x = -100.0f;
 	sparkle.y = -100.0f;
-	sparkle.height = 0.05f;
-	sparkle.width = 0.05f;
+	sparkle.height = 0.0f;
+	sparkle.width = 0.0f;
 	sparkle.friction_y = 0.0f;
 	sparkle.acceleration_y = 0.0f;
 	sparkle.velocity_y = 0.0f;
@@ -184,6 +159,7 @@ void StageOne::Init(){
 // reset the stage. called when user wants to play again
 void StageOne::reset(){
 	winner = 0;
+	freeze = false;
 
 	bulletIndex = 0;
 
@@ -210,6 +186,13 @@ void StageOne::reset(){
 	player1.velocity_y = 0.0f;
 	player1.visible = true;
 
+	player1shield.x = -1.13f;
+	player1shield.y = 0.0f;
+	player1shield.friction_y = 0.0f;
+	player1shield.acceleration_y = 0.0f;
+	player1shield.velocity_y = 0.0f;
+	player1shield.visible = true;
+
 	player2.x = 1.13f;
 	player2.y = 0.0f;
 	player2.friction_y = 1.5f;
@@ -217,10 +200,15 @@ void StageOne::reset(){
 	player2.velocity_y = 0.0f;
 	player2.visible = true;
 
+	player2shield.x = 1.13f;
+	player2shield.y = 0.0f;
+	player2shield.friction_y = 0.0f;
+	player2shield.acceleration_y = 0.0f;
+	player2shield.velocity_y = 0.0f;
+	player2shield.visible = true;
+
 	sparkle.x = -100.0f;
 	sparkle.y = -100.0f;
-	sparkle.height = 0.05f;
-	sparkle.width = 0.05f;
 	sparkle.friction_y = 0.0f;
 	sparkle.acceleration_y = 0.0f;
 	sparkle.velocity_y = 0.0f;
@@ -336,10 +324,6 @@ int StageOne::fixedUpdate(float fixedElapsed){
 			//enemies2[i]->y += enemies2[i]->velocity_y * FIXED_TIMESTEP;
 		}
 
-		// update shield to player position
-		player1shield.x = player1.x;
-		player1shield.y = player1.y;
-
 		// screen boundaries
 		if (player1.y > 0.85f)
 			player1.y = 0.85f;
@@ -349,6 +333,12 @@ int StageOne::fixedUpdate(float fixedElapsed){
 			player1.y = -0.85f;
 		if (player2.y < -0.85f)
 			player2.y = -0.85f;
+
+		// update shield to player position
+		player1shield.x = player1.x;
+		player1shield.y = player1.y;
+		player2shield.x = player2.x;
+		player2shield.y = player2.y;
 
 		// have enemies reverse when they meet edge of screen
 		if (enemies1[0]->y >= 0.5){
@@ -526,18 +516,18 @@ bool StageOne::explosion(float fixedElapsed){
 	sparkle.visible = true;
 	explosionTime += fixedElapsed;
 	// set sparkle over the loser
-	if (winner == 1){
+	if (winner == 1 && sparkle.x == -100.0f){
 		sparkle.x = player2.x;
 		sparkle.y = player2.y;
 	}
-	if (winner == 2){
+	if (winner == 2 && sparkle.x == -100.0f){
 		sparkle.x = player1.x;
 		sparkle.y = player1.y;
 	}
 	// have sparkle grow over time
-	sparkle.height *= explosionTime / 2;
-	sparkle.width *= explosionTime / 2;
-	if (sparkle.height > 2.0)
+	sparkle.height += explosionTime;
+	sparkle.width += explosionTime;
+	if (sparkle.width > 15.0f)
 		return true;
 	return false;
 }
@@ -557,10 +547,13 @@ void StageOne::Render(){
 	
 	screenShake = false;
 	stageAnimationTime = 0.0f;
-	screenShakeValue = 0.0f;
+	//screenShakeValue = 0.0f;
 	
+	if (player1Hits == 0)
+		player1shield.draw();
 	player1.draw();
-	player1shield.shieldDraw();
+	if (player2Hits == 0)
+		player2shield.draw();
 	player2.draw();
 
 	for (size_t i = 0; i < enemies1.size(); i++){

@@ -19,7 +19,6 @@ public:
 	~StageOne();
 
 	GLuint LoadTexture(const char *image_path);
-	void DrawText(int fontTexture, std::string text, float size, float spacing, float r, float g, float b, float a);
 
 	void Init();
 	void ProcessShoot(SDL_Event* event, bool& done);
@@ -61,6 +60,7 @@ private:
 	Entity player1;
 	Entity player1shield;
 	Entity player2;
+	Entity player2shield;
 	std::vector<Entity*> enemies1;
 	std::vector<Entity*> enemies2;
 

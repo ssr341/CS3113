@@ -119,32 +119,40 @@ void ClassDemoApp::fixedUpdate(float fixedElapsed){
 		winner = stage2.fixedUpdate(fixedElapsed);
 		if (winner == 1){
 			stage2Winner = 1;
-			if (stage1Winner == 1 && stage2Winner == 1){
-				gameWinner = 1;
-				state = 5;
+			if (stage2.explosion(fixedElapsed)){
+				if (stage1Winner == 1 && stage2Winner == 1){
+					gameWinner = 1;
+					state = 5;
+				}
+				else
+					state++;
 			}
-			else
-				state++;
 		}
 		if (winner == 2){
 			stage2Winner = 2;
-			if (stage1Winner == 2 && stage2Winner == 2){
-				gameWinner = 2;
-				state = 5;
+			if (stage2.explosion(fixedElapsed)){
+				if (stage1Winner == 2 && stage2Winner == 2){
+					gameWinner = 2;
+					state = 5;
+				}
+				else
+					state++;
 			}
-			else
-				state++;
 		}
 		break;
 	case STATE_STAGE_THREE:
 		winner = stage3.fixedUpdate(fixedElapsed);
 		if (winner == 1){
-			gameWinner = 1;
-			state++;
+			if (stage3.explosion(fixedElapsed)){
+				gameWinner = 1;
+				state++;
+			}
 		}
 		if (winner == 2){
-			gameWinner = 2;
-			state++;
+			if (stage3.explosion(fixedElapsed)){
+				gameWinner = 2;
+				state++;
+			}
 		}
 		break;
 	}

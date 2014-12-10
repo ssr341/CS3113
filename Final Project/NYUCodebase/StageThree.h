@@ -19,7 +19,6 @@ public:
 	~StageThree();
 
 	GLuint LoadTexture(const char *image_path);
-	void DrawText(int fontTexture, std::string text, float size, float spacing, float r, float g, float b, float a);
 
 	void Init();
 	void ProcessShoot(SDL_Event* event, bool& done);
@@ -28,6 +27,8 @@ public:
 	int fixedUpdate(float fixedElapsed);
 
 	void shootBullet(float x, float y, float direction, float shooter, float size, float speed);
+
+	bool explosion(float fixedElapsed);
 
 	void reset();
 
@@ -40,14 +41,21 @@ private:
 	float enemyShot; // time between enemy shots
 
 	int winner; // winner of stage. 0 means gameplay still happening, 1 means player 1, 2 means player 2
+	bool freeze; // freeze movement when someone dies
 
 	int hitsToKill; // number of hits to kill a player
 	int player1Hits; // number of times player 1 has been shot
 	int player2Hits; // number of times player 2 has been shot
 
 	Entity player1;
+	Entity player1shield;
 	Entity player2;
+	Entity player2shield;
 	Entity enemy;
+
+	// used in explosion
+	Entity sparkle;
+	float explosionTime;
 
 	// powerups
 	float player1Shot; // current time between shots
