@@ -3,6 +3,7 @@
 GameOver::GameOver(){}
 
 void GameOver::Init(){
+	time = 0.0f;
 	screenText = LoadTexture("pixel_font.png");
 }
 
@@ -26,8 +27,10 @@ int GameOver::ProcessEvents(SDL_Event* event, bool& done){
 
 	if (event->type == SDL_KEYDOWN) {
 		// if space is pressed move to stage select
-		if (event->key.keysym.scancode == SDL_SCANCODE_SPACE)
+		if (event->key.keysym.scancode == SDL_SCANCODE_SPACE){
 			state = 0;
+			time = 0.0f;
+		}
 		// if esc is pressed quit
 		if (event->key.keysym.scancode == SDL_SCANCODE_ESCAPE)
 			done = true;
@@ -73,29 +76,44 @@ void GameOver::DrawText(int fontTexture, std::string text, float size, float spa
 	glDisableClientState(GL_COLOR_ARRAY);
 }
 
-void GameOver::Render(int winningPlayer){
+void GameOver::Render(int winningPlayer, float fixedElapsed){
+	time += fixedElapsed;
+
 	// game over text
 	glClear(GL_COLOR_BUFFER_BIT);
 	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-	glTranslatef(-0.25, 0.35, 0.0);
-	DrawText(screenText, "Game", 0.2f, 0.001f, 1.0f, 0.0f, 0.0f, 1.0f);
-	glLoadIdentity();
-	glTranslatef(-0.25, 0.15, 0.0);
-	DrawText(screenText, "Over", 0.2f, 0.001f, 1.0f, 0.0f, 0.0f, 1.0f);
-	
-	glLoadIdentity();
-	glTranslatef(-0.35f, -0.25f, 0.0f);
-	DrawText(screenText, "Player ", 0.07f, 0.001f, 1.0f, 0.0f, 0.0f, 1.0f);
-	std::string playerString = std::to_string(winningPlayer);
-	glLoadIdentity();
-	glTranslatef(0.10f, -0.25f, 0.0f);
-	DrawText(screenText, playerString, 0.07f, 0.001f, 1.0f, 0.0f, 0.0f, 1.0f);
-	glLoadIdentity();
-	glTranslatef(0.125f, -0.25f, 0.0f);
-	DrawText(screenText, " wins!", 0.07f, 0.001f, 1.0f, 0.0f, 0.0f, 1.0f);
 
-	glLoadIdentity();
-	glTranslatef(-1.2f, -0.5f, 0.0f);
-	DrawText(screenText, "Press space to return to main menu.", 0.07f, 0.001f, 1.0f, 0.0f, 0.0f, 1.0f);
+	if (time > 1.0f){
+		glLoadIdentity();
+		glTranslatef(-0.25, 0.35, 0.0);
+		DrawText(screenText, "Game", 0.2f, 0.001f, 1.0f, 0.0f, 0.0f, 1.0f);
+	}
+	if (time > 2.0f){
+		glLoadIdentity();
+		glTranslatef(-0.25, 0.15, 0.0);
+		DrawText(screenText, "Over", 0.2f, 0.001f, 1.0f, 0.0f, 0.0f, 1.0f);
+	}
+	
+	if (time > 4.0f){
+		glLoadIdentity();
+		glTranslatef(-0.35f, -0.25f, 0.0f);
+		DrawText(screenText, "Player ", 0.07f, 0.001f, 1.0f, 0.0f, 0.0f, 1.0f);
+
+		glLoadIdentity();
+		glTranslatef(0.125f, -0.25f, 0.0f);
+		DrawText(screenText, " wins!", 0.07f, 0.001f, 1.0f, 0.0f, 0.0f, 1.0f);
+	}
+
+	if (time > 5.5f){
+		std::string playerString = std::to_string(winningPlayer);
+		glLoadIdentity();
+		glTranslatef(0.10f, -0.25f, 0.0f);
+		DrawText(screenText, playerString, 0.07f, 0.001f, 1.0f, 0.0f, 0.0f, 1.0f);
+	}
+
+	if (time > 8.0f){
+		glLoadIdentity();
+		glTranslatef(-1.2f, -0.5f, 0.0f);
+		DrawText(screenText, "Press space to return to main menu.", 0.07f, 0.001f, 1.0f, 0.0f, 0.0f, 1.0f);
+	}
 }

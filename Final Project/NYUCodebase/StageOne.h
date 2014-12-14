@@ -32,8 +32,10 @@ public:
 
 	void reset();
 
+	// used in screenshake
 	float mapValue(float value, float srcMin, float srcMax, float dstMin, float dstMax);
 	float easeOut(float from, float to, float time);
+	float lerp(float v0, float v1, float t);
 
 	Mix_Chunk* explosionSound; // sound when bullets collide
 	Mix_Chunk* shootingSound; // sound when bullets shot
@@ -53,11 +55,11 @@ private:
 	bool freeze; // freeze movement when someone dies
 
 	// shake screen when player is hit
-	bool screenShake;
-	float stageAnimationTime;
+	float screenShakeIntensity;
 	float screenShakeValue;
 
 	Entity player1;
+	Entity player1fire;
 	Entity player1shield;
 	Entity player2;
 	Entity player2shield;

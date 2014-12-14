@@ -15,8 +15,9 @@ public:
 	void DrawText(int fontTexture, std::string text, float size, float spacing, float r, float g, float b, float a);
 
 	int ProcessEvents(SDL_Event* event, bool& done);
-	void Render();
+	void Render(float fixedElapsed);
 	int Update();
 private:
 	unsigned int screenText;
+	float time;
 };

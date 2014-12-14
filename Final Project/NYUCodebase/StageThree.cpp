@@ -59,7 +59,7 @@ void StageThree::Init(){
 	player1.width = 0.25f;
 	player1.x = -1.13f;
 	player1.y = 0.0f;
-	player1.friction_y = 1.5f;
+	player1.friction_y = 2.5f;
 	player1.acceleration_y = 0.0f;
 	player1.velocity_y = 0.0f;
 	player1.visible = true;
@@ -79,7 +79,7 @@ void StageThree::Init(){
 	player2.width = 0.25f;
 	player2.x = 1.13f;
 	player2.y = 0.0f;
-	player2.friction_y = 1.5f;
+	player2.friction_y = 2.5f;
 	player2.acceleration_y = 0.0f;
 	player2.velocity_y = 0.0f;
 	player2.visible = true;
@@ -124,6 +124,7 @@ void StageThree::Init(){
 void StageThree::reset(){
 	winner = 0;
 	freeze = false;
+	explosionTime = 0.0f;
 
 	bulletIndex = 0;
 
@@ -170,9 +171,8 @@ void StageThree::reset(){
 
 	sparkle.x = -100.0f;
 	sparkle.y = -100.0f;
-	sparkle.friction_y = 0.0f;
-	sparkle.acceleration_y = 0.0f;
-	sparkle.velocity_y = 0.0f;
+	sparkle.height = 0.0f;
+	sparkle.width = 0.0f;
 	sparkle.visible = false;
 
 	for (int i = 0; i < MAX_BULLETS; i++){

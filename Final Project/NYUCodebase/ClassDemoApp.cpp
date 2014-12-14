@@ -73,6 +73,7 @@ bool ClassDemoApp::ProcessEvents(){
 		case STATE_GAME_OVER:
 			state = gameOver.ProcessEvents(&event, done);
 			if (state == 0){
+				winner = 0;
 				stage1Winner = 0;
 				stage2Winner = 0;
 				gameWinner = 0;
@@ -159,10 +160,10 @@ void ClassDemoApp::fixedUpdate(float fixedElapsed){
 }
 
 
-void ClassDemoApp::Render(){
+void ClassDemoApp::Render(float fixedElapsed){
 	switch (state) {
 	case STATE_MAIN_MENU:
-		menu.Render();
+		menu.Render(fixedElapsed);
 		break;
 	case STATE_INSTRUCTIONS:
 		instructions.Render();
@@ -177,7 +178,7 @@ void ClassDemoApp::Render(){
 		stage3.Render();
 		break;
 	case STATE_GAME_OVER:
-		gameOver.Render(gameWinner);
+		gameOver.Render(gameWinner, fixedElapsed);
 		break;
 	}
 	SDL_GL_SwapWindow(displayWindow);
@@ -199,7 +200,6 @@ void ClassDemoApp::UpdateAndRender() {
 		fixedUpdate(fixedElapsed);
 	}
 
+	Render(fixedElapsed);
 	timeLeftOver = fixedElapsed;
-	Render();
-
 }

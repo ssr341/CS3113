@@ -1,4 +1,3 @@
-//NEEDS FIXED UPDATE
 #include "Bullet.h"
 
 Bullet::Bullet(){}

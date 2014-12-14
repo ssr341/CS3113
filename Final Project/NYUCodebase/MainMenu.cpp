@@ -2,6 +2,7 @@
 
 void MainMenu::Init(){
 	screenText = LoadTexture("pixel_font.png");
+	time = 0.0f;
 }
 
 GLuint MainMenu::LoadTexture(const char *image_path) {
@@ -75,8 +76,9 @@ int MainMenu::ProcessEvents(SDL_Event* event, bool& done){
 	return state;
 }
 
-void MainMenu::Render(){
+void MainMenu::Render(float fixedElapsed){
 	// start screen text
+	time += fixedElapsed;
 
 	glClear(GL_COLOR_BUFFER_BIT);
 	glMatrixMode(GL_MODELVIEW);
@@ -85,20 +87,26 @@ void MainMenu::Render(){
 	glTranslatef(-1.3, 0.9, 0.0);
 	DrawText(screenText, "Press Esc at any time to quit", 0.03f, 0.001f, 1.0f, 1.0f, 0.0f, 1.0f);
 
-	glLoadIdentity();
-	glTranslatef(-0.35, 0.25, 0.0);
-	DrawText(screenText, "Galaxy", 0.15f, 0.001f, 1.0f, 1.0f, 0.0f, 1.0f);
+	if (time > 1.0f){
+		glLoadIdentity();
+		glTranslatef(-0.35, 0.25, 0.0);
+		DrawText(screenText, "Galaxy", 0.15f, 0.001f, 1.0f, 1.0f, 0.0f, 1.0f);
+	}
 
-	glLoadIdentity();
-	glTranslatef(-0.5, 0.0, 0.0);
-	DrawText(screenText, "Defender", 0.15f, 0.001f, 1.0f, 1.0f, 0.0f, 1.0f);
+	if (time > 3.0f){
+		glLoadIdentity();
+		glTranslatef(-0.5, 0.0, 0.0);
+		DrawText(screenText, "Defender", 0.15f, 0.001f, 1.0f, 1.0f, 0.0f, 1.0f);
+	}
 
-	glLoadIdentity();
-	glTranslatef(-0.8f, -0.4f, 0.0f);
-	DrawText(screenText, "Press Space to Continue", 0.07f, 0.001f, 1.0f, 0.0f, 0.0f, 1.0f);
+	if (time > 5.0f){
+		glLoadIdentity();
+		glTranslatef(-0.8f, -0.4f, 0.0f);
+		DrawText(screenText, "Press Space to Continue", 0.07f, 0.001f, 1.0f, 0.0f, 0.0f, 1.0f);
 
-	glLoadIdentity();
-	glTranslatef(-0.8f, -0.8f, 0.0f);
-	DrawText(screenText, "Press I for Instructions", 0.07f, 0.001f, 1.0f, 0.0f, 0.0f, 1.0f);
+		glLoadIdentity();
+		glTranslatef(-0.8f, -0.8f, 0.0f);
+		DrawText(screenText, "Press I for Instructions", 0.07f, 0.001f, 1.0f, 0.0f, 0.0f, 1.0f);
+	}
 
 }

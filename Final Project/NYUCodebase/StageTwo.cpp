@@ -66,7 +66,7 @@ void StageTwo::Init(){
 	player1.width = 0.25f;
 	player1.x = -1.13f;
 	player1.y = 0.0f;
-	player1.friction_y = 1.5f;
+	player1.friction_y = 2.5f;
 	player1.acceleration_y = 0.0f;
 	player1.velocity_y = 0.0f;
 	player1.visible = true;
@@ -86,7 +86,7 @@ void StageTwo::Init(){
 	player2.width = 0.25f;
 	player2.x = 1.13f;
 	player2.y = 0.0f;
-	player2.friction_y = 1.5f;
+	player2.friction_y = 2.5f;
 	player2.acceleration_y = 0.0f;
 	player2.velocity_y = 0.0f;
 	player2.visible = true;
@@ -165,6 +165,7 @@ void StageTwo::Init(){
 void StageTwo::reset(){
 	winner = 0;
 	freeze = false;
+	explosionTime = 0.0f;
 
 	bulletIndex = 0;
 
@@ -213,9 +214,8 @@ void StageTwo::reset(){
 
 	sparkle.x = -100.0f;
 	sparkle.y = -100.0f;
-	sparkle.friction_y = 0.0f;
-	sparkle.acceleration_y = 0.0f;
-	sparkle.velocity_y = 0.0f;
+	sparkle.height = 0.0f;
+	sparkle.width = 0.0f;
 	sparkle.visible = false;
 
 	asteroid.x = 0.0f;
@@ -328,11 +328,9 @@ int StageTwo::fixedUpdate(float fixedElapsed){
 		asteroid.fixedUpdate();
 		for (size_t i = 0; i < enemies1.size(); i++){
 			enemies1[i]->fixedUpdate();
-			//enemies1[i]->y += enemies1[i]->velocity_y * FIXED_TIMESTEP;
 		}
 		for (size_t i = 0; i < enemies2.size(); i++){
 			enemies2[i]->fixedUpdate();
-			//enemies2[i]->y += enemies2[i]->velocity_y * FIXED_TIMESTEP;
 		}
 
 		// screen boundaries
@@ -426,7 +424,7 @@ int StageTwo::fixedUpdate(float fixedElapsed){
 		}
 		for (size_t i = 0; i < enemies2.size(); i++){
 			if (!enemies2[i]->visible)
-				enemies1[i]->deadTime += fixedElapsed;
+				enemies2[i]->deadTime += fixedElapsed;
 		}
 
 		// check for respawns
@@ -490,16 +488,32 @@ int StageTwo::fixedUpdate(float fixedElapsed){
 			bool shot2 = false;  // was the bullet shot?
 			while (!shot1 && !shot2){
 				int enemyBulletX = rand() % (enemyNum);
+				// used to check for alive enemies
+				int enemy1visCounter = 0;
+				int enemy2visCounter = 0;
+				for (size_t i = 0; i < enemies1.size(); i++){
+					if (enemies1[i]->visible)
+						++enemy1visCounter;
+				}
+				for (size_t i = 0; i < enemies2.size(); i++){
+					if (enemies2[2]->visible)
+						++enemy2visCounter;
+				}
+
 				if (enemies1[enemyBulletX]->visible && !shot1){
 					Mix_PlayChannel(-1, shootingSound, 0);
 					shootBullet(enemies1[enemyBulletX]->x, enemies1[enemyBulletX]->y, -1.0f, 2, enemyBulletSize, enemyBulletSpeed);
 					shot1 = true;
 				}
+				else if (enemy1visCounter == 0)  // if no enemies are visible, mark shot as fired
+					shot1 = true;
 				if (enemies2[enemyBulletX]->visible && !shot2){
 					Mix_PlayChannel(-1, shootingSound, 0);
 					shootBullet(enemies2[enemyBulletX]->x, enemies2[enemyBulletX]->y, 1.0f, 3, enemyBulletSize, enemyBulletSpeed);
 					shot2 = true;
 				}
+				else if (enemy2visCounter == 0)  // if no enemies are visible, mark shot as fired
+					shot2 = true;
 			}
 			enemyShot = 0;
 		}
