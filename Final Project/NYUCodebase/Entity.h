@@ -10,7 +10,7 @@ public:
 	Entity();
 
 	void draw();
-	void shieldDraw();
+	void fireDraw();
 
 	void fixedUpdate();
 	bool collidesWith(Bullet bullet);
@@ -22,6 +22,8 @@ public:
 	float width;
 	float height;
 
+	bool rotate;
+	float rotation;
 	bool visible;
 	float deadTime;
 

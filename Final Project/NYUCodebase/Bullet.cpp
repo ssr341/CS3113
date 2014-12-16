@@ -2,12 +2,14 @@
 
 Bullet::Bullet(){}
 
+// update position of bullet
 void Bullet::fixedUpdate(){
 	x += direction * speed * FIXED_TIMESTEP;
 	if (x < -1.33 || x > 1.33)
 		visible = false;
 }
 
+// draw the bullet
 void Bullet::Draw(){
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, textureID);

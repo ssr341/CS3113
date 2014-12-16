@@ -4,7 +4,7 @@ StageTwo::StageTwo(){
 	winner = 0;
 	freeze = false;
 
-	hitsToKill = 2;
+	hitsToKill = 3;
 	player1Hits = 0;
 	player2Hits = 0;
 
@@ -13,7 +13,7 @@ StageTwo::StageTwo(){
 	enemyNum = 3;
 	enemyBulletSize = 0.025f;
 	enemyBulletSpeed = 1.0f;
-	respawnTimer = 0.4f;
+	respawnTimer = 0.15f;
 
 	player1Shot = 10.0f;
 	player2Shot = 10.0f;
@@ -43,6 +43,7 @@ StageTwo::~StageTwo(){
 		delete enemies2[i];
 	Mix_FreeChunk(shootingSound);
 	Mix_FreeChunk(explosionSound);
+	Mix_FreeChunk(powerupSound);
 }
 
 GLuint StageTwo::LoadTexture(const char *image_path) {
@@ -66,16 +67,32 @@ void StageTwo::Init(){
 	player1.width = 0.25f;
 	player1.x = -1.13f;
 	player1.y = 0.0f;
+	player1.rotate = false;
+	player1.rotation = 0.0f;
 	player1.friction_y = 2.5f;
 	player1.acceleration_y = 0.0f;
 	player1.velocity_y = 0.0f;
 	player1.visible = true;
+
+	player1fire.textureID = LoadTexture("fire.png");
+	player1fire.height = 0.25f;
+	player1fire.width = 0.25f;
+	player1fire.x = -1.13f;
+	player1fire.y = 0.0f;
+	player1fire.rotate = false;
+	player1fire.rotation = 0.0f;
+	player1fire.friction_y = 0.0f;
+	player1fire.acceleration_y = 0.0f;
+	player1fire.velocity_y = 0.0f;
+	player1fire.visible = true;
 
 	player1shield.textureID = LoadTexture("ring.png");
 	player1shield.height = 0.25f;
 	player1shield.width = 0.25f;
 	player1shield.x = -1.13f;
 	player1shield.y = 0.0f;
+	player1shield.rotate = false;
+	player1shield.rotation = 0.0f;
 	player1shield.friction_y = 0.0f;
 	player1shield.acceleration_y = 0.0f;
 	player1shield.velocity_y = 0.0f;
@@ -86,16 +103,32 @@ void StageTwo::Init(){
 	player2.width = 0.25f;
 	player2.x = 1.13f;
 	player2.y = 0.0f;
+	player2.rotate = false;
+	player2.rotation = 0.0f;
 	player2.friction_y = 2.5f;
 	player2.acceleration_y = 0.0f;
 	player2.velocity_y = 0.0f;
 	player2.visible = true;
+
+	player2fire.textureID = LoadTexture("fire.png");
+	player2fire.height = 0.25f;
+	player2fire.width = 0.25f;
+	player2fire.x = 1.13f;
+	player2fire.y = 0.0f;
+	player2shield.rotate = false;
+	player2shield.rotation = 0.0f;
+	player2fire.friction_y = 0.0f;
+	player2fire.acceleration_y = 0.0f;
+	player2fire.velocity_y = 0.0f;
+	player2fire.visible = true;
 
 	player2shield.textureID = LoadTexture("ring.png");
 	player2shield.height = 0.25f;
 	player2shield.width = 0.25f;
 	player2shield.x = 1.13f;
 	player2shield.y = 0.0f;
+	player2shield.rotate = false;
+	player2shield.rotation = 0.0f;
 	player2shield.friction_y = 0.0f;
 	player2shield.acceleration_y = 0.0f;
 	player2shield.velocity_y = 0.0f;
@@ -104,6 +137,8 @@ void StageTwo::Init(){
 	sparkle.textureID = LoadTexture("sparkle.png");
 	sparkle.x = -100.0f;
 	sparkle.y = -100.0f;
+	sparkle.rotate = false;
+	sparkle.rotation = 0.0f;
 	sparkle.height = 0.0f;
 	sparkle.width = 0.0f;
 	sparkle.friction_y = 0.0f;
@@ -121,6 +156,8 @@ void StageTwo::Init(){
 	asteroid.width = 0.4f;
 	asteroid.x = 0.0f;
 	asteroid.y = 0.0f;
+	asteroid.rotate = true;
+	asteroid.rotation = 0.0f;
 	asteroid.friction_y = 1.0f;
 	asteroid.acceleration_y = 0.5f;
 	asteroid.velocity_y = 0.0f;
@@ -137,6 +174,8 @@ void StageTwo::Init(){
 		enemy1->height = 0.2f;
 		enemy1->x = enemy1X;
 		enemy1->y = enemyY;
+		enemy1->rotate = false;
+		enemy1->rotation = 0.0f;
 		enemy1->velocity_y = 0.0f;
 		enemy1->acceleration_y = -1.0f;
 		enemy1->friction_y = 0.5f;
@@ -150,11 +189,13 @@ void StageTwo::Init(){
 		enemy2->height = 0.2f;
 		enemy2->x = enemy2X;
 		enemy2->y = enemyY;
+		enemy2->rotate = false;
+		enemy2->rotation = 0.0f;
 		enemy2->velocity_y = 0.0f;
 		enemy2->acceleration_y = -1.0f;
 		enemy2->friction_y = 0.5f;
 		enemy2->visible = true;
-		enemy1->deadTime = 0.0f;
+		enemy2->deadTime = 0.0f;
 		enemies2.push_back(enemy2);
 
 		enemyY -= 0.2f;
@@ -186,31 +227,31 @@ void StageTwo::reset(){
 
 	player1.x = -1.13f;
 	player1.y = 0.0f;
-	player1.friction_y = 1.5f;
 	player1.acceleration_y = 0.0f;
 	player1.velocity_y = 0.0f;
 	player1.visible = true;
 
 	player1shield.x = -1.13f;
 	player1shield.y = 0.0f;
-	player1shield.friction_y = 0.0f;
-	player1shield.acceleration_y = 0.0f;
-	player1shield.velocity_y = 0.0f;
-	player1shield.visible = true;
+	player1shield.height = 0.25f;
+	player1shield.width = 0.25f;
+
+	player1fire.x = -1.13f;
+	player1fire.y = 0.0f;
 
 	player2.x = 1.13f;
 	player2.y = 0.0f;
-	player2.friction_y = 1.5f;
 	player2.acceleration_y = 0.0f;
 	player2.velocity_y = 0.0f;
 	player2.visible = true;
 
 	player2shield.x = 1.13f;
 	player2shield.y = 0.0f;
-	player2shield.friction_y = 0.0f;
-	player2shield.acceleration_y = 0.0f;
-	player2shield.velocity_y = 0.0f;
-	player2shield.visible = true;
+	player2shield.height = 0.25f;
+	player2shield.width = 0.25f;
+
+	player2fire.x = 1.13f;
+	player2fire.y = 0.0f;
 
 	sparkle.x = -100.0f;
 	sparkle.y = -100.0f;
@@ -220,10 +261,9 @@ void StageTwo::reset(){
 
 	asteroid.x = 0.0f;
 	asteroid.y = 0.0f;
-	asteroid.friction_y = 1.0f;
+	asteroid.rotation = 0.0f;
 	asteroid.acceleration_y = 0.5f;
 	asteroid.velocity_y = 0.0f;
-	asteroid.visible = true;
 
 	for (int i = 0; i < MAX_BULLETS; i++){
 		bullets[i].x = -10.0f;
@@ -235,7 +275,7 @@ void StageTwo::reset(){
 	}
 
 	float enemyY = 0.3f;
-	for (size_t i = 0; i < enemyNum; i++){
+	for (int i = 0; i < enemyNum; i++){
 		enemies1[i]->x = -0.3f;;
 		enemies1[i]->y = enemyY;
 		enemies1[i]->velocity_y = 0.0f;
@@ -256,6 +296,7 @@ void StageTwo::reset(){
 	}
 }
 
+// process player shooting or quit
 void StageTwo::ProcessShoot(SDL_Event* event, bool& done){
 	const Uint8* keys = SDL_GetKeyboardState(NULL);
 
@@ -283,6 +324,7 @@ void StageTwo::ProcessShoot(SDL_Event* event, bool& done){
 	}
 }
 
+// process player movement
 void StageTwo::ProcessEvents(){
 	player1.acceleration_y = 0.0f;
 	player2.acceleration_y = 0.0f;
@@ -314,13 +356,14 @@ void StageTwo::ProcessEvents(){
 	if (keys[SDL_SCANCODE_DOWN]){
 		// if down pressed, set acceleration negative
 		if (player2KillCount >= 10)
-			player2.acceleration_y = 4.5f;
+			player2.acceleration_y = -4.5f;
 		else
 			player2.acceleration_y = -3.5f;
 	}
 }
 
 int StageTwo::fixedUpdate(float fixedElapsed){
+	// if a player isn't dead yet
 	if (!freeze){
 		// run fixed update for everything
 		player1.fixedUpdate();
@@ -334,20 +377,24 @@ int StageTwo::fixedUpdate(float fixedElapsed){
 		}
 
 		// screen boundaries
-		if (player1.y > 0.85)
-			player1.y = 0.85;
-		if (player2.y > 0.85)
-			player2.y = 0.85;
-		if (player1.y < -0.85)
-			player1.y = -0.85;
-		if (player2.y < -0.85)
-			player2.y = -0.85;
+		if (player1.y > 0.85f)
+			player1.y = 0.85f;
+		if (player2.y > 0.85f)
+			player2.y = 0.85f;
+		if (player1.y < -0.85f)
+			player1.y = -0.85f;
+		if (player2.y < -0.85f)
+			player2.y = -0.85f;
 
-		// update shield to player position
+		// update shield and fire to player position
 		player1shield.x = player1.x;
 		player1shield.y = player1.y;
 		player2shield.x = player2.x;
 		player2shield.y = player2.y;
+		player1fire.x = player1.x;
+		player1fire.y = player1.y;
+		player2fire.x = player2.x;
+		player2fire.y = player2.y;
 
 		// have asteroid reverse when meets edge of screen
 		if (asteroid.y > 0.65)
@@ -515,7 +562,17 @@ int StageTwo::fixedUpdate(float fixedElapsed){
 				else if (enemy2visCounter == 0)  // if no enemies are visible, mark shot as fired
 					shot2 = true;
 			}
-			enemyShot = 0;
+			enemyShot = 0.0f;
+		}
+
+		// shrink shield if shot
+		if (player1Hits > 0 && player1shield.width > 0.0f){
+			player1shield.width -= fixedElapsed * 3;
+			player1shield.height -= fixedElapsed * 3;
+		}
+		if (player2Hits > 0 && player2shield.width > 0.0f){
+			player2shield.width -= fixedElapsed * 3;
+			player2shield.height -= fixedElapsed * 3;
 		}
 
 		// update position of each bullet
@@ -528,31 +585,48 @@ int StageTwo::fixedUpdate(float fixedElapsed){
 		player2Shot += fixedElapsed;
 
 		// update for powerups
-		if (player1KillCount >= 3 && player1BulletSpeed == 2.0f)
+		if (player1KillCount >= 3 && player1BulletSpeed == 2.0f){
 			player1BulletSpeed *= 2.0f;
-		if (player1KillCount >= 6 && player1BulletSize == 0.025f)
+			Mix_PlayChannel(-1, powerupSound, 0);
+		}
+		if (player1KillCount >= 6 && player1BulletSize == 0.025f){
 			player1BulletSize = 0.04f;
-		if (player2KillCount >= 3 && player2BulletSpeed == 2.0f)
+			Mix_PlayChannel(-1, powerupSound, 0);
+		}
+		if (player2KillCount >= 3 && player2BulletSpeed == 2.0f){
 			player2BulletSpeed *= 2.0f;
-		if (player2KillCount >= 6 && player2BulletSize == 0.025f)
+			Mix_PlayChannel(-1, powerupSound, 0);
+		}
+		if (player2KillCount >= 6 && player2BulletSize == 0.025f){
 			player2BulletSize = 0.04f;
-		if (player1KillCount >= 10 && player1ShotTime == 0.025f)
+			Mix_PlayChannel(-1, powerupSound, 0);
+		}
+		if (player1KillCount >= 10 && player1ShotTime == 0.025f){
 			player1ShotTime /= 2.0f;
-		if (player2KillCount >= 10 && player2ShotTime == 0.025f)
+			Mix_PlayChannel(-1, powerupSound, 0);
+		}
+		if (player2KillCount >= 10 && player2ShotTime == 0.025f){
 			player2ShotTime /= 2.0f;
+			Mix_PlayChannel(-1, powerupSound, 0);
+		}
 	}
 	return winner;
 }
 
+// draw stuff on screen
 void StageTwo::Render(){
 	glClear(GL_COLOR_BUFFER_BIT);
 
-	if (player1Hits == 0)
+	if (player1shield.width > 0.0f)
 		player1shield.draw();
 	player1.draw();
-	if (player2Hits == 0)
+	if (player1Hits == 2)
+		player1fire.fireDraw();
+	if (player2shield.width > 0.0f)
 		player2shield.draw();
 	player2.draw();
+	if (player2Hits == 2)
+		player2fire.fireDraw();
 	asteroid.draw();
 
 	for (size_t i = 0; i < enemies1.size(); i++){
@@ -564,6 +638,7 @@ void StageTwo::Render(){
 			enemies2[i]->draw();
 	}
 
+	// if a player is alive, draw bullets
 	if (!freeze){
 		for (int i = 0; i < MAX_BULLETS; i++){
 			// only draw bullets that haven't collided or are on screen
@@ -572,10 +647,12 @@ void StageTwo::Render(){
 		}
 	}
 
+	// if player is dead, draw explosion
 	if (freeze)
 		sparkle.draw();
 }
 
+// have losing player's ship explode
 bool StageTwo::explosion(float fixedElapsed){
 	sparkle.visible = true;
 	explosionTime += fixedElapsed;
@@ -591,6 +668,7 @@ bool StageTwo::explosion(float fixedElapsed){
 	// have sparkle grow over time
 	sparkle.height += explosionTime;
 	sparkle.width += explosionTime;
+	// when explosion big enough, move to next stage
 	if (sparkle.width > 15.0f)
 		return true;
 	return false;

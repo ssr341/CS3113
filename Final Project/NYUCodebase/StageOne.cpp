@@ -6,10 +6,7 @@ StageOne::StageOne(){
 
 	bulletIndex = 0;
 
-	screenShakeIntensity = 0.0f;
-	screenShakeValue = 10.0f;
-
-	hitsToKill = 2;
+	hitsToKill = 3;
 	player1Hits = 0;
 	player2Hits = 0;
 	explosionTime = 0.0f;
@@ -18,7 +15,7 @@ StageOne::StageOne(){
 	enemyNum = 4;
 	enemyBulletSize = 0.025f;
 	enemyBulletSpeed = 1.0f;
-	respawnTimer = 0.4f;
+	respawnTimer = 0.15f;
 
 	player1Shot = 10.0f;
 	player2Shot = 10.0f;
@@ -41,6 +38,7 @@ StageOne::StageOne(){
 	}
 }
 
+// delete the enemies and free sound chunks
 StageOne::~StageOne(){
 	for (size_t i = 0; i < enemies1.size(); i++)
 		delete enemies1[i];
@@ -48,8 +46,10 @@ StageOne::~StageOne(){
 		delete enemies2[i];
 	Mix_FreeChunk(shootingSound);
 	Mix_FreeChunk(explosionSound);
+	Mix_FreeChunk(powerupSound);
 }
 
+// load textures for entities
 GLuint StageOne::LoadTexture(const char *image_path) {
 	SDL_Surface *surface = IMG_Load(image_path);
 	GLuint textureID;
@@ -65,12 +65,14 @@ GLuint StageOne::LoadTexture(const char *image_path) {
 }
 
 void StageOne::Init(){
-	// player creation
+	// entity creation
 	player1.textureID = LoadTexture("playerShip1.png");
 	player1.height = 0.25f;
 	player1.width = 0.25f;
 	player1.x = -1.13f;
 	player1.y = 0.0f;
+	player1.rotate = false;
+	player1.rotation = 0.0f;
 	player1.friction_y = 2.5f;
 	player1.acceleration_y = 0.0f;
 	player1.velocity_y = 0.0f;
@@ -81,6 +83,8 @@ void StageOne::Init(){
 	player1fire.width = 0.25f;
 	player1fire.x = -1.13f;
 	player1fire.y = 0.0f;
+	player1fire.rotate = false;
+	player1fire.rotation = 0.0f;
 	player1fire.friction_y = 0.0f;
 	player1fire.acceleration_y = 0.0f;
 	player1fire.velocity_y = 0.0f;
@@ -91,6 +95,8 @@ void StageOne::Init(){
 	player1shield.width = 0.25f;
 	player1shield.x = -1.13f;
 	player1shield.y = 0.0f;
+	player1shield.rotate = false;
+	player1shield.rotation = 0.0f;
 	player1shield.friction_y = 0.0f;
 	player1shield.acceleration_y = 0.0f;
 	player1shield.velocity_y = 0.0f;
@@ -101,16 +107,32 @@ void StageOne::Init(){
 	player2.width = 0.25f;
 	player2.x = 1.13f;
 	player2.y = 0.0f;
+	player2.rotate = false;
+	player2.rotation = 0.0f;
 	player2.friction_y = 2.5f;
 	player2.acceleration_y = 0.0f;
 	player2.velocity_y = 0.0f;
 	player2.visible = true;
+
+	player2fire.textureID = LoadTexture("fire.png");
+	player2fire.height = 0.25f;
+	player2fire.width = 0.25f;
+	player2fire.x = 1.13f;
+	player2fire.y = 0.0f;
+	player2fire.rotate = false;
+	player2fire.rotation = 0.0f;
+	player2fire.friction_y = 0.0f;
+	player2fire.acceleration_y = 0.0f;
+	player2fire.velocity_y = 0.0f;
+	player2fire.visible = true;
 
 	player2shield.textureID = LoadTexture("ring.png");
 	player2shield.height = 0.25f;
 	player2shield.width = 0.25f;
 	player2shield.x = 1.13f;
 	player2shield.y = 0.0f;
+	player2shield.rotate = false;
+	player2shield.rotation = 0.0f;
 	player2shield.friction_y = 0.0f;
 	player2shield.acceleration_y = 0.0f;
 	player2shield.velocity_y = 0.0f;
@@ -119,6 +141,8 @@ void StageOne::Init(){
 	sparkle.textureID = LoadTexture("sparkle.png");
 	sparkle.x = -100.0f;
 	sparkle.y = -100.0f;
+	sparkle.rotate = false;
+	sparkle.rotation = 0.0f;
 	sparkle.height = 0.0f;
 	sparkle.width = 0.0f;
 	sparkle.friction_y = 0.0f;
@@ -141,6 +165,8 @@ void StageOne::Init(){
 		enemy1->height = 0.2f;
 		enemy1->x = enemy1X;
 		enemy1->y = enemyY;
+		enemy1->rotate = false;
+		enemy1->rotation = 0.0f;
 		enemy1->velocity_y = 0.0f;
 		enemy1->acceleration_y = -1.0f;
 		enemy1->friction_y = 0.5f;
@@ -154,6 +180,8 @@ void StageOne::Init(){
 		enemy2->height = 0.2f;
 		enemy2->x = enemy2X;
 		enemy2->y = enemyY;
+		enemy2->rotate = false;
+		enemy2->rotation = 0.0f;
 		enemy2->velocity_y = 0.0f;
 		enemy2->acceleration_y = -1.0f;
 		enemy2->friction_y = 0.5f;
@@ -190,31 +218,31 @@ void StageOne::reset(){
 
 	player1.x = -1.13f;
 	player1.y = 0.0f;
-	player1.friction_y = 1.5f;
 	player1.acceleration_y = 0.0f;
 	player1.velocity_y = 0.0f;
 	player1.visible = true;
 
 	player1shield.x = -1.13f;
 	player1shield.y = 0.0f;
-	player1shield.friction_y = 0.0f;
-	player1shield.acceleration_y = 0.0f;
-	player1shield.velocity_y = 0.0f;
-	player1shield.visible = true;
+	player1shield.height = 0.25f;
+	player1shield.width = 0.25f;
+
+	player1fire.x = -1.13f;
+	player1fire.y = 0.0f;
 
 	player2.x = 1.13f;
 	player2.y = 0.0f;
-	player2.friction_y = 1.5f;
 	player2.acceleration_y = 0.0f;
 	player2.velocity_y = 0.0f;
 	player2.visible = true;
 
 	player2shield.x = 1.13f;
 	player2shield.y = 0.0f;
-	player2shield.friction_y = 0.0f;
-	player2shield.acceleration_y = 0.0f;
-	player2shield.velocity_y = 0.0f;
-	player2shield.visible = true;
+	player2shield.height = 0.25f;
+	player2shield.width = 0.25f;
+
+	player2fire.x = 1.13f;
+	player2fire.y = 0.0f;
 
 	sparkle.x = -100.0f;
 	sparkle.y = -100.0f;
@@ -253,6 +281,7 @@ void StageOne::reset(){
 	}
 }
 
+// process player shooting or quit
 void StageOne::ProcessShoot(SDL_Event* event, bool& done){
 	const Uint8* keys = SDL_GetKeyboardState(NULL);
 
@@ -280,6 +309,7 @@ void StageOne::ProcessShoot(SDL_Event* event, bool& done){
 	}
 }
 
+// process player movement
 void StageOne::ProcessEvents(){
 	player1.acceleration_y = 0.0f;
 	player2.acceleration_y = 0.0f;
@@ -311,14 +341,16 @@ void StageOne::ProcessEvents(){
 	if (keys[SDL_SCANCODE_DOWN]){
 		// if down pressed, set acceleration negative
 		if (player2KillCount >= 10)
-			player2.acceleration_y = 4.5f;
+			player2.acceleration_y = -4.5f;
 		else
 			player2.acceleration_y = -3.5f;
 	}
 
 }
 
+// update the game based on the time
 int StageOne::fixedUpdate(float fixedElapsed){
+	// if a player is not dead
 	if (!freeze){
 		// run fixed update for everything
 		player1.fixedUpdate();
@@ -340,13 +372,15 @@ int StageOne::fixedUpdate(float fixedElapsed){
 		if (player2.y < -0.85f)
 			player2.y = -0.85f;
 
-		// update shield to player position and fire
+		// update shield and fire to player position
 		player1shield.x = player1.x;
 		player1shield.y = player1.y;
 		player2shield.x = player2.x;
 		player2shield.y = player2.y;
 		player1fire.x = player1.x;
 		player1fire.y = player1.y;
+		player2fire.x = player2.x;
+		player2fire.y = player2.y;
 
 		// have enemies reverse when they meet edge of screen
 		if (enemies1[0]->y >= 0.5){
@@ -439,7 +473,6 @@ int StageOne::fixedUpdate(float fixedElapsed){
 			// if bullet is visible and colliding
 			if (bullets[i].visible && bullets[i].shooter != 0 && player1.collidesWith(bullets[i])){
 				if (player1Hits < hitsToKill - 1){
-					screenShakeIntensity = 10.0f;
 					player1Hits++;
 					bullets[i].visible = false;
 				}
@@ -455,7 +488,6 @@ int StageOne::fixedUpdate(float fixedElapsed){
 			// if bullet is visible and colliding
 			if (bullets[i].visible && bullets[i].shooter != 1 && player2.collidesWith(bullets[i])){
 				if (player2Hits < hitsToKill - 1){
-					screenShakeIntensity = 10.0f;
 					player2Hits++;
 					bullets[i].visible = false;
 				}
@@ -505,6 +537,16 @@ int StageOne::fixedUpdate(float fixedElapsed){
 			enemyShot = 0;
 		}
 
+		// shrink shield if shot
+		if (player1Hits > 0 && player1shield.width > 0.0f){
+			player1shield.width -= fixedElapsed*3;
+			player1shield.height -= fixedElapsed*3;
+		}
+		if (player2Hits > 0 && player2shield.width > 0.0f){
+			player2shield.width -= fixedElapsed*3;
+			player2shield.height -= fixedElapsed*3;
+		}
+
 		// update position of each bullet
 		for (int i = 0; i < MAX_BULLETS; i++){
 			bullets[i].fixedUpdate();
@@ -515,26 +557,35 @@ int StageOne::fixedUpdate(float fixedElapsed){
 		player2Shot += fixedElapsed;
 
 		// update for powerups
-		if (player1KillCount >= 3 && player1BulletSpeed == 2.0f)
+		if (player1KillCount >= 3 && player1BulletSpeed == 2.0f){
 			player1BulletSpeed *= 2.0f;
-		if (player1KillCount >= 6 && player1BulletSize == 0.025f)
+			Mix_PlayChannel(-1, powerupSound, 0);
+		}
+		if (player1KillCount >= 6 && player1BulletSize == 0.025f){
 			player1BulletSize = 0.04f;
-		if (player2KillCount >= 3 && player2BulletSpeed == 2.0f)
+			Mix_PlayChannel(-1, powerupSound, 0);
+		}
+		if (player2KillCount >= 3 && player2BulletSpeed == 2.0f){
 			player2BulletSpeed *= 2.0f;
-		if (player2KillCount >= 6 && player2BulletSize == 0.025f)
+			Mix_PlayChannel(-1, powerupSound, 0);
+		}
+		if (player2KillCount >= 6 && player2BulletSize == 0.025f){
 			player2BulletSize = 0.04f;
-		if (player1KillCount >= 10 && player1ShotTime == 0.025f)
+			Mix_PlayChannel(-1, powerupSound, 0);
+		}
+		if (player1KillCount >= 10 && player1ShotTime == 0.025f){
 			player1ShotTime /= 2.0f;
-		if (player2KillCount >= 10 && player2ShotTime == 0.025f)
+			Mix_PlayChannel(-1, powerupSound, 0);
+		}
+		if (player2KillCount >= 10 && player2ShotTime == 0.025f){
 			player2ShotTime /= 2.0f;
-
-		// used for screenshake
-		if (screenShakeIntensity > 0)
-			screenShakeIntensity = lerp(screenShakeIntensity, 0.0, FIXED_TIMESTEP*5);
+			Mix_PlayChannel(-1, powerupSound, 0);
+		}
 	}
 	return winner;
 }
 
+// have losing player's ship explode
 bool StageOne::explosion(float fixedElapsed){
 	sparkle.visible = true;
 	explosionTime += fixedElapsed;
@@ -550,29 +601,28 @@ bool StageOne::explosion(float fixedElapsed){
 	// have sparkle grow over time
 	sparkle.height += explosionTime;
 	sparkle.width += explosionTime;
+	// when explosion big enough, move to next stage
 	if (sparkle.width > 15.0f)
 		return true;
 	return false;
 }
 
+// draw stuff on screen
 void StageOne::Render(){
 	glClear(GL_COLOR_BUFFER_BIT);
 
 	glMatrixMode(GL_MODELVIEW);
-	glPushMatrix();
-	// if player collision shake screen
-	if (screenShakeIntensity > 0.0f){
-		float value = sin(screenShakeValue)* screenShakeIntensity;
-		glTranslatef(0.0f, sin(screenShakeValue)* screenShakeIntensity, 0.0f);
-	}
 	
-	if (player1Hits == 0)
+	if (player1shield.width > 0.0f)
 		player1shield.draw();
 	player1.draw();
-	player1fire.shieldDraw();
-	if (player2Hits == 0)
+	if (player1Hits == 2)
+		player1fire.fireDraw();
+	if (player2shield.width > 0.0f)
 		player2shield.draw();
 	player2.draw();
+	if (player2Hits == 2)
+		player2fire.fireDraw();
 
 	for (size_t i = 0; i < enemies1.size(); i++){
 		if (enemies1[i]->visible)
@@ -583,6 +633,7 @@ void StageOne::Render(){
 			enemies2[i]->draw();
 	}
 
+	// if player isn't dead, draw bullets
 	if (!freeze){
 		for (int i = 0; i < MAX_BULLETS; i++){
 			// only draw bullets that haven't collided or are on screen
@@ -590,8 +641,8 @@ void StageOne::Render(){
 				bullets[i].Draw();
 		}
 	}
-	//glPopMatrix();
 
+	// if player is dead, draw explosion
 	if (freeze)
 		sparkle.draw();
 }
@@ -610,28 +661,4 @@ void StageOne::shootBullet(float x, float y, float direction, float shooter, flo
 	// reset index if max bullet is reached and overwrite earlier bullets
 	if (bulletIndex > MAX_BULLETS - 1)
 		bulletIndex = 0;
-}
-
-// used in screenshake
-float StageOne::mapValue(float value, float srcMin, float srcMax, float dstMin, float dstMax) {
-	float retVal = dstMin + ((value - srcMin) / (srcMax - srcMin) * (dstMax - dstMin));
-	if (retVal < dstMin) {
-		retVal = dstMin;
-	}
-	if (retVal > dstMax) {
-		retVal = dstMax;
-	}
-	return retVal;
-}
-
-float StageOne::easeOut(float from, float to, float time) {
-	float oneMinusT = 1.0f - time;
-	float tVal = 1.0f - (oneMinusT * oneMinusT * oneMinusT *
-		oneMinusT * oneMinusT);
-	return (1.0f - tVal)*from + tVal*to;
-}
-
-// linear interpolation
-float StageOne::lerp(float v0, float v1, float t){
-	return (1.0 - t) * v0 + t * v1;
 }

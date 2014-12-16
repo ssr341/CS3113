@@ -3,6 +3,7 @@
 void MainMenu::Init(){
 	screenText = LoadTexture("pixel_font.png");
 	time = 0.0f;
+	wordX = 1.3f;
 }
 
 GLuint MainMenu::LoadTexture(const char *image_path) {
@@ -62,12 +63,16 @@ int MainMenu::ProcessEvents(SDL_Event* event, bool& done){
 	int state = 0;
 
 	if (event->type == SDL_KEYDOWN) {
-		// if space is pressed move to stage select
-		if (event->key.keysym.scancode == SDL_SCANCODE_SPACE)
+		// if space is pressed move to stage 1
+		if (event->key.keysym.scancode == SDL_SCANCODE_SPACE){
 			state = 2;
+			time = 11.0f; // set time > 10 so doesn't play animations when return to menu
+		}
 		// if i is pressed move to instructions
-		if (event->key.keysym.scancode == SDL_SCANCODE_I) 
+		if (event->key.keysym.scancode == SDL_SCANCODE_I){
 			state = 1;
+			time = 11.0f; // set time > 10 so doesn't play animations when return to menu
+		}
 		// if escape is pressed quit
 		if (event->key.keysym.scancode == SDL_SCANCODE_ESCAPE)
 			done = true;
@@ -78,35 +83,43 @@ int MainMenu::ProcessEvents(SDL_Event* event, bool& done){
 
 void MainMenu::Render(float fixedElapsed){
 	// start screen text
-	time += fixedElapsed;
+	if (time < 10.0f) // only keep track until 10, no need to otherwise
+		time += fixedElapsed;
 
 	glClear(GL_COLOR_BUFFER_BIT);
 	glMatrixMode(GL_MODELVIEW);
 	
 	glLoadIdentity();
-	glTranslatef(-1.3, 0.9, 0.0);
+	glTranslatef(-1.3f, 0.9f, 0.0f);
 	DrawText(screenText, "Press Esc at any time to quit", 0.03f, 0.001f, 1.0f, 1.0f, 0.0f, 1.0f);
 
-	if (time > 1.0f){
+	if (time < 10.0f){
 		glLoadIdentity();
-		glTranslatef(-0.35, 0.25, 0.0);
+		glTranslatef(wordX, 0.25f, 0.0f);
 		DrawText(screenText, "Galaxy", 0.15f, 0.001f, 1.0f, 1.0f, 0.0f, 1.0f);
-	}
 
-	if (time > 3.0f){
 		glLoadIdentity();
-		glTranslatef(-0.5, 0.0, 0.0);
+		glTranslatef(wordX, 0.0f, 0.0f);
 		DrawText(screenText, "Defender", 0.15f, 0.001f, 1.0f, 1.0f, 0.0f, 1.0f);
+
+		wordX -= fixedElapsed/2.5f;
 	}
 
-	if (time > 5.0f){
+	if (time > 10.0f){
+		glLoadIdentity();
+		glTranslatef(-0.35f, 0.25f, 0.0f);
+		DrawText(screenText, "Galaxy", 0.15f, 0.001f, 1.0f, 1.0f, 0.0f, 1.0f);
+
+		glLoadIdentity();
+		glTranslatef(-0.5f, 0.0f, 0.0f);
+		DrawText(screenText, "Defender", 0.15f, 0.001f, 1.0f, 1.0f, 0.0f, 1.0f);
+
 		glLoadIdentity();
 		glTranslatef(-0.8f, -0.4f, 0.0f);
 		DrawText(screenText, "Press Space to Continue", 0.07f, 0.001f, 1.0f, 0.0f, 0.0f, 1.0f);
 
 		glLoadIdentity();
-		glTranslatef(-0.8f, -0.8f, 0.0f);
+		glTranslatef(-0.8f, -0.6f, 0.0f);
 		DrawText(screenText, "Press I for Instructions", 0.07f, 0.001f, 1.0f, 0.0f, 0.0f, 1.0f);
 	}
-
 }

@@ -7,6 +7,7 @@ void GameOver::Init(){
 	screenText = LoadTexture("pixel_font.png");
 }
 
+// loads image to render
 GLuint GameOver::LoadTexture(const char *image_path) {
 	SDL_Surface *surface = IMG_Load(image_path);
 	GLuint textureID;
@@ -21,15 +22,16 @@ GLuint GameOver::LoadTexture(const char *image_path) {
 	return textureID;
 }
 
+// process input
 int GameOver::ProcessEvents(SDL_Event* event, bool& done){
 	const Uint8* keys = SDL_GetKeyboardState(NULL);
 	int state = 5;
 
 	if (event->type == SDL_KEYDOWN) {
-		// if space is pressed move to stage select
+		// if space is pressed move to main menu
 		if (event->key.keysym.scancode == SDL_SCANCODE_SPACE){
 			state = 0;
-			time = 0.0f;
+			time = 0.0f; // reset time for animation when play again
 		}
 		// if esc is pressed quit
 		if (event->key.keysym.scancode == SDL_SCANCODE_ESCAPE)
@@ -39,6 +41,7 @@ int GameOver::ProcessEvents(SDL_Event* event, bool& done){
 	return state;
 }
 
+// draw text from sprite sheet
 void GameOver::DrawText(int fontTexture, std::string text, float size, float spacing, float r, float g, float b, float a) {
 	glBindTexture(GL_TEXTURE_2D, fontTexture);
 	glEnable(GL_TEXTURE_2D);
@@ -76,21 +79,23 @@ void GameOver::DrawText(int fontTexture, std::string text, float size, float spa
 	glDisableClientState(GL_COLOR_ARRAY);
 }
 
+// show text saying victor
 void GameOver::Render(int winningPlayer, float fixedElapsed){
-	time += fixedElapsed;
+	if (time < 8.0f) // only keep track until 8, no need to otherwise
+		time += fixedElapsed;
 
-	// game over text
+	// game over text. animated
 	glClear(GL_COLOR_BUFFER_BIT);
 	glMatrixMode(GL_MODELVIEW);
 
 	if (time > 1.0f){
 		glLoadIdentity();
-		glTranslatef(-0.25, 0.35, 0.0);
+		glTranslatef(-0.25f, 0.35f, 0.0f);
 		DrawText(screenText, "Game", 0.2f, 0.001f, 1.0f, 0.0f, 0.0f, 1.0f);
 	}
 	if (time > 2.0f){
 		glLoadIdentity();
-		glTranslatef(-0.25, 0.15, 0.0);
+		glTranslatef(-0.25f, 0.15f, 0.0f);
 		DrawText(screenText, "Over", 0.2f, 0.001f, 1.0f, 0.0f, 0.0f, 1.0f);
 	}
 	

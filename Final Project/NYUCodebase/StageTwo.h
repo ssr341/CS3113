@@ -33,6 +33,7 @@ public:
 
 	Mix_Chunk* explosionSound; // sound when bullets collide
 	Mix_Chunk* shootingSound; // sound when bullets shot
+	Mix_Chunk* powerupSound; // sound when player gets powerup
 private:
 	Bullet bullets[MAX_BULLETS];
 	int bulletIndex;
@@ -48,10 +49,13 @@ private:
 	int winner; // winner of stage. 0 means gameplay still happening, 1 means player 1, 2 means player 2
 	bool freeze; // freeze movement when someone dies
 
+	// entities
 	Entity player1;
 	Entity player1shield;
+	Entity player1fire;
 	Entity player2;
 	Entity player2shield;
+	Entity player2fire;
 	Entity asteroid;
 	std::vector<Entity*> enemies1;
 	std::vector<Entity*> enemies2;
@@ -72,6 +76,7 @@ private:
 	float player1BulletSpeed;
 	float player2BulletSpeed;
 
+	// enemy bullet properties
 	float enemyBulletSize;
 	float enemyBulletSpeed;
 

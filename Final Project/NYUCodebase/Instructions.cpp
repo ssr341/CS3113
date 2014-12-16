@@ -4,6 +4,7 @@ void Instructions::Init(){
 	screenText = LoadTexture("pixel_font.png");
 }
 
+// load image to render
 GLuint Instructions::LoadTexture(const char *image_path) {
 	SDL_Surface *surface = IMG_Load(image_path);
 
@@ -19,6 +20,7 @@ GLuint Instructions::LoadTexture(const char *image_path) {
 	return textureID;
 }
 
+// draw text from spritesheet
 void Instructions::DrawText(int fontTexture, std::string text, float size, float spacing, float r, float g, float b, float a) {
 	glBindTexture(GL_TEXTURE_2D, fontTexture);
 	glEnable(GL_TEXTURE_2D);
@@ -56,12 +58,13 @@ void Instructions::DrawText(int fontTexture, std::string text, float size, float
 	glDisableClientState(GL_COLOR_ARRAY);
 }
 
+// process input
 int Instructions::ProcessEvents(SDL_Event* event, bool& done){
 	const Uint8* keys = SDL_GetKeyboardState(NULL);
 	int state = 1;
 
 	if (event->type == SDL_KEYDOWN) {
-		// if space is pressed move to stage select
+		// if space is pressed move to stage 1
 		if (event->key.keysym.scancode == SDL_SCANCODE_SPACE)
 			state = 2;
 		// if esc is pressed quit
@@ -72,76 +75,77 @@ int Instructions::ProcessEvents(SDL_Event* event, bool& done){
 	return state;
 }
 
+// show users how to play
 void Instructions::Render(){
 	glClear(GL_COLOR_BUFFER_BIT);
 	glMatrixMode(GL_MODELVIEW);
 
 	glLoadIdentity();
-	glTranslatef(-1.3, 0.9, 0.0);
+	glTranslatef(-1.3f, 0.9f, 0.0f);
 	DrawText(screenText, "Press Escape at any time to quit", 0.03f, 0.001f, 1.0f, 1.0f, 0.0f, 1.0f);
 
 	glLoadIdentity();
-	glTranslatef(-1.25, 0.75, 0.0);
+	glTranslatef(-1.25f, 0.75f, 0.0f);
 	DrawText(screenText, "Player 1:", 0.05f, 0.001f, 1.0f, 1.0f, 0.0f, 1.0f);
 
 	glLoadIdentity();
-	glTranslatef(0.4, 0.75, 0.0);
+	glTranslatef(0.4f, 0.75f, 0.0f);
 	DrawText(screenText, "Player 2:", 0.05f, 0.001f, 1.0f, 1.0f, 0.0f, 1.0f);
 
 	glLoadIdentity();
-	glTranslatef(-1.25, 0.6, 0.0);
+	glTranslatef(-1.25f, 0.6f, 0.0f);
 	DrawText(screenText, "W to move up", 0.05f, 0.001f, 1.0f, 1.0f, 0.0f, 1.0f);
 
 	glLoadIdentity();
-	glTranslatef(0.4, 0.6, 0.0);
+	glTranslatef(0.4f, 0.6f, 0.0f);
 	DrawText(screenText, "Up to move up", 0.05f, 0.001f, 1.0f, 1.0f, 0.0f, 1.0f);
 
 	glLoadIdentity();
-	glTranslatef(-1.25, 0.5, 0.0);
+	glTranslatef(-1.25f, 0.5f, 0.0f);
 	DrawText(screenText, "S to move down", 0.05f, 0.001f, 1.0f, 1.0f, 0.0f, 1.0f);
 
 	glLoadIdentity();
-	glTranslatef(0.4, 0.5, 0.0);
+	glTranslatef(0.4f, 0.5f, 0.0f);
 	DrawText(screenText, "Down to move down", 0.05f, 0.001f, 1.0f, 1.0f, 0.0f, 1.0f);
 
 	glLoadIdentity();
-	glTranslatef(-1.25, 0.4, 0.0);
+	glTranslatef(-1.25f, 0.4f, 0.0f);
 	DrawText(screenText, "F to shoot", 0.05f, 0.001f, 1.0f, 1.0f, 0.0f, 1.0f);
 
 	glLoadIdentity();
-	glTranslatef(0.4, 0.4, 0.0);
+	glTranslatef(0.4f, 0.4f, 0.0f);
 	DrawText(screenText, "0 to shoot", 0.05f, 0.001f, 1.0f, 1.0f, 0.0f, 1.0f);
 
 	glLoadIdentity();
-	glTranslatef(-1.25, 0.2, 0.0);
+	glTranslatef(-1.25f, 0.2f, 0.0f);
 	DrawText(screenText, "Goal is to beat your opponent in a best of 3.", 0.05f, 0.001f, 1.0f, 1.0f, 0.0f, 1.0f);
 
 	glLoadIdentity();
-	glTranslatef(-1.25, 0.1, 0.0);
-	DrawText(screenText, "Two shots mean death", 0.05f, 0.001f, 1.0f, 1.0f, 0.0f, 1.0f);
+	glTranslatef(-1.25f, 0.1f, 0.0f);
+	DrawText(screenText, "Three shots mean death", 0.05f, 0.001f, 1.0f, 1.0f, 0.0f, 1.0f);
 
 	glLoadIdentity();
-	glTranslatef(-1.25, 0.0, 0.0);
+	glTranslatef(-1.25f, 0.0f, 0.0f);
 	DrawText(screenText, "Get powerups by shooting down UFOs: ", 0.05f, 0.001f, 1.0f, 1.0f, 0.0f, 1.0f);
 
 	glLoadIdentity();
-	glTranslatef(-1.10, -0.1, 0.0);
+	glTranslatef(-1.10f, -0.1f, 0.0f);
 	DrawText(screenText, "3 UFOs - Bullets travel faster", 0.035f, 0.001f, 1.0f, 1.0f, 0.0f, 1.0f);
 
 	glLoadIdentity();
-	glTranslatef(-1.10, -0.2, 0.0);
+	glTranslatef(-1.10f, -0.2f, 0.0f);
 	DrawText(screenText, "6 UFOs - Bullets are larger", 0.035f, 0.001f, 1.0f, 1.0f, 0.0f, 1.0f);
 
 	glLoadIdentity();
-	glTranslatef(-1.10, -0.3, 0.0);
+	glTranslatef(-1.10f, -0.3f, 0.0f);
 	DrawText(screenText, "10 UFOs - Move slightly faster and shoot more often", 0.035f, 0.001f, 1.0f, 1.0f, 0.0f, 1.0f);
 
 	glLoadIdentity();
-	glTranslatef(-1.25, -0.4, 0.0);
+	glTranslatef(-1.25f, -0.4f, 0.0f);
 	DrawText(screenText, "If third stage reached, players start with all", 0.05f, 0.001f, 1.0f, 1.0f, 0.0f, 1.0f);
 
 	glLoadIdentity();
-	glTranslatef(-1.25, -0.5, 0.0);
+	glTranslatef(-1.25f, -0.5f, 0.0f);
 	DrawText(screenText, "powerups and the UFO cannot be killed", 0.05f, 0.001f, 1.0f, 1.0f, 0.0f, 1.0f);
 
 	glLoadIdentity();

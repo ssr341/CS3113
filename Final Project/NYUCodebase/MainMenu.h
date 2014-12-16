@@ -6,6 +6,7 @@
 
 #include <string>
 #include <vector>
+#include "Entity.h"
 
 class MainMenu{
 public:
@@ -19,5 +20,6 @@ public:
 	int Update();
 private:
 	unsigned int screenText;
-	float time;
+	float time;  // kept for starting animations
+	float wordX; // position of the words
 };

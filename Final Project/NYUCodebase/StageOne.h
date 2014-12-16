@@ -32,13 +32,9 @@ public:
 
 	void reset();
 
-	// used in screenshake
-	float mapValue(float value, float srcMin, float srcMax, float dstMin, float dstMax);
-	float easeOut(float from, float to, float time);
-	float lerp(float v0, float v1, float t);
-
 	Mix_Chunk* explosionSound; // sound when bullets collide
 	Mix_Chunk* shootingSound; // sound when bullets shot
+	Mix_Chunk* powerupSound; // sound when player gets powerup
 private:
 	Bullet bullets[MAX_BULLETS];
 	int bulletIndex;
@@ -54,14 +50,12 @@ private:
 	int winner; // winner of stage. 0 means gameplay still happening, 1 means player 1, 2 means player 2
 	bool freeze; // freeze movement when someone dies
 
-	// shake screen when player is hit
-	float screenShakeIntensity;
-	float screenShakeValue;
-
+	// entities
 	Entity player1;
 	Entity player1fire;
 	Entity player1shield;
 	Entity player2;
+	Entity player2fire;
 	Entity player2shield;
 	std::vector<Entity*> enemies1;
 	std::vector<Entity*> enemies2;
@@ -82,9 +76,8 @@ private:
 	float player1BulletSpeed;
 	float player2BulletSpeed;
 
+	// enemy bullet properites
 	float enemyBulletSize;
 	float enemyBulletSpeed;
-
-	float lastFrameTicks;
 
 };

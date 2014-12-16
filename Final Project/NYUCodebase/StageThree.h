@@ -47,9 +47,12 @@ private:
 	int player1Hits; // number of times player 1 has been shot
 	int player2Hits; // number of times player 2 has been shot
 
+	// entities
 	Entity player1;
+	Entity player1fire;
 	Entity player1shield;
 	Entity player2;
+	Entity player2fire;
 	Entity player2shield;
 	Entity enemy;
 
@@ -67,9 +70,8 @@ private:
 	float player1BulletSpeed;
 	float player2BulletSpeed;
 
+	// enemy bullet properties
 	float enemyBulletSize;
 	float enemyBulletSpeed;
-
-	float lastFrameTicks;
 
 };
